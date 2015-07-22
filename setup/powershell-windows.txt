@@ -1,0 +1,25 @@
+22/07/2015:
+
+In order to convert the Django application into a Windows64 exe using PyInstaller, I have to set up a python environment in Windows.
+This means using Windows powershell.
+
+Created new user "img-test"
+
+1. Set permissions in PowerShell:
+  a. Log in as Administrator
+  b. > Set-ExecutionPolicy RemoteSigned
+  c. Logout admin.
+
+2. Install python2.7
+3. Install pip with get-pip.py
+4. Install VirtualEnvWrapper
+  a. > pip install virtualenvwrapper virtualenvwrapper-powershell
+  b. > Import-Module C:\Python27\Lib\site-packages\Users\img-test\Documents\WindowsPowerShell\Modules\VirtualEnvWrapper (full path)
+
+5. create virtualenv "img" with > New-VirtualEnvironment img
+6. use workon/deactivate etc.
+
+http://www.tylerbutler.com/2012/05/how-to-install-python-pip-and-virtualenv-on-windows-with-powershell/
+
+7. install pywin32 from souceforge: pick latest build and python 2.7 version
+8. 
