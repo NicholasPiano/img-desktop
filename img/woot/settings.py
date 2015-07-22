@@ -325,27 +325,10 @@ FILE_UPLOAD_HANDLERS = (
 
 
 ########## DATABASE CONFIGURATION
-# load database details from database config file
-db = {}
-if os.path.exists(os.path.join(ACCESS_ROOT, DB_ACCESS)):
-  with open(os.path.join(ACCESS_ROOT, DB_ACCESS)) as db_json:
-    db = json.load(db_json)
-else:
-  print('Database access not defined. Please check {}'.format(os.path.join(ACCESS_ROOT, DB_ACCESS)))
-  sys.exit()
-
-# 1. start database server: ~$ pg_ctl start -D /usr/local/var/postgres/
-# 2. connect to database: ~$ psql -U nicholaspiano postgres
-# 3. check database server: ~$ pg_ctl status -D /usr/local/var/postgres/
-
 DATABASES = {
   'default': {
-    'ENGINE': 'django.db.backends.postgresql_psycopg2',
-    'NAME': db['name'],
-    'USER': db['user'],
-    'PASSWORD': db['pwd'],
-    'HOST': db['host'], # Set to empty string for localhost.
-    'PORT': db['port'], # Set to empty string for default.
+    'ENGINE': 'django.db.backends.sqlite3',
+    'NAME': 'db/img_db',
   }
 }
 ########## END DATABASE CONFIGURATION
