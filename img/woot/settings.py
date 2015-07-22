@@ -17,18 +17,6 @@ TEST_RUNNER = 'django.test.runner.DiscoverRunner'
 ########## END TEST CONFIGURATION
 
 
-########## AUTH CONFIGURATION
-AUTH_USER_MODEL = 'users.User'
-########## END AUTH CONFIGURATION
-
-
-########## ALLOWED HOSTS CONFIGURATION
-ALLOWED_HOSTS = (
-  'localhost',
-)
-########## END ALLOWED HOSTS CONFIGURATION
-
-
 ########## PATH CONFIGURATION
 # Absolute filesystem path to the Django project directory:
 DJANGO_ROOT = dirname(abspath(__file__))
@@ -140,7 +128,6 @@ FIXTURE_DIRS = (
 ########## TEMPLATE CONFIGURATION
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#template-context-processors
 TEMPLATE_CONTEXT_PROCESSORS = (
-  'django.contrib.auth.context_processors.auth',
   'django.core.context_processors.debug',
   'django.core.context_processors.i18n',
   'django.core.context_processors.media',
@@ -192,37 +179,21 @@ ROOT_URLCONF = '%s.urls' % SITE_NAME
 ########## APP CONFIGURATION
 DJANGO_APPS = (
   # Default Django apps:
-  'django.contrib.auth',
   'django.contrib.contenttypes',
   'django.contrib.sessions',
   'django.contrib.sites',
   'django.contrib.messages',
   'django.contrib.staticfiles',
-
-  # Useful template tags:
-  # 'django.contrib.humanize',
-
-  # Admin panel and documentation:
-  # 'django.contrib.admin',
-  # 'django.contrib.admindocs',
-
-  # flatpages for static pages
-  # 'django.contrib.flatpages',
 )
 
 THIRD_PARTY_APPS = (
-  # Asynchronous task scheduling
-  # 'djcelery',
 
-  # Static file management:
-  # 'compressor',
 )
 
 LOCAL_APPS = (
   'apps.cell',
   'apps.expt',
   'apps.img',
-  'apps.users',
 )
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
@@ -268,54 +239,6 @@ WSGI_APPLICATION = 'wsgi.application'
 ########## END WSGI CONFIGURATION
 
 
-########## COMPRESSION CONFIGURATION
-# See: http://django_compressor.readthedocs.org/en/latest/settings/#django.conf.settings.COMPRESS_ENABLED
-COMPRESS_ENABLED = True
-
-# See: http://django-compressor.readthedocs.org/en/latest/settings/#django.conf.settings.COMPRESS_CSS_HASHING_METHOD
-COMPRESS_CSS_HASHING_METHOD = 'content'
-
-# See: http://django_compressor.readthedocs.org/en/latest/settings/#django.conf.settings.COMPRESS_CSS_FILTERS
-COMPRESS_CSS_FILTERS = [
-    'compressor.filters.template.TemplateFilter',
-]
-
-# See: http://django_compressor.readthedocs.org/en/latest/settings/#django.conf.settings.COMPRESS_JS_FILTERS
-COMPRESS_JS_FILTERS = [
-    'compressor.filters.template.TemplateFilter',
-]
-
-STATICFILES_FINDERS += (
-  'compressor.finders.CompressorFinder',
-)
-########## END COMPRESSION CONFIGURATION
-
-
-########## CELERY CONFIGURATION
-from djcelery import setup_loader
-
-CELERY_RESULT_BACKEND='djcelery.backends.database:DatabaseBackend'
-
-# : Only add pickle to this list if your broker is secured
-# : from unwanted access (see userguide/security.html)
-CELERY_ACCEPT_CONTENT = ['json']
-CELERY_TASK_SERIALIZER = 'json'
-CELERY_RESULT_SERIALIZER = 'json'
-
-# See: http://celery.readthedocs.org/en/latest/configuration.html#celery-task-result-expires
-CELERY_TASK_RESULT_EXPIRES = timedelta(minutes=30)
-
-# See: http://docs.celeryproject.org/en/master/configuration.html#std:setting-CELERY_CHORD_PROPAGATES
-CELERY_CHORD_PROPAGATES = True
-
-# See: http://celery.github.com/celery/django/
-setup_loader()
-
-# rabbitmq: https://www.rabbitmq.com/man/rabbitmqctl.1.man.html
-# celery: https://zapier.com/blog/async-celery-example-why-and-how/
-########## END CELERY CONFIGURATION
-
-
 ########## FILE UPLOAD CONFIGURATION
 FILE_UPLOAD_HANDLERS = (
   'django.core.files.uploadhandler.MemoryFileUploadHandler',
@@ -328,7 +251,7 @@ FILE_UPLOAD_HANDLERS = (
 DATABASES = {
   'default': {
     'ENGINE': 'django.db.backends.sqlite3',
-    'NAME': 'db/img_db',
+    'NAME': 'db/img_db.sqlite3',
   }
 }
 ########## END DATABASE CONFIGURATION
