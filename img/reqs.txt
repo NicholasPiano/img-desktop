@@ -1,0 +1,29 @@
+# Django
+django>=1.8
+
+# Python base libraries commonly used
+Pillow
+scipy
+pandas
+matplotlib
+scikit-image
+
+# Common Django reusable apps
+Sphinx
+
+# Postgres
+psycopg2
+
+# Tasks
+celery
+django-celery
+redis
+
+# Static compression
+django-compressor
+
+# LESS and SASS
+# https://github.com/andreyfedoseev/django-static-precompiler
+
+# Debug toolbar
+django-debug-toolbar
