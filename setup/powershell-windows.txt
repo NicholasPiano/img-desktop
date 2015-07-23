@@ -16,10 +16,41 @@ Created new user "img-test"
   a. > pip install virtualenvwrapper virtualenvwrapper-powershell
   b. > Import-Module C:\Python27\Lib\site-packages\Users\img-test\Documents\WindowsPowerShell\Modules\VirtualEnvWrapper (full path)
 
-5. create virtualenv "img" with > New-VirtualEnvironment img
+5. create virtualenv "img" with > New-VirtualEnvironment img (see commands with > Get-Command *virtualenv*)
 6. use workon/deactivate etc.
 
 http://www.tylerbutler.com/2012/05/how-to-install-python-pip-and-virtualenv-on-windows-with-powershell/
 
 7. install pywin32 from souceforge: pick latest build and python 2.7 version
-8. 
+
+Make sure to install pywin32 for the right version and maxint of python installed. So if python is 2.7, 32-bit,
+the corresponding pywin32 must be installed. This also applies to a virtualenv. If a virtualenv is active while
+the pywin32 installer is running, it will override the system python installation and only give the virtualenv
+Python as an option for installation.
+
+I would like:
+
+Python 3.4
+Django 1.8
+Pywin32 (Python 3.4, 64-bit)
+PyInstaller (Python 3.4, 64-bit)
+Pygments (Python 3.4, 64-bit)
+
+Safe option:
+
+Python 2.7
+Django 1.8
+
+8. Setup I decided on:
+  a. Keep system python as Python2.7, do not put Python3.4 python.exe in path. pip/python etc will call Python2.7 from PS.
+  b.
+
+Install pywin32:
+
+1. Ensure version (Python3.4) and maxsize (32-bit)
+2. Activate virtualenv
+3. Double check python version
+4. Download with PS > easy_install http://PATH.TO/EXE/DOWNLOAD (in this case: http://sourceforge.net/projects/pywin32/files/pywin32/Build%20219/pywin32-219.win32-py3.4.exe/download)
+5. Please check version and maxsize!!!
+
+>>> Run pyinstaller to check
