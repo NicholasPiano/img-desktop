@@ -1,6 +1,7 @@
 # import
 import os
 import re
+import numpy as np
 from skimage import exposure
 from scipy.misc import imread, imsave
 from scipy.ndimage.measurements import center_of_mass as com

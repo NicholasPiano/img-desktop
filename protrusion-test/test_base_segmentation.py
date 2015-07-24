@@ -23,27 +23,51 @@ for path in [cp_path, img_path, bf_path]:
   if not exists(path):
     os.mkdir(path)
 
-'''
 # analyse or prepare
-if exists(cp_path): # analyse
+if exists(img_path) and exists(bf_path): # analyse
+
+  # create cell profiler path
+  if not exists(cp_path):
+    os.mkdir(cp_path)
 
   # load all mask images from cellprofiler
-  pass
+  cp_z = lambda n: int(re.match(r'^bf_z(?P<z>[0-9]+)\.(?P<extension>.+)$', n).group('z'))
+  cp = {cp_z(name):{'img':load(cp_path, name), 'name':name} for name in os.listdir(cp_path) if '.DS' not in name}
+
+  ##### AREA
+  # Z = []
+  # A = []
+  # for cpz, cp_img in cp.items():
+  #   img = cp_img['img']
+  #   a = np.sum(img==1.0)
+  #   aa = img.shape[0] * img.shape[1]
+  #   if a/aa < 0.07 and a > 50:
+  #     print(cpz, a)
+  #     Z.append(cpz)
+  #     A.append(a)
+  #
+  # plt.plot(Z,A)
+  # plt.show()
+  ##### AREA
+
+  ##### PROTRUSIONS
+  
+
+  ##### PROTRUSIONS
 
 else:
-  # create path
-  os.mkdir(cp_path)
+  # create paths
+  os.mkdir(img_path)
+  os.mkdir(bf_path)
 
   # prepare images for segmentation
+  save = lambda img, name: imsave(join(bf_path if 'bf_' in name else img_path, name), img)
 
-'''
-save = lambda img, name: imsave(join(bf_path if 'bf_' in name else img_path, name), img)
+  for img_z, img_dict in bf.items():
+    save(cut(img_dict['img']), 'bf_z{}.png'.format(img_z))
 
-for img_z, img_dict in bf.items():
-  save(cut(img_dict['img']), 'bf_z{}.png'.format(img_z))
-
-save(cut(zmod), 'zmod.png')
-save(cut(zmean), 'zmean.png')
-save(cut(zbf), 'zbf.png')
-save(cut(marker), 'marker.png')
-save(cut(zcomp), 'zcomp.png')
+  save(cut(zmod), 'zmod.png')
+  save(cut(zmean), 'zmean.png')
+  save(cut(zbf), 'zbf.png')
+  save(cut(marker), 'marker.png')
+  save(cut(zcomp), 'zcomp.png')
