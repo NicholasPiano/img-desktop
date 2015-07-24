@@ -17,6 +17,9 @@ from scipy.ndimage import distance_transform_edt
 # 3. import images and categorize objects by protrusion length
 # 4. plot results
 
+def box_edges_on(binary_img):
+  return np.any(binary_img[0,:]==1) or np.any(binary_img[:,0]==1) or np.any(binary_img[binary_img.shape[0]-1,:]==1) or np.any(binary_img[:,binary_img.shape[1]-1]==1)
+
 def get_sorted_edge(binary_img):
   # get distance transform
   D = distance_transform_edt(binary_img)
@@ -107,6 +110,21 @@ if exists(img_path) and exists(bf_path): # analyse
   # plt.show()
 
   ##### PROTRUSIONS
+
+  ##### SUM
+
+  cp_sum = np.zeros(cp[0]['img'].shape)
+  for cpz, cp_img in cp.items():
+    img = cp_img['img'].astype(int)
+    if not box_edges_on(img):
+      cp_sum += img
+
+  m = exposure.rescale_intensity(cp_sum * 1.0) + cut(zmean)
+
+  plt.imshow(m, cmap='Greys_r')
+  plt.show()
+
+  ##### SUM
 
 else:
   # create paths
