@@ -1,0 +1,38 @@
+# Django
+django>=1.7
+
+# Python base libraries commonly used
+Pillow
+scipy
+pandas
+
+# Common Django reusable apps
+Sphinx
+
+# Postgres
+psycopg2
+
+# Tasks
+amqp
+anyjson
+kombu
+billiard
+celery
+django-celery
+redis
+pytz
+
+# Static compression
+django-compressor
+
+# App specific settings
+django-appconf
+
+# Python 2 -> Python 3
+six
+
+# LESS and SASS
+# https://github.com/andreyfedoseev/django-static-precompiler
+
+# Debug toolbar
+django-debug-toolbar

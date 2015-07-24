@@ -1,3 +1,6 @@
 *.pyc
 migrations/
 db/
+*.tif
+*.tiff
+*.png
