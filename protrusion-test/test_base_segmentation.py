@@ -1,6 +1,10 @@
 # test_base_segmentation
 
 from mod_base import *
+from scipy.ndimage.morphology import binary_erosion as erode
+from scipy.ndimage.morphology import binary_dilation as dilate
+from scipy.signal import find_peaks_cwt
+from scipy.ndimage import distance_transform_edt
 
 # goal:
 # 1. simple segmentation of the brightfield levels, zbf, and zcomp
@@ -12,6 +16,30 @@ from mod_base import *
 # 2. run cell profiler
 # 3. import images and categorize objects by protrusion length
 # 4. plot results
+
+def get_sorted_edge(binary_img):
+  # get distance transform
+  D = distance_transform_edt(binary_img)
+  max_r, max_c = np.where(D==D.max())[0][0], np.where(D==D.max())[1][0]
+
+  # cut to edge
+  edge = binary_img - erode(binary_img)
+
+  # get list of edge points
+  edge_points = list(zip(np.where(edge==1)[0], np.where(edge==1)[1]))
+
+  # sort initially by distance from distance transform maximum
+  sorted_edge = [min(edge_points, key=lambda e: np.sqrt((e[0]-max_r)**2 + (e[1]-max_c)**2))]
+
+  # count through edge points
+  index = 0
+  while index < len(edge_points) - 1:
+    current_edge = sorted_edge[index]
+    next_edge = min(filter(lambda e: e not in sorted_edge, edge_points), key=lambda d: np.sqrt((d[0]-current_edge[0])**2 + (d[1]-current_edge[1])**2))
+    sorted_edge.append(next_edge)
+    index += 1
+
+  return (max_r, max_c), sorted_edge
 
 # paths
 test_path = join(t_path, 'base_segmentation')
@@ -51,7 +79,32 @@ if exists(img_path) and exists(bf_path): # analyse
   ##### AREA
 
   ##### PROTRUSIONS
-  
+  # 1. get edge
+  # 2. for each point, get distance and angle from point with highest distance transform
+  # 3. trace along edge and copy into sorted array
+  # 4. roll array to position minimum on edge. This ensures that no peaks lie on the edge and can be segmented properly
+  # 5. return peaks with peak detection
+
+  # for cpz, cp_img in cp.items():
+  #   if cpz not in [27, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 52]:
+  #   # if cpz in [25]:
+  #     img = cp_img['img']
+  #
+  #     img = erode(dilate(img, iterations=3), iterations=3)
+  #
+  #     (max_r, max_c), sorted_edge = get_sorted_edge(img)
+  #     print(max_r, max_c)
+  #
+  #     y = np.array([np.sqrt((e[0]-max_r)**2 + (e[1]-max_c)**2) for e in sorted_edge])
+  #     x = np.array(list(range(len(sorted_edge))))
+  #     x = x - np.argmax(y)
+  #
+  #     x = x / len(x)
+  #     # y = y / y.max()
+  #
+  #     plt.plot(x, y)
+  #
+  # plt.show()
 
   ##### PROTRUSIONS
 
