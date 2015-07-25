@@ -17,33 +17,6 @@ from scipy.ndimage import distance_transform_edt
 # 3. import images and categorize objects by protrusion length
 # 4. plot results
 
-def box_edges_on(binary_img):
-  return np.any(binary_img[0,:]==1) or np.any(binary_img[:,0]==1) or np.any(binary_img[binary_img.shape[0]-1,:]==1) or np.any(binary_img[:,binary_img.shape[1]-1]==1)
-
-def get_sorted_edge(binary_img):
-  # get distance transform
-  D = distance_transform_edt(binary_img)
-  max_r, max_c = np.where(D==D.max())[0][0], np.where(D==D.max())[1][0]
-
-  # cut to edge
-  edge = binary_img - erode(binary_img)
-
-  # get list of edge points
-  edge_points = list(zip(np.where(edge==1)[0], np.where(edge==1)[1]))
-
-  # sort initially by distance from distance transform maximum
-  sorted_edge = [min(edge_points, key=lambda e: np.sqrt((e[0]-max_r)**2 + (e[1]-max_c)**2))]
-
-  # count through edge points
-  index = 0
-  while index < len(edge_points) - 1:
-    current_edge = sorted_edge[index]
-    next_edge = min(filter(lambda e: e not in sorted_edge, edge_points), key=lambda d: np.sqrt((d[0]-current_edge[0])**2 + (d[1]-current_edge[1])**2))
-    sorted_edge.append(next_edge)
-    index += 1
-
-  return (max_r, max_c), sorted_edge
-
 # paths
 test_path = join(t_path, 'base_segmentation')
 cp_path = join(test_path, 'cp')
