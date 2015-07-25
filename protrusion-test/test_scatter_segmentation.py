@@ -1,4 +1,4 @@
-# test_scatter_segmentation
+# test_scatter_segmentation: FAILED
 
 from mod_base import *
 
@@ -11,6 +11,11 @@ from mod_base import *
 # 2. use each pixel to make a new primary
 # 3. run segmentation again
 # 4. import masks and compare
+
+# results:
+# Method failed because segmentation is confined to an area of recognition that is independent of the marker location.
+# Even placing the original marker along with the test marker fails to expand the segmentation.
+# This cannot be solved without changing the behaviour of cell profiler, a very common problem.
 
 # paths
 zcomp_segmented = load(join(t_path, 'base_segmentation', 'results'), 'zcomp.tiff')

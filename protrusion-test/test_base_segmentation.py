@@ -17,6 +17,15 @@ from scipy.ndimage import distance_transform_edt
 # 3. import images and categorize objects by protrusion length
 # 4. plot results
 
+# results:
+# No failure here. Just testing how the segmentation changes with Z. When the interior of the cell comes closer to the background and
+# the edges become less defined, the recognition extends to the boundaries. I need some good way of testing whether this
+# has happened. Right now, I use the box_edges_on method, which tests for "on" edges of the chosen bounding box. This is
+# unreliable since I will not have a bounding box in practical operation.
+#
+# I need to know what the best level for segmenting the protrusions is. I think I will combine any information from here to
+# a method based on difference in z level from points inside the mask. This will be my third test.
+
 # paths
 test_path = join(t_path, 'base_segmentation')
 cp_path = join(test_path, 'cp')
