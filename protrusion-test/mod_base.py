@@ -42,6 +42,16 @@ zcomp = zbf * zmean
 def binary_edge(binary):
   return binary - erode(binary)
 
+def edges_touching(binary_inside, binary_outside):
+  # 1. get edge of outside
+  binary_outside_edge = binary_edge(binary_outside).astype(int)
+
+  # 2. add to inside
+  binary_sum = binary_outside_edge + binary_inside.astype(int)
+
+  # 3. if any pixel value is 2, then touching
+  return np.any(binary_sum==2)
+
 def box_edges_on(binary_img):
   return np.any(binary_img[0,:]==1) or np.any(binary_img[:,0]==1) or np.any(binary_img[binary_img.shape[0]-1,:]==1) or np.any(binary_img[:,binary_img.shape[1]-1]==1)
 
