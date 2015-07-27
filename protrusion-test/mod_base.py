@@ -6,6 +6,8 @@ from skimage import exposure
 from scipy.misc import imread, imsave
 from scipy.ndimage.measurements import center_of_mass as com
 from os.path import abspath, basename, dirname, join, normpath, exists
+from scipy.ndimage.morphology import binary_erosion as erode
+from scipy.ndimage.morphology import binary_dilation as dilate
 from scipy.ndimage.filters import gaussian_filter as gf
 import matplotlib.pyplot as plt
 
@@ -36,6 +38,9 @@ cut_r, cut_c = marker_r - r0, marker_c - c0
 
 # generate zcomp
 zcomp = zbf * zmean
+
+def binary_edge(binary):
+  return binary - erode(binary)
 
 def box_edges_on(binary_img):
   return np.any(binary_img[0,:]==1) or np.any(binary_img[:,0]==1) or np.any(binary_img[binary_img.shape[0]-1,:]==1) or np.any(binary_img[:,binary_img.shape[1]-1]==1)

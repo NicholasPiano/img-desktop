@@ -19,8 +19,19 @@ zcomp_cp = load(join(test_path, 'zcomp_cp.tiff'))
 zdiff_cp = load(join(test_path, 'zdiff_cp.tiff'))
 
 # TEST 1: erode zdiff_cp until it touches zcomp_cp
-while not_touching(zdiff_cp, zcomp_cp):
-  erode(zdiff_cp)
+def edges_touching(binary_inside, binary_outside):
+  # 1. get edge of outside
+  binary_outside_edge = binary_edge(binary_outside).astype(int)
+
+  # 2. add to inside
+  binary_sum = binary_outside_edge + binary_inside.astype(int)
+
+  # 3. if any pixel value is 2, then touching
+  return np.any(binary_sum==2)
+
+# while not_touching(zdiff_cp, zcomp_cp):
+#   erode(zdiff_cp)
+print(edges_touching(zcomp_cp, zdiff_cp))
 
 # cut and modify zbf
 # cut_zbf = cut(zbf)
