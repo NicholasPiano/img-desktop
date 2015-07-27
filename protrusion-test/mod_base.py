@@ -6,6 +6,7 @@ from skimage import exposure
 from scipy.misc import imread, imsave
 from scipy.ndimage.measurements import center_of_mass as com
 from os.path import abspath, basename, dirname, join, normpath, exists
+from scipy.ndimage.filters import gaussian_filter as gf
 import matplotlib.pyplot as plt
 
 # paths
