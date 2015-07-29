@@ -1,2 +1,4 @@
-1. looks like we are using Kivy.
-  a. 
+1. looks like we are using Kivy
+  a. clone git repo
+  b. make in the repo directory
+  c. install kivy-designer for lulz.

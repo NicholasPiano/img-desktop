@@ -1,6 +1,7 @@
 # import
 import os
 import re
+import math
 import numpy as np
 from skimage import exposure
 from scipy.misc import imread, imsave
@@ -10,6 +11,7 @@ from scipy.ndimage.morphology import binary_erosion as erode
 from scipy.ndimage.morphology import binary_dilation as dilate
 from scipy.ndimage.filters import gaussian_filter as gf
 import matplotlib.pyplot as plt
+from scipy.ndimage import distance_transform_edt
 
 # paths
 base_path = dirname(abspath(__file__))
