@@ -29,7 +29,7 @@ class Command(BaseCommand):
   help = ''
 
   def handle(self, *args, **options):
-    pass
 
     # a number of things to do in this script.
     # 1. start the main kivy application
+    pass
