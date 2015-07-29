@@ -87,6 +87,7 @@ class RegionMarker(models.Model):
   gon = models.ForeignKey(Gon, related_name='region_markers', null=True)
   region_track = models.ForeignKey(RegionTrack, related_name='markers')
   region_track_instance = models.ForeignKey(RegionTrackInstance, related_name='markers')
+  region_track_index = models.IntegerField(default=-1) # stores position in chain.
 
   # properties
   r = models.IntegerField(default=0)
@@ -274,7 +275,7 @@ class CellMask(models.Model):
   cell = models.ForeignKey(Cell, related_name='masks')
   cell_instance = models.ForeignKey(CellInstance, related_name='masks')
   mask = models.ForeignKey(Mask, related_name='cell_masks')
-  marker = models.OneToOneField(Marker, related_name='cell_mask')
+  marker = models.ForeignKey(Marker, related_name='cell_masks')
 
   # properties
   gray_value_id = models.IntegerField(default=0)

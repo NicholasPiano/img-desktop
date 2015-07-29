@@ -1,4 +1,4 @@
-# apps.expt.models
+# woot.apps.expt.models
 
 # django
 from django.db import models
