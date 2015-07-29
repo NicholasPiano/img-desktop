@@ -2,3 +2,11 @@
   a. clone git repo
   b. make in the repo directory
   c. install kivy-designer for lulz.
+
+install kivy by first downloading the repo, then building
+1. git clone git://github.com/kivy/kivy.git
+2. cd kivy
+3. make
+
+Python 3.4
+Pygame: pip install hg+http://bitbucket.org/pygame/pygame
