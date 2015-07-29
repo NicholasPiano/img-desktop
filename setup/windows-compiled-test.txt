@@ -1,0 +1,11 @@
+A series of tests need to be run to make sure that the application can be run compiled on windows.
+
+List of steps involved in the program:
+1. Open .lif
+2. Generate and save new images
+3. Graphical interface for tracking
+4. Graphical interface for regions
+5. 
+
+The following list of things are run in the application:
+1.
