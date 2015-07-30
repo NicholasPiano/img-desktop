@@ -1,0 +1,3 @@
+http://cmci.embl.de/documents/101029imagej_cui_lifconversion#bfconvert_help
+https://pypi.python.org/pypi/ExifRead
+http://blog.endpoint.com/2015/01/getting-realtime-output-using-python.html

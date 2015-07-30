@@ -1,0 +1,8 @@
+Tests
+
+Steps
+
+Problems
+
+http://irwinkwan.com/tag/pyinstaller/
+http://gamedev.stackexchange.com/questions/54037/solving-the-riddle-on-distributing-a-python-built-game
