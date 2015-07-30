@@ -45,12 +45,6 @@ path.append(DJANGO_ROOT)
 ########## END PATH CONFIGURATION
 
 
-########## PASSWORD CONFIGURATION
-ACCESS_ROOT = '/.djaccess/'
-DB_ACCESS = 'db.json'
-########## END PASSWORD CONFIGURATION
-
-
 ########## DEBUG CONFIGURATION
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#debug
 DEBUG = False
@@ -196,32 +190,14 @@ DJANGO_APPS = (
   'django.contrib.sites',
   'django.contrib.messages',
   'django.contrib.staticfiles',
-
-  # Useful template tags:
-  # 'django.contrib.humanize',
-
-  # Admin panel and documentation:
-  # 'django.contrib.admin',
-  # 'django.contrib.admindocs',
-
-  # flatpages for static pages
-  # 'django.contrib.flatpages',
 )
 
 THIRD_PARTY_APPS = (
-  # Asynchronous task scheduling
-  # 'djcelery',
-
-  # Static file management:
-  # 'compressor',
-)
-
-LOCAL_APPS = (
-
+  'test',
 )
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
-INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
+INSTALLED_APPS = DJANGO_APPS + LOCAL_APPS
 ########## END APP CONFIGURATION
 
 
@@ -263,54 +239,6 @@ WSGI_APPLICATION = 'wsgi.application'
 ########## END WSGI CONFIGURATION
 
 
-########## COMPRESSION CONFIGURATION
-# See: http://django_compressor.readthedocs.org/en/latest/settings/#django.conf.settings.COMPRESS_ENABLED
-COMPRESS_ENABLED = True
-
-# See: http://django-compressor.readthedocs.org/en/latest/settings/#django.conf.settings.COMPRESS_CSS_HASHING_METHOD
-COMPRESS_CSS_HASHING_METHOD = 'content'
-
-# See: http://django_compressor.readthedocs.org/en/latest/settings/#django.conf.settings.COMPRESS_CSS_FILTERS
-COMPRESS_CSS_FILTERS = [
-    'compressor.filters.template.TemplateFilter',
-]
-
-# See: http://django_compressor.readthedocs.org/en/latest/settings/#django.conf.settings.COMPRESS_JS_FILTERS
-COMPRESS_JS_FILTERS = [
-    'compressor.filters.template.TemplateFilter',
-]
-
-STATICFILES_FINDERS += (
-  'compressor.finders.CompressorFinder',
-)
-########## END COMPRESSION CONFIGURATION
-
-
-########## CELERY CONFIGURATION
-from djcelery import setup_loader
-
-CELERY_RESULT_BACKEND='djcelery.backends.database:DatabaseBackend'
-
-# : Only add pickle to this list if your broker is secured
-# : from unwanted access (see userguide/security.html)
-CELERY_ACCEPT_CONTENT = ['json']
-CELERY_TASK_SERIALIZER = 'json'
-CELERY_RESULT_SERIALIZER = 'json'
-
-# See: http://celery.readthedocs.org/en/latest/configuration.html#celery-task-result-expires
-CELERY_TASK_RESULT_EXPIRES = timedelta(minutes=30)
-
-# See: http://docs.celeryproject.org/en/master/configuration.html#std:setting-CELERY_CHORD_PROPAGATES
-CELERY_CHORD_PROPAGATES = True
-
-# See: http://celery.github.com/celery/django/
-setup_loader()
-
-# rabbitmq: https://www.rabbitmq.com/man/rabbitmqctl.1.man.html
-# celery: https://zapier.com/blog/async-celery-example-why-and-how/
-########## END CELERY CONFIGURATION
-
-
 ########## FILE UPLOAD CONFIGURATION
 FILE_UPLOAD_HANDLERS = (
   'django.core.files.uploadhandler.MemoryFileUploadHandler',
@@ -320,22 +248,10 @@ FILE_UPLOAD_HANDLERS = (
 
 
 ########## DATABASE CONFIGURATION
-# load database details from database config file
-if os.path.exists(os.path.join(ACCESS_ROOT, DB_ACCESS)):
-  with open(os.path.join(ACCESS_ROOT, DB_ACCESS)) as db_json:
-else:
-  if os.path.exists(ACCESS_ROOT):
-    
-
-
 DATABASES = {
   'default': {
-    'ENGINE': 'django.db.backends.postgresql_psycopg2',
-    'NAME': '',
-    'USER': '',
-    'PASSWORD': '',
-    'HOST': '', # Set to empty string for localhost.
-    'PORT': '', # Set to empty string for default.
+    'ENGINE': 'django.db.backends.sqlite3',
+    'NAME': 'db/test_db.sqlite3',
   }
 }
 ########## END DATABASE CONFIGURATION
