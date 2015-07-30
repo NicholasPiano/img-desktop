@@ -1,3 +1,26 @@
-Pygame: pip install hg+http://bitbucket.org/pygame/pygame
+The following packages need to be installed:
+1. numpy
+
 http://www.laurivan.com/install-numpy-in-a-virtual-environment-on-windows/
-http://www.scipy.org/scipylib/building/windows.html
+
+  a. start virtualenv
+  b. download prebuilt binaries from http://www.lfd.uci.edu/~gohlke/pythonlibs/
+    i. find under numpy‑1.9.2+mkl‑cp34‑none‑win32.whl
+
+  c. unpack with 7zip
+  d. Three directories: (numpy, numpy-1.9.2.data, numpy-1.9.2.dist-info)
+  e. copy "numpy" to virtualenv site-packages
+  f. copy numpy-1.9.2.data/scripts/f2py.py to virtualenv \Scripts directory
+  g. test with > python
+    >>> import numpy
+    >>> numpy.__version__
+    '1.9.2'
+    >>> exit()
+
+2. scipy
+
+Repeat procedure for numpy with scipy-0.16.0-cp34-none-win32.whl
+
+3. scikit
+
+Repeat procedure with scikit_image-0.11.3-cp34-none-win32.whl
