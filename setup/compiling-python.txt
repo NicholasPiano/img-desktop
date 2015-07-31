@@ -1,8 +1,17 @@
 Tests
+A number of tests will be run to set up the django application as a windows exe.
 
-Steps
+1. Basic python script
+This will print a string to a file in the same directory as the script.
 
-Problems
+2. Basic django project
+A stripped down version of the basic project provided by django. This will test the dynamic importing employed by Django.
 
+3. Kivy python script to test window
+A window will be displayed and features in Kivy tested.
+
+4. Test the IMG project
+
+Resources:
 http://irwinkwan.com/tag/pyinstaller/
 http://gamedev.stackexchange.com/questions/54037/solving-the-riddle-on-distributing-a-python-built-game
