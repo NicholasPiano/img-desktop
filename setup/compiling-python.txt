@@ -3,6 +3,8 @@ A number of tests will be run to set up the django application as a windows exe.
 
 1. Basic python script
 This will print a string to a file in the same directory as the script.
+  a. Simply enter: (img) PS > python \path\to\pyinstaller.py --noconsole test.py
+  b. executable is .\dist\test\test.exe
 
 2. Basic django project
 A stripped down version of the basic project provided by django. This will test the dynamic importing employed by Django.
