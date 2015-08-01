@@ -248,7 +248,7 @@ FILE_UPLOAD_HANDLERS = (
 
 ########## DATABASE CONFIGURATION
 if not exists(join(DJANGO_ROOT, 'db')):
-  os.mkdir(join(DJANGO_ROOT, 'db'))
+  mkdir(join(DJANGO_ROOT, 'db'))
 
 DATABASES = {
   'default': {
