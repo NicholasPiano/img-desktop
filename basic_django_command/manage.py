@@ -4,7 +4,7 @@ import sys
 
 if __name__ == '__main__':
   # set settings variable based on env
-  environ.setdefault('DJANGO_SETTINGS_MODULE', 'woot.settings')
+  environ.setdefault('DJANGO_SETTINGS_MODULE', 'settings')
 
   ### If in a production or staging environment, the settings module should be called explicitly:
   # ~$ python manage.py --settings=woot.settings.production
