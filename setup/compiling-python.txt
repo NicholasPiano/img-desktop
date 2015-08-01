@@ -17,3 +17,9 @@ A window will be displayed and features in Kivy tested.
 Resources:
 http://irwinkwan.com/tag/pyinstaller/
 http://gamedev.stackexchange.com/questions/54037/solving-the-riddle-on-distributing-a-python-built-game
+
+Steps:
+
+http://pythonhosted.org/PyInstaller/#general-options
+
+1. (img) PS > \path\to\pyinstaller\pyinstaller.py (--noconsole) (--onefile) (--distpath=\path\to\output) --name=<name> \path\to\manage.py

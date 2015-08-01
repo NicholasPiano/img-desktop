@@ -192,7 +192,7 @@ DJANGO_APPS = (
 )
 
 LOCAL_APPS = (
-  'woot.apps.testapp',
+  # 'woot.apps.testapp',
 )
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
