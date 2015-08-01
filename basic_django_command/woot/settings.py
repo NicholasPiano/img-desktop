@@ -192,8 +192,8 @@ DJANGO_APPS = (
   'django.contrib.staticfiles',
 )
 
-THIRD_PARTY_APPS = (
-  'test',
+LOCAL_APPS = (
+  'users',
 )
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
