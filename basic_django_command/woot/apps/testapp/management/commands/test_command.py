@@ -1,10 +1,8 @@
-# users.setup: command
+# testapp.command: test_command.py
 
 # django
 from django.core.management.base import BaseCommand, CommandError
 from django.conf import settings
-
-# local
 
 # util
 import os
@@ -21,18 +19,13 @@ class Command(BaseCommand):
       help='Name of the experiment to import' # who cares
     ),
 
-    make_option('--series', # option that will appear in cmd
-      action='store', # no idea
-      dest='series', # refer to this in options variable
-      default='13', # some default
-      help='Name of the series' # who cares
-    ),
-
   )
 
   args = ''
   help = ''
 
   def handle(self, *args, **options):
-    # logic
-    pass
+    # 1. print to command line
+    print(options['expt'])
+
+    # 2. output to file in manage.py directory

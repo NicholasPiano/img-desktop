@@ -18,7 +18,6 @@ TEST_RUNNER = 'django.test.runner.DiscoverRunner'
 
 
 ########## AUTH CONFIGURATION
-AUTH_USER_MODEL = 'users.User'
 ########## END AUTH CONFIGURATION
 
 
@@ -193,7 +192,7 @@ DJANGO_APPS = (
 )
 
 LOCAL_APPS = (
-  'users',
+  'woot.apps.testapp',
 )
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
@@ -248,6 +247,9 @@ FILE_UPLOAD_HANDLERS = (
 
 
 ########## DATABASE CONFIGURATION
+if not exists(join(DJANGO_ROOT, 'db')):
+  os.mkdir(join(DJANGO_ROOT, 'db'))
+
 DATABASES = {
   'default': {
     'ENGINE': 'django.db.backends.sqlite3',
