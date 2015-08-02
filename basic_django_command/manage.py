@@ -1,6 +1,9 @@
 # !/usr/bin/env python
 from os import environ
 import sys
+import woot
+import woot.apps
+import woot.apps.testapp
 
 if __name__ == '__main__':
   # set settings variable based on env
