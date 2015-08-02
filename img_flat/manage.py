@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 # django
-import django.contrib.admin.apps
 
 # util
 import os
@@ -13,6 +12,7 @@ import img
 import cell
 
 if __name__ == "__main__":
-  os.environ.setdefault("DJANGO_SETTINGS_MODULE", "woot.settings")
+  os.environ["DJANGO_SETTINGS_MODULE"] = "woot.settings"
+  import django.contrib.admin.apps
   from django.core.management import execute_from_command_line
   execute_from_command_line(sys.argv)
