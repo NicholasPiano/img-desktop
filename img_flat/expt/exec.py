@@ -12,3 +12,6 @@ feedback or be chopped up into repeatable sections per image or series.
 # util
 
 ### SCRIPTS
+def run():
+  while True:
+    print('hello')

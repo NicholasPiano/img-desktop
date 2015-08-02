@@ -36,3 +36,8 @@ Basic Django app testing
 4. Conclusion:
 
 Rewrite project structure to match basic django app. It only has be in this form until the code is compiled.
+
+5. Result:
+
+Remove matplotlib
+Remove references to apps. module
