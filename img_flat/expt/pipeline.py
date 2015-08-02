@@ -1,4 +1,4 @@
-# apps.expt.pipeline
+# expt.pipeline
 
 '''
 Text representation of a cell profiler pipeline that can be used to modify data processing.

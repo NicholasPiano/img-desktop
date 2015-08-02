@@ -1,4 +1,4 @@
-# apps.expt.util
+# expt.util
 
 # django
 from django.db import models

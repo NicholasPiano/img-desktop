@@ -1,4 +1,4 @@
-# apps.img.util
+# img.util
 
 # django
 

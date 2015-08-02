@@ -1,4 +1,4 @@
-# apps.expt.data
+# expt.data
 
 '''
 Specific experiment and series information in the form of lists of prototype objects

@@ -9,7 +9,7 @@ import string
 import json
 import sys
 
-from django_settings import *
+from woot.django_settings import *
 ########## IMPORT
 
 

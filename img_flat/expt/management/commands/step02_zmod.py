@@ -4,8 +4,8 @@
 from django.core.management.base import BaseCommand, CommandError
 
 # local
-from apps.img.models import Composite
-from apps.expt.util import *
+from img.models import Composite
+from expt.util import *
 
 # util
 from optparse import make_option

@@ -5,8 +5,8 @@ from django.core.management.base import BaseCommand, CommandError
 from django.conf import settings
 
 # local
-from apps.img.models import Composite
-from apps.expt.data import *
+from img.models import Composite
+from expt.data import *
 
 # util
 import os

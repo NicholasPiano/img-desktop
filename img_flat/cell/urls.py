@@ -1,4 +1,4 @@
-# woot.apps.cell.urls
+# woot.cell.urls
 
 # django
 from django.conf.urls import patterns, include, url

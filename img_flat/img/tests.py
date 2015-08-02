@@ -1,4 +1,4 @@
-# woot.apps.img.tests
+# woot.img.tests
 
 # django
 from django.test import TestCase

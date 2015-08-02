@@ -1,12 +1,12 @@
-# woot.apps.img.models
+# woot.img.models
 
 # django
 from django.db import models
 
 # local
-from apps.expt.models import Experiment, Series
-from apps.expt.util import generate_id_token
-from apps.img import algorithms
+from expt.models import Experiment, Series
+from expt.util import generate_id_token
+from img import algorithms
 
 # util
 import os

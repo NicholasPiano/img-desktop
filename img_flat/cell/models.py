@@ -1,12 +1,12 @@
-# woot.apps.cell.models
+# woot.cell.models
 
 # django
 from django.db import models
 
 # local
-from apps.expt.models import Experiment, Series
-from apps.img.models import Composite, Channel, Gon, Mask
-from apps.img.util import *
+from expt.models import Experiment, Series
+from img.models import Composite, Channel, Gon, Mask
+from img.util import *
 
 # util
 import numpy as np

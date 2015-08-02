@@ -1,4 +1,4 @@
-# woot.apps.img.urls
+# woot.img.urls
 
 # django
 from django.conf.urls import patterns, include, url

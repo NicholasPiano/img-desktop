@@ -1,4 +1,4 @@
-# woot.apps.expt.urls
+# woot.expt.urls
 
 # django
 from django.conf.urls import patterns, include, url

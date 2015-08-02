@@ -5,8 +5,8 @@ from django.core.management.base import BaseCommand, CommandError
 from django.conf import settings
 
 # local
-from apps.expt.models import Experiment
-from apps.expt.data import *
+from expt.models import Experiment
+from expt.data import *
 
 # util
 import os

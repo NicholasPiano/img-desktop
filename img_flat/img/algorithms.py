@@ -1,8 +1,8 @@
-# apps.img.algorithms
+# img.algorithms
 
 # local
-from apps.img.util import cut_to_black, create_bulk_from_image_set, nonzero_mean, edge_image
-from apps.expt.util import generate_id_token
+from img.util import cut_to_black, create_bulk_from_image_set, nonzero_mean, edge_image
+from expt.util import generate_id_token
 
 # util
 import os

@@ -4,9 +4,9 @@
 from django.core.management.base import BaseCommand, CommandError
 
 # local
-from apps.expt.models import Series
-from apps.expt.util import *
-from apps.expt.data import allowed_img_extensions
+from expt.models import Series
+from expt.util import *
+from expt.data import allowed_img_extensions
 
 # util
 import os

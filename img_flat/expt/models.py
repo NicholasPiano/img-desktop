@@ -1,12 +1,12 @@
-# woot.apps.expt.models
+# woot.expt.models
 
 # django
 from django.db import models
 
 # local
-from apps.expt.data import *
-from apps.expt.util import generate_id_token, random_string
-from apps.expt.pipeline import marker_pipeline, region_pipeline
+from expt.data import *
+from expt.util import generate_id_token, random_string
+from expt.pipeline import marker_pipeline, region_pipeline
 
 # util
 import os

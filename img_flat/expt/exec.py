@@ -1,4 +1,4 @@
-# woot.apps.expt.exec
+# woot.expt.exec
 
 '''
 Stores scripts that would be run in steps, but need to be called from the interface. Hopefully, can hook into interface
