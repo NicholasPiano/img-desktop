@@ -23,3 +23,16 @@ Steps:
 http://pythonhosted.org/PyInstaller/#general-options
 
 1. (img) PS > \path\to\pyinstaller\pyinstaller.py (--noconsole) (--onefile) (--distpath=\path\to\output) --name=<name> \path\to\manage.py
+
+Basic Django app testing
+1. Compile basic django poll app: SUCCESSFUL
+2. Compile standard newdjango with a single standard startapp: SUCCESSFUL
+  a. Have to import app explicitly from manage.py
+
+3. Move app inside project folder and update path accordingly: SUCCESSFUL
+  a. update manage.py: setdefault
+  b. update INSTALLED_APPS: really_basic_django_command.testapp
+
+4. Conclusion:
+
+Rewrite project structure to match basic django app. It only has be in this form until the code is compiled.
