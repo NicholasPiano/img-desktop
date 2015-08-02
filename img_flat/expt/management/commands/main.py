@@ -12,6 +12,9 @@ from expt.data import *
 import os
 from optparse import make_option
 
+# execute
+from expt.kivy.models import *
+
 ### Command
 class Command(BaseCommand):
   option_list = BaseCommand.option_list + (
@@ -32,4 +35,6 @@ class Command(BaseCommand):
 
     # a number of things to do in this script.
     # 1. start the main kivy application
-    pass
+
+    cell_track_app = CellApp()
+    cell_track_app.run()
