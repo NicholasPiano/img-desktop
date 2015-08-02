@@ -190,7 +190,7 @@ class Channel(models.Model):
           blank = np.zeros(self.composite.shape())
 
           for i, marker in enumerate(markers):
-            print('primary for composite {} {} {} channel {} | t{}/{}'.format(self.composite.experiment.name, self.composite.series.name, self.composite.id_token, self.name, t, self.composite.series.ts), end='\n' if t==self.composite.series.ts-1 else '\r')
+            # print('primary for composite {} {} {} channel {} | t{}/{}'.format(self.composite.experiment.name, self.composite.series.name, self.composite.id_token, self.name, t, self.composite.series.ts), end='\n' if t==self.composite.series.ts-1 else '\r')
             blank[marker.c-3:marker.c+2, marker.r-3:marker.r+2] = 255
 
           marker_channel, marker_channel_created = self.composite.channels.get_or_create(name='{}-primary'.format(self.name))
@@ -200,10 +200,11 @@ class Channel(models.Model):
         return channel_name
 
       else:
-        print('primary for composite {} {} {} channel {} | no markers have been defined.'.format(self.composite.experiment.name, self.composite.series.name, self.composite.id_token, self.name))
+        pass
+        # print('primary for composite {} {} {} channel {} | no markers have been defined.'.format(self.composite.experiment.name, self.composite.series.name, self.composite.id_token, self.name))
 
     else:
-      print('primary for composite {} {} {} channel {} has already been created.'.format(self.composite.experiment.name, self.composite.series.name, self.composite.id_token, self.name))
+      # print('primary for composite {} {} {} channel {} has already been created.'.format(self.composite.experiment.name, self.composite.series.name, self.composite.id_token, self.name))
       return '{}-primary'.format(self.name)
 
   def region_primary(self):
@@ -229,7 +230,7 @@ class Channel(models.Model):
 
             for r in range(blank.shape[0]):
               for c in range(blank.shape[1]):
-                print('region primary for composite {} {} {} channel {} | t{}/{} region {} r{} c{}'.format(self.composite.experiment.name, self.composite.series.name, self.composite.id_token, self.name, t, self.composite.series.ts-1, name, r, c), end='\n' if t==self.composite.series.ts-1 else '\r')
+                # print('region primary for composite {} {} {} channel {} | t{}/{} region {} r{} c{}'.format(self.composite.experiment.name, self.composite.series.name, self.composite.id_token, self.name, t, self.composite.series.ts-1, name, r, c), end='\n' if t==self.composite.series.ts-1 else '\r')
                 up = blank[:r,c]
                 down = blank[r:,c]
                 left = blank[r,:c]
@@ -244,10 +245,12 @@ class Channel(models.Model):
           blank_sum_gon, blank_sum_gon_created = region_channel.get_or_create_gon(blank_sum, t)
 
       else:
-        print('region primary for composite {} {} {} channel {} | no region markers have been defined.'.format(self.composite.experiment.name, self.composite.series.name, self.composite.id_token, self.name))
+        pass
+        # print('region primary for composite {} {} {} channel {} | no region markers have been defined.'.format(self.composite.experiment.name, self.composite.series.name, self.composite.id_token, self.name))
 
     else:
-      print('region primary for composite {} {} {} channel {} has already been created.'.format(self.composite.experiment.name, self.composite.series.name, self.composite.id_token, self.name))
+      pass
+      # print('region primary for composite {} {} {} channel {} has already been created.'.format(self.composite.experiment.name, self.composite.series.name, self.composite.id_token, self.name))
 
 class Gon(models.Model):
   # connections

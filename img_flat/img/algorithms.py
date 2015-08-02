@@ -44,7 +44,7 @@ def mod_zmod(composite, mod_id, algorithm):
 
   # iterate over frames
   for t in range(composite.series.ts):
-    print('step02 | processing mod_zmod t{}/{}...'.format(t+1, composite.series.ts), end='\r')
+    # print('step02 | processing mod_zmod t{}/{}...'.format(t+1, composite.series.ts), end='\r')
 
     # load gfp
     gfp_gon = composite.gons.get(t=t, channel__name='0')
