@@ -8,3 +8,4 @@ db/
 build/
 *.spec
 *.sqlite3
+dist/
