@@ -229,13 +229,14 @@ class Series(models.Model):
             sub_gon, sub_gon_created = self.gons.get_or_create(experiment=self.experiment, gon=gon, channel=composite_channel, template=template, t=t, z=z)
             E = z==self.zs-1 and t==self.ts-1
             if sub_gon_created:
-              print('step01 | composing {} series {}... channel {} t{} z{}... created.{}'.format(self.experiment.name, self.name, channel.name, t, z, spacer), end='\n' if E else '\r')
+              # print('step01 | composing {} series {}... channel {} t{} z{}... created.{}'.format(self.experiment.name, self.name, channel.name, t, z, spacer), end='\n' if E else '\r')
               sub_gon.set_origin(0,0,z,t)
               sub_gon.set_extent(self.rs, self.cs, 1)
               sub_gon.paths.create(composite=composite, channel=composite_channel, template=template, url=path.url, file_name=path.file_name, t=t, z=z)
 
             else:
-              print('step01 | composing {} series {}... channel {} t{} z{}... already exists.{}'.format(self.experiment.name, self.name, channel.name, t, z, spacer), end='\n' if E else '\r')
+              pass
+              # print('step01 | composing {} series {}... channel {} t{} z{}... already exists.{}'.format(self.experiment.name, self.name, channel.name, t, z, spacer), end='\n' if E else '\r')
 
             sub_gon.save()
 
@@ -246,7 +247,7 @@ class Series(models.Model):
           L = len(path_set) - 1
           for i, path in enumerate(path_set):
             E = i==L and t==self.ts-1
-            print('step01 | composing {} series {}... channel {} t{} z{}... created diffuse.{}'.format(self.experiment.name, self.name, channel.name, t, path.z, spacer), end='\n' if E else '\r')
+            # print('step01 | composing {} series {}... channel {} t{} z{}... created diffuse.{}'.format(self.experiment.name, self.name, channel.name, t, path.z, spacer), end='\n' if E else '\r')
 
             template = composite.templates.get(name=path.template.name)
             gon, gon_created = self.gons.get_or_create(experiment=self.experiment, composite=composite, channel=composite_channel, template=template, t=t, z=path.z)
