@@ -13,5 +13,5 @@ feedback or be chopped up into repeatable sections per image or series.
 
 ### SCRIPTS
 def run():
-  while True:
-    print('hello')
+  from django.core.management import call_command
+  call_command('syncdb', interactive=False)
