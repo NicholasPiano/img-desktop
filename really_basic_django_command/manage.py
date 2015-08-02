@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import os
 import sys
+import testapp
 
 if __name__ == "__main__":
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "really_basic_django_command.settings")
