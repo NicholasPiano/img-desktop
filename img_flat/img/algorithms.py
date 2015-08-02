@@ -12,7 +12,6 @@ from scipy.ndimage.measurements import center_of_mass as com
 from skimage import exposure
 import numpy as np
 from scipy.ndimage.measurements import label
-import matplotlib.pyplot as plt
 
 # methods
 def scan_point(img, rs, cs, r, c, size=0):

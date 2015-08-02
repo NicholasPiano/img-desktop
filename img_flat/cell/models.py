@@ -12,7 +12,6 @@ from img.util import *
 import numpy as np
 from scipy.ndimage.morphology import binary_dilation as dilate
 from scipy.signal import find_peaks_cwt as find_peaks
-import matplotlib.pyplot as plt
 
 ### Models
 ### MARKERS
