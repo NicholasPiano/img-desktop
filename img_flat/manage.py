@@ -16,6 +16,7 @@ if __name__ == "__main__":
   import django.contrib.admin.apps
   from expt.exec import run
 
+  from django.core.management import execute_from_command_line
+  execute_from_command_line(sys.argv)
+
   run()
-  # from django.core.management import execute_from_command_line
-  # execute_from_command_line(sys.argv)
