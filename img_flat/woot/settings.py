@@ -31,5 +31,15 @@ LOCAL_APPS = (
 )
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
-INSTALLED_APPS = LOCAL_APPS
+INSTALLED_APPS = DJANGO_APPS + LOCAL_APPS
 ########## END APP CONFIGURATION
+
+
+########## DATABASE CONFIGURATION
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(DJANGO_ROOT, 'img_db.sqlite3'),
+    }
+}
+########## END DATABASE CONFIGURATION
