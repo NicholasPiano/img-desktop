@@ -1,4 +1,4 @@
-# woot.expt.exec
+# woot.expt.kivy.models.pong
 
 '''
 Stores scripts that would be run in steps, but need to be called from the interface. Hopefully, can hook into interface
@@ -74,7 +74,7 @@ class PongGame(Widget):
     if touch.x > self.width - self.width / 3:
       self.player2.center_y = touch.y
 
-class CellApp(App):
+class PongApp(App):
   def build(self):
     game = PongGame()
     game.serve_ball()
