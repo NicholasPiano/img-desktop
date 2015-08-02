@@ -7,3 +7,4 @@ db/
 *.xcf
 build/
 *.spec
+*.sqlite3
