@@ -1,0 +1,3 @@
+Currently having problems getting kivy to run on Windows 7.
+
+Someone said the glew32.dll could be the problem. Trying to remove from system32 folder.
