@@ -12,10 +12,6 @@ from expt.data import *
 import os
 from optparse import make_option
 
-# execute
-from expt.kivy.models.pong import PongApp
-from expt.kivy.models.paint import PaintApp
-
 ### Command
 class Command(BaseCommand):
   option_list = BaseCommand.option_list + (
@@ -35,12 +31,5 @@ class Command(BaseCommand):
   def handle(self, *args, **options):
 
     # a number of things to do in this script.
-    # 1. start the main kivy application
 
-
-    ### TESTS
-    # pong_app = PongApp()
-    # pong_app.run()
-
-    paint_app = PaintApp()
-    paint_app.run()
+    
