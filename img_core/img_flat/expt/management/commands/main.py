@@ -3,6 +3,7 @@
 # django
 from django.core.management.base import BaseCommand, CommandError
 from django.conf import settings
+from django.core import management
 
 # local
 from expt.models import Experiment
@@ -13,6 +14,7 @@ import os
 from optparse import make_option
 import asyncio
 import pythrust
+import subprocess
 
 ### Command
 class Command(BaseCommand):
@@ -37,6 +39,6 @@ class Command(BaseCommand):
     api = pythrust.API(loop)
 
     asyncio.async(api.spawn())
-    asyncio.async(api.window({ 'root_url': 'http://arkaeologic.pythonanywhere.com' }).show())
+    asyncio.async(api.window({'root_url': 'http://localhost:8000' }).show())
 
     loop.run_forever()

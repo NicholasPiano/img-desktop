@@ -1,0 +1,20 @@
+Plan
+1. Backend
+Django project -> img
+Tornado web server wrapping Django
+https://github.com/bdarnell/django-tornado-demo/blob/master/testsite/tornado_main.py
+
+2. Frontend
+Breach/Thrust browser pointed at localhost port specified by tornado server.
+
+3. Compiling
+Compile project to single executable using
+PyInstaller:
+
+p2exe: http://www.danomagnum.com/wiki/py2exe%20and%20django,
+       https://misunderstandings.wordpress.com/2008/06/26/django-desktop-app/
+
+Tests
+1. Basic Python script with py2exe
+2. Basic Django app with py2exe
+3. 
