@@ -24,3 +24,8 @@ Tests
 Interface design
 1. Refactor image classes to handle web stuff (ImageField)
 2. Make sure templates work outside of compiled exe
+
+Final products
+1. Base django running on python. No server or web stuff. No protrusions. No regions. One round of segmentation.
+2. Base django on python with protrusions and regions.
+3. Packaged tornado, django and thrust.

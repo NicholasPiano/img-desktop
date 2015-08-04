@@ -1,0 +1,19 @@
+Steps to complete:
+
+Virtualenv
+1. ~$ workon img
+2. ~$ cd code/img/
+
+Input
+1. Place .lif archive in the data directory
+2. Ensure 3x space needed for .lif on hard disk
+3. ~$ python manage.py step01_input --expt=<experiment name> --series=<series name>
+4. Drag modified image directory into Fiji. Do tracking.
+5. Save track file in track directory
+6. ~$ python manage.py step02_data --expt=<experiment name> --series=<series name>
+  a. cell video will be in the video directory
+  b. spreadsheet will be in the spreadsheet directory
+
+7. ~$ python manage.py area --expt=<experiment name> --series=<series name> --cells='<cell index>,<cell index>,<cell index>'
+8. ~$ python manage.py speed --expt=<experiment name> --series=<series name> --cells='<cell index>,<cell index>,<cell index>'
+  a. graph in graph directory
