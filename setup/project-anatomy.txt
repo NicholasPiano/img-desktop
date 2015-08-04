@@ -17,4 +17,10 @@ p2exe: http://www.danomagnum.com/wiki/py2exe%20and%20django,
 Tests
 1. Basic Python script with py2exe
 2. Basic Django app with py2exe
-3. 
+3. Multiple Django apps with commands
+4. Package tornado server calling django WSGI application.
+5. Package tornado + thrust startup
+
+Interface design
+1. Refactor image classes to handle web stuff (ImageField)
+2. Make sure templates work outside of compiled exe
