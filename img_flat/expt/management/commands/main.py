@@ -11,6 +11,8 @@ from expt.data import *
 # util
 import os
 from optparse import make_option
+import asyncio
+import pythrust
 
 ### Command
 class Command(BaseCommand):
@@ -31,5 +33,10 @@ class Command(BaseCommand):
   def handle(self, *args, **options):
 
     # a number of things to do in this script.
+    loop = asyncio.get_event_loop()
+    api = pythrust.API(loop)
 
-    
+    asyncio.async(api.spawn())
+    asyncio.async(api.window({ 'root_url': 'http://arkaeologic.pythonanywhere.com' }).show())
+
+    loop.run_forever()
