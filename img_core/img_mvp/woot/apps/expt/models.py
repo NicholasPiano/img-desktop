@@ -50,16 +50,17 @@ class Experiment(models.Model):
     self.storage_path = os.path.join(self.base_path, default_paths['storage'])
     self.composite_path = os.path.join(self.base_path, default_paths['composite'])
     self.cp_path = os.path.join(self.base_path, default_paths['cp'])
+    self.ij_path = os.path.join(self.base_path, default_paths['ij'])
 
-    self.output_path = os.path.join(self.base_path, default_paths['output'])
     self.plot_path = os.path.join(self.base_path, default_paths['plot'])
     self.track_path = os.path.join(self.base_path, default_paths['track'])
     self.data_path = os.path.join(self.base_path, default_paths['data'])
     self.pipeline_path = os.path.join(self.base_path, default_paths['pipeline'])
+    self.video_path = os.path.join(self.base_path, default_paths['video'])
 
     self.save()
 
-    for path in [self.composite_path, self.cp_path, self.output_path, self.plot_path, self.track_path, self.data_path, self.pipeline_path]:
+    for path in [self.storage_path, self.composite_path, self.cp_path, self.ij_path, self.plot_path, self.track_path, self.data_path, self.pipeline_path, self.video_path]:
       if not os.path.exists(path):
         os.makedirs(path)
 

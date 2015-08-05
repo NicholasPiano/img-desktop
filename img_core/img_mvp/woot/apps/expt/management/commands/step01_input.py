@@ -7,10 +7,12 @@ from django.conf import settings
 # local
 from apps.expt.models import Experiment
 from apps.expt.data import *
+from apps.expt.util import *
 
 # util
 import os
 from optparse import make_option
+import subprocess
 
 spacer = ' ' *  20
 
@@ -21,15 +23,22 @@ class Command(BaseCommand):
     make_option('--expt', # option that will appear in cmd
       action='store', # no idea
       dest='expt', # refer to this in options variable
-      default='050714-test', # some default
+      default='', # some default
       help='Name of the experiment to import' # who cares
     ),
 
     make_option('--series', # option that will appear in cmd
       action='store', # no idea
       dest='series', # refer to this in options variable
-      default='13', # some default
+      default='', # some default
       help='Name of the series' # who cares
+    ),
+
+    make_option('--lif', # option that will appear in cmd
+      action='store', # no idea
+      dest='series', # refer to this in options variable
+      default='', # some default
+      help='Name of the .lif archive' # who cares
     ),
 
   )
@@ -65,8 +74,25 @@ class Command(BaseCommand):
     # vars
     experiment_name = options['expt']
     series_name = options['series']
+    lif_name = options['lif']
     base_path = settings.DATA_ROOT
 
+
+    ### UNPACK LIF IF NECESSARY
+    if os.path.exists(os.path.join(base_path, experiment_name)):
+      # do not need to unpack lif
+      print('step01 | experiment path exists, and lif is unpacked {}... '.format(experiment_name))
+    else:
+      #unpack lif
+      print('step01 | creating experiment path, unpacking lif {}... '.format(experiment_name, lif_name))
+      experiment_path = os.path.join(base_path, experiment_name)
+      lif_path = os.path.join(settings.LIF_ROOT, lif_name)
+      lif_template = r'{}/{}_s%s_ch%c_t%t_z%z.tiff'.format(experiment_path, experiment_name)
+
+      if os.path.exists(lif_path):
+        subprocess.call('')
+
+    ### DATABASE INPUT
     if os.path.exists(os.path.join(base_path, experiment_name)):
       # 1. create experiment
       print('step01 | experiment path exists, experiment {}... '.format(experiment_name), end='\r')
@@ -124,3 +150,19 @@ class Command(BaseCommand):
 
     else:
       print('step01 | experiment path {} not found in {}'.format(experiment_name, base_path))
+
+    ### MAKE ZMOD
+    # 1. select composite
+    composite = Composite.objects.get(experiment__name=experiment_name, series__name=series_name)
+
+    # 2. Call zmod mod
+    if composite.channels.filter(name='-zmod').count()==0:
+      mod = composite.mods.create(id_token=generate_id_token('img', 'Mod'), algorithm='mod_zmod')
+
+      # 3. Run mod
+      print('step01 | processing mod_zmod...', end='\r')
+      mod.run()
+      print('step01 | processing mod_zmod... done.{}'.format(spacer))
+
+    else:
+      print('step01 | zmod already exists...')

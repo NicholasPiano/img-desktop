@@ -162,12 +162,12 @@ templates = {
 default_paths = {
   'storage':'img/storage/',
   'composite':'img/composite/',
-  'region':'img/region/',
   'cp':'img/cp/',
+  'ij':'ij/',
 
-  'output':'img/output/',
   'plot':'plot/',
   'track':'track/',
   'data':'data/',
   'pipeline':'pipelines/',
+  'video':'video/',
 }

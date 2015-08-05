@@ -32,13 +32,8 @@ SITE_NAME = basename(dirname(DJANGO_ROOT))
 path.append(DJANGO_ROOT)
 
 DATA_ROOT = '/Volumes/transport/data/puzzle/'
+LIF_ROOT = join(DATA_ROOT, 'lif')
 ########## END PATH CONFIGURATION
-
-
-########## PASSWORD CONFIGURATION
-ACCESS_ROOT = '/.djaccess/'
-DB_ACCESS = 'img_db.json'
-########## END PASSWORD CONFIGURATION
 
 
 ########## DEBUG CONFIGURATION
