@@ -64,7 +64,7 @@ class Command(BaseCommand):
       experiment, experiment_created = Experiment.objects.get_or_create(name=experiment_name)
       if experiment_created:
         # set metadata
-        experiment.make_paths(os.path.join(base_path, experiment.name))
+        experiment.make_paths(join(data_root, experiment.name))
         experiment.get_templates()
         print('step01 | experiment path exists, experiment {}...  created.'.format(experiment_name))
       else:
