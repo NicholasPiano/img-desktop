@@ -60,7 +60,6 @@ class Command(BaseCommand):
 
     # 1. create experiment and series
     if experiment_name!='' and series_name!='':
-      print('step01 | experiment path exists, experiment {}... '.format(experiment_name))
       experiment, experiment_created = Experiment.objects.get_or_create(name=experiment_name)
       if experiment_created:
         # set metadata

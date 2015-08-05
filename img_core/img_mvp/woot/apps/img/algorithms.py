@@ -45,7 +45,7 @@ def mod_zmod(composite, mod_id, algorithm):
 
   # iterate over frames
   for t in range(composite.series.ts):
-    print('step02 | processing mod_zmod t{}/{}...'.format(t+1, composite.series.ts), end='\r')
+    print('step01 | processing mod_zmod t{}/{}...'.format(t+1, composite.series.ts), end='\r')
 
     # load gfp
     gfp_gon = composite.gons.get(t=t, channel__name='0')
@@ -103,7 +103,7 @@ def mod_zmod(composite, mod_id, algorithm):
     zbf_gon.set_extent(composite.series.rs, composite.series.cs, 1)
 
     zbf_gon.array = Zbf
-    zbf_gon.save_array(composite.series.experiment.composite_path, template)
+    zbf_gon.save_array(composite.series.experiment.ij_path, template) # WARNING: saving to ij path for ease of use
     zbf_gon.save()
 
     zcomp_gon, zcomp_gon_created = composite.gons.get_or_create(experiment=composite.experiment, series=composite.series, channel=zcomp_channel, t=t)
