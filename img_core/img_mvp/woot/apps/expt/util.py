@@ -6,6 +6,7 @@ from django.db import models
 # util
 import random
 import string
+import re
 
 # vars
 chars = string.ascii_uppercase + string.digits
@@ -31,14 +32,14 @@ def series_metadata_from_file(file_name):
 
   value = lambda lines, template: re.match(template, list(filter(lambda l: re.match(template, l) is not None, lines))[0].rstrip()).group(1)
 
-  voxel_r_metadata_template = r'HardwareSetting\|ScannerSettingRecord\|dblVoxelX #1: (.*)\n' # directly to rmop
-  voxel_c_metadata_template = r'HardwareSetting\|ScannerSettingRecord\|dblVoxelY #1: (.*)\n' # directly to cmop
-  total_z_metadata_template = r'HardwareSetting\|ScannerSettingRecord\|dblSizeZ #1: (.*)\n' # zmop = <ans> / zs
-  tpf_in_seconds_metadata_template = r'HardwareSetting\|ScannerSettingRecord\|nDelayTime_s #1: (.*)\n' # tpf = <ans> / 60
-  rs_template = r'HardwareSetting\|ScannerSettingRecord\|nFormatInDimension #1: (.*)\n'
-  cs_template = r'HardwareSetting\|ScannerSettingRecord\|nFormatOutDimension #1: (.*)\n'
-  zs_template = r'HardwareSetting\|ScannerSettingRecord\|nSections #1: (.*)\n'
-  ts_template = r'HardwareSetting\|ScannerSettingRecord\|nRepeatActions #1: (.*)\n'
+  voxel_r_metadata_template = r'HardwareSetting\|ScannerSettingRecord\|dblVoxelX #1: (.*)' # directly to rmop
+  voxel_c_metadata_template = r'HardwareSetting\|ScannerSettingRecord\|dblVoxelY #1: (.*)' # directly to cmop
+  total_z_metadata_template = r'HardwareSetting\|ScannerSettingRecord\|dblSizeZ #1: (.*)' # zmop = <ans> / zs
+  tpf_in_seconds_metadata_template = r'HardwareSetting\|ScannerSettingRecord\|nDelayTime_s #1: (.*)' # tpf = <ans> / 60
+  rs_template = r'HardwareSetting\|ScannerSettingRecord\|nFormatInDimension #1: (.*)'
+  cs_template = r'HardwareSetting\|ScannerSettingRecord\|nFormatOutDimension #1: (.*)'
+  zs_template = r'HardwareSetting\|ScannerSettingRecord\|nSections #1: (.*)'
+  ts_template = r'HardwareSetting\|ScannerSettingRecord\|nRepeatActions #1: (.*)'
 
   metadata = {}
 

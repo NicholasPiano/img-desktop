@@ -1,0 +1,334 @@
+Checking file format [Leica Image File Format]
+Initializing reader
+LIFReader initializing /Volumes/transport/data/puzzle/lif/09_08_14_MB_Dextran_Beads.lif
+Reading header
+Finding image offsets
+Initialization took 0.841s
+
+Reading core metadata
+Filename = /Volumes/transport/data/puzzle/lif/09_08_14_MB_Dextran_Beads.lif
+Series count = 4
+Series #0 :
+	Image count = 48
+	RGB = false (1) 
+	Interleaved = false
+	Indexed = true (false color, 8-bit LUT: 3 x 256)
+	Width = 512
+	Height = 512
+	SizeZ = 16
+	SizeT = 1
+	SizeC = 3
+	Thumbnail size = 128 x 128
+	Endianness = intel (little)
+	Dimension order = XYCZT (certain)
+	Pixel type = uint8
+	Valid bits per pixel = 8
+	Metadata complete = true
+	Thumbnail series = false
+	-----
+	Plane #0 <=> Z 0, C 0, T 0
+	Plane #22 <=> Z 7, C 1, T 0
+	Plane #23 <=> Z 7, C 2, T 0
+	Plane #24 <=> Z 8, C 0, T 0
+	Plane #25 <=> Z 8, C 1, T 0
+	Plane #26 <=> Z 8, C 2, T 0
+	Plane #47 <=> Z 15, C 2, T 0
+
+Series #1 :
+	Image count = 48
+	RGB = false (1) 
+	Interleaved = false
+	Indexed = true (false color, 8-bit LUT: 3 x 256)
+	Width = 512
+	Height = 512
+	SizeZ = 16
+	SizeT = 1
+	SizeC = 3
+	Thumbnail size = 128 x 128
+	Endianness = intel (little)
+	Dimension order = XYCZT (certain)
+	Pixel type = uint8
+	Valid bits per pixel = 8
+	Metadata complete = true
+	Thumbnail series = false
+	-----
+	Plane #0 <=> Z 0, C 0, T 0
+	Plane #22 <=> Z 7, C 1, T 0
+	Plane #23 <=> Z 7, C 2, T 0
+	Plane #24 <=> Z 8, C 0, T 0
+	Plane #25 <=> Z 8, C 1, T 0
+	Plane #26 <=> Z 8, C 2, T 0
+	Plane #47 <=> Z 15, C 2, T 0
+
+Series #2 :
+	Image count = 1296
+	RGB = false (1) 
+	Interleaved = false
+	Indexed = true (false color, 8-bit LUT: 3 x 256)
+	Width = 512
+	Height = 512
+	SizeZ = 16
+	SizeT = 27
+	SizeC = 3
+	Thumbnail size = 128 x 128
+	Endianness = intel (little)
+	Dimension order = XYCZT (certain)
+	Pixel type = uint8
+	Valid bits per pixel = 8
+	Metadata complete = true
+	Thumbnail series = false
+	-----
+	Plane #0 <=> Z 0, C 0, T 0
+	Plane #646 <=> Z 7, C 1, T 13
+	Plane #647 <=> Z 7, C 2, T 13
+	Plane #648 <=> Z 8, C 0, T 13
+	Plane #649 <=> Z 8, C 1, T 13
+	Plane #650 <=> Z 8, C 2, T 13
+	Plane #1295 <=> Z 15, C 2, T 26
+
+Series #3 :
+	Image count = 303
+	RGB = false (1) 
+	Interleaved = false
+	Indexed = true (false color, 8-bit LUT: 3 x 256)
+	Width = 512
+	Height = 512
+	SizeZ = 101
+	SizeT = 1
+	SizeC = 3
+	Thumbnail size = 128 x 128
+	Endianness = intel (little)
+	Dimension order = XYCZT (certain)
+	Pixel type = uint8
+	Valid bits per pixel = 8
+	Metadata complete = true
+	Thumbnail series = false
+	-----
+	Plane #0 <=> Z 0, C 0, T 0
+	Plane #149 <=> Z 49, C 2, T 0
+	Plane #150 <=> Z 50, C 0, T 0
+	Plane #151 <=> Z 50, C 1, T 0
+	Plane #152 <=> Z 50, C 2, T 0
+	Plane #153 <=> Z 51, C 0, T 0
+	Plane #302 <=> Z 100, C 2, T 0
+
+
+Reading global metadata
+
+Reading series #2 metadata
+ChannelDescription|BitInc: 0
+ChannelDescription|BytesInc: 524288
+ChannelDescription|ChannelTag: 0
+ChannelDescription|DataType: 0
+ChannelDescription|IsLUTInverted: 0
+ChannelDescription|LUTName: Gray
+ChannelDescription|Max: 2.550000e+002
+ChannelDescription|Min: 0.000000e+000
+ChannelDescription|Resolution: 8
+ChannelScalingInfo|Automatic: 0
+ChannelScalingInfo|BlackValue: 0
+ChannelScalingInfo|GammaValue: 1
+ChannelScalingInfo|WhiteValue: 1
+Coordinate|Name: SubPatternElement
+Coordinate|Value: -1
+DimensionDescription|BitInc: 0
+DimensionDescription|BytesInc: 12582912
+DimensionDescription|DimID: 4
+DimensionDescription|Length: 5.966410e+002
+DimensionDescription|NumberOfElements: 27
+DimensionDescription|Origin: 0.000000e+000
+DimensionDescription|Unit: s
+HardwareSetting|FilterSettingRecord|AOBS (0) #1: 100
+HardwareSetting|FilterSettingRecord|AOBS (0) #2: 0
+HardwareSetting|FilterSettingRecord|AOBS (1) #1: 0
+HardwareSetting|FilterSettingRecord|AOBS (1) #2: 0
+HardwareSetting|FilterSettingRecord|AOBS (2) #1: 0
+HardwareSetting|FilterSettingRecord|AOBS (2) #2: 0
+HardwareSetting|FilterSettingRecord|AOBS (3) #1: 0
+HardwareSetting|FilterSettingRecord|AOBS (3) #2: 0
+HardwareSetting|FilterSettingRecord|AOBS (4) #1: 0
+HardwareSetting|FilterSettingRecord|AOBS (4) #2: 0
+HardwareSetting|FilterSettingRecord|AOBS (5) #1: 0
+HardwareSetting|FilterSettingRecord|AOBS (5) #2: 0
+HardwareSetting|FilterSettingRecord|AOBS (6) #1: 0
+HardwareSetting|FilterSettingRecord|AOBS (6) #2: 0
+HardwareSetting|FilterSettingRecord|AOBS (7) #1: 0
+HardwareSetting|FilterSettingRecord|AOBS (7) #2: 0
+HardwareSetting|FilterSettingRecord|AOTF (458) #1: 0
+HardwareSetting|FilterSettingRecord|AOTF (458) #2: 0
+HardwareSetting|FilterSettingRecord|AOTF (476) #1: 0
+HardwareSetting|FilterSettingRecord|AOTF (476) #2: 0
+HardwareSetting|FilterSettingRecord|AOTF (488) #1: 12.0002441555271
+HardwareSetting|FilterSettingRecord|AOTF (488) #2: 0
+HardwareSetting|FilterSettingRecord|AOTF (496) #1: 0
+HardwareSetting|FilterSettingRecord|AOTF (496) #2: 0
+HardwareSetting|FilterSettingRecord|AOTF (514) #1: 0
+HardwareSetting|FilterSettingRecord|AOTF (514) #2: 0
+HardwareSetting|FilterSettingRecord|AOTF (594) #1: 0
+HardwareSetting|FilterSettingRecord|AOTF (594) #2: 0
+HardwareSetting|FilterSettingRecord|AOTF (633) #1: 0
+HardwareSetting|FilterSettingRecord|AOTF (633) #2: 0
+HardwareSetting|FilterSettingRecord|Attribute: Stain
+HardwareSetting|FilterSettingRecord|ClassName: CSpectrophotometerUnit
+HardwareSetting|FilterSettingRecord|DMI6000 Stage Pos x #1: 0.06264966518898
+HardwareSetting|FilterSettingRecord|DMI6000 Stage Pos y #1: 0.03739599647824
+HardwareSetting|FilterSettingRecord|DMI6000 Stage Pos z #1: 0
+HardwareSetting|FilterSettingRecord|DMI6000 Stage XOrigin #1: 0
+HardwareSetting|FilterSettingRecord|DMI6000 Stage YOrigin #1: 0
+HardwareSetting|FilterSettingRecord|DMI6000 Stage ZOrigin #1: 0
+HardwareSetting|FilterSettingRecord|Data: 0
+HardwareSetting|FilterSettingRecord|Description: SP Mirror Channel 4 (stain)
+HardwareSetting|FilterSettingRecord|Dummy Name (Obj.) #1: Dummy1
+HardwareSetting|FilterSettingRecord|Excitation FW MP #1: ND 3
+HardwareSetting|FilterSettingRecord|Galvo Slider #1: Galvo X Normal 
+HardwareSetting|FilterSettingRecord|Hardware Type No. #1: 7
+HardwareSetting|FilterSettingRecord|Laser output power #1: 29.6969696969697
+HardwareSetting|FilterSettingRecord|Laser wavelength #1: 458
+HardwareSetting|FilterSettingRecord|Laser wavelength #2: 594
+HardwareSetting|FilterSettingRecord|Laser wavelength #3: 633
+HardwareSetting|FilterSettingRecord|Magnification-Changer #1: SCANx
+HardwareSetting|FilterSettingRecord|Multifunction Port (MFP) #1: Substrate 
+HardwareSetting|FilterSettingRecord|Notch Filter Wheel 2 #1: Empty
+HardwareSetting|FilterSettingRecord|Numerical aperture (Obj.) #1: 0.3
+HardwareSetting|FilterSettingRecord|ObjectName: SP Mirror Channel 4
+HardwareSetting|FilterSettingRecord|Objective #1: HC PL FLUOTAR  10.0x0.30 DRY 
+HardwareSetting|FilterSettingRecord|Order number (Obj.) #1: 11506505
+HardwareSetting|FilterSettingRecord|PMT 1 #1: Inactive
+HardwareSetting|FilterSettingRecord|PMT 2 #1: Active
+HardwareSetting|FilterSettingRecord|PMT 2 (HV) #1: 900
+HardwareSetting|FilterSettingRecord|PMT 2 (HV_Unit) #1: V
+HardwareSetting|FilterSettingRecord|PMT 2 (Offs.) #1: 0
+HardwareSetting|FilterSettingRecord|PMT 2 (Preamp) #1: Standard
+HardwareSetting|FilterSettingRecord|PMT 3 #1: Active
+HardwareSetting|FilterSettingRecord|PMT 3 (HV) #1: 1000
+HardwareSetting|FilterSettingRecord|PMT 3 (HV_Unit) #1: V
+HardwareSetting|FilterSettingRecord|PMT 3 (Offs.) #1: 0
+HardwareSetting|FilterSettingRecord|PMT 3 (Preamp) #1: Standard
+HardwareSetting|FilterSettingRecord|PMT 4 #1: Inactive
+HardwareSetting|FilterSettingRecord|PMT Trans #1: Active
+HardwareSetting|FilterSettingRecord|PMT Trans (HV) #1: 450
+HardwareSetting|FilterSettingRecord|PMT Trans (HV_Unit) #1: V
+HardwareSetting|FilterSettingRecord|PMT Trans (Offs.) #1: 0
+HardwareSetting|FilterSettingRecord|PMT Trans (Preamp) #1: Standard
+HardwareSetting|FilterSettingRecord|Phase #1: -32.8755626764324
+HardwareSetting|FilterSettingRecord|Polarization FW #1: NF 488
+HardwareSetting|FilterSettingRecord|Position #1: 3
+HardwareSetting|FilterSettingRecord|Power State #1: On
+HardwareSetting|FilterSettingRecord|Power State #2: Off
+HardwareSetting|FilterSettingRecord|Power State #3: On
+HardwareSetting|FilterSettingRecord|Refraction index #1: 1
+HardwareSetting|FilterSettingRecord|Reson. Galvo Pan #1: Galvo X Pan Center 
+HardwareSetting|FilterSettingRecord|Rotation Direction #1: 1
+HardwareSetting|FilterSettingRecord|SMD-Phase #1: 0
+HardwareSetting|FilterSettingRecord|SP Mirror Channel 1 (left) #1: 406.25
+HardwareSetting|FilterSettingRecord|SP Mirror Channel 1 (right) #1: 458.75
+HardwareSetting|FilterSettingRecord|SP Mirror Channel 2 (left) #1: 495
+HardwareSetting|FilterSettingRecord|SP Mirror Channel 2 (right) #1: 575
+HardwareSetting|FilterSettingRecord|SP Mirror Channel 2 (stain) #1: Leica/ALEXA 488
+HardwareSetting|FilterSettingRecord|SP Mirror Channel 3 (left) #1: 650
+HardwareSetting|FilterSettingRecord|SP Mirror Channel 3 (right) #1: 710.340909090909
+HardwareSetting|FilterSettingRecord|SP Mirror Channel 4 (left) #1: 768.831168831169
+HardwareSetting|FilterSettingRecord|SP Mirror Channel 4 (right) #1: 800
+HardwareSetting|FilterSettingRecord|Scan Field Rotation #1: -63.490099009901
+HardwareSetting|FilterSettingRecord|Scan Speed #1: 400
+HardwareSetting|FilterSettingRecord|System Number #1: MASTER
+HardwareSetting|FilterSettingRecord|TLD_Settings #1: -1
+HardwareSetting|FilterSettingRecord|Target Slider #1: Target Park 
+HardwareSetting|FilterSettingRecord|VariantType: 8
+HardwareSetting|FilterSettingRecord|X Scan Actuator #1: Active
+HardwareSetting|FilterSettingRecord|X Scan Actuator (Gain) #1: 1.46487625242382
+HardwareSetting|FilterSettingRecord|X Scan Actuator (Offs.) #1: 8.67361737988404E-19
+HardwareSetting|FilterSettingRecord|X Scan Actuator (POS) #1: 0
+HardwareSetting|FilterSettingRecord|Y Scan Actuator #1: Active
+HardwareSetting|FilterSettingRecord|Y Scan Actuator (Gain) #1: 1.46487625242382
+HardwareSetting|FilterSettingRecord|Y Scan Actuator (Offs.) #1: 8.67361737988404E-19
+HardwareSetting|FilterSettingRecord|Y Scan Actuator (POS) #1: 0
+HardwareSetting|FilterSettingRecord|Y-Phase #1: 0
+HardwareSetting|FilterSettingRecord|inverse flag topo #1: 0
+HardwareSetting|Name: default
+HardwareSetting|ScannerSettingRecord|SystemType #1: TCS SP5
+HardwareSetting|ScannerSettingRecord|bAFUseFixSliceNumber #1: 0
+HardwareSetting|ScannerSettingRecord|bAdaptiveFocusControlActive #1: 0
+HardwareSetting|ScannerSettingRecord|bEnableRoiScan #1: 0
+HardwareSetting|ScannerSettingRecord|bIs3DLimitedRoiScanEnable #1: 0
+HardwareSetting|ScannerSettingRecord|bIsSequential #1: 0
+HardwareSetting|ScannerSettingRecord|bIsSeriesScanAutofocusActive #1: 0
+HardwareSetting|ScannerSettingRecord|bMinimizeMode #1: 1
+HardwareSetting|ScannerSettingRecord|bSecondCrystal #1: 1
+HardwareSetting|ScannerSettingRecord|bStepSizeConstant #1: 0
+HardwareSetting|ScannerSettingRecord|bStepSizerActivated #1: 0
+HardwareSetting|ScannerSettingRecord|bUseMPShutter #1: 0
+HardwareSetting|ScannerSettingRecord|bUseSuperContVisibleShutter #1: 0
+HardwareSetting|ScannerSettingRecord|bUseVisibleShutter #1: 1
+HardwareSetting|ScannerSettingRecord|bValidBegin #1: 1
+HardwareSetting|ScannerSettingRecord|bValidEnd #1: 1
+HardwareSetting|ScannerSettingRecord|csLutName00 #1: Green
+HardwareSetting|ScannerSettingRecord|csLutName01 #1: Green
+HardwareSetting|ScannerSettingRecord|csLutName02 #1: Red
+HardwareSetting|ScannerSettingRecord|csLutName03 #1: Gray
+HardwareSetting|ScannerSettingRecord|csLutName04 #1: Gray
+HardwareSetting|ScannerSettingRecord|csLutName05 #1: Green
+HardwareSetting|ScannerSettingRecord|csLutName06 #1: Red
+HardwareSetting|ScannerSettingRecord|csLutName07 #1: Blue
+HardwareSetting|ScannerSettingRecord|csLutName08 #1: Gray
+HardwareSetting|ScannerSettingRecord|csLutName09 #1: Cyan
+HardwareSetting|ScannerSettingRecord|csLutName10 #1: Magenta
+HardwareSetting|ScannerSettingRecord|csLutName11 #1: Yellow
+HardwareSetting|ScannerSettingRecord|csLutName12 #1: Glow
+HardwareSetting|ScannerSettingRecord|csLutName13 #1: Gray
+HardwareSetting|ScannerSettingRecord|csScanMode #1: xyzt
+HardwareSetting|ScannerSettingRecord|dAdaptiveFocusControlAutonomousOffset #1: -2
+HardwareSetting|ScannerSettingRecord|dblAFCOffset #1: -2
+HardwareSetting|ScannerSettingRecord|dblAFFocusRange #1: 0.00008
+HardwareSetting|ScannerSettingRecord|dblPinhole #1: 7.07790337049479E-05
+HardwareSetting|ScannerSettingRecord|dblPinholeAiry #1: 1.00026898961204
+HardwareSetting|ScannerSettingRecord|dblSizeX #1: 1.05810985565186E-03
+HardwareSetting|ScannerSettingRecord|dblSizeY #1: 1.05810985565186E-03
+HardwareSetting|ScannerSettingRecord|dblSizeZ #1: 0.000146718
+HardwareSetting|ScannerSettingRecord|dblStepSize #1: 0.0000097812
+HardwareSetting|ScannerSettingRecord|dblVoxelX #1: 2.07066507955353E-06
+HardwareSetting|ScannerSettingRecord|dblVoxelY #1: 2.07066507955353E-06
+HardwareSetting|ScannerSettingRecord|dblZWidePos #1: 0.0041344076
+HardwareSetting|ScannerSettingRecord|dblZoom #1: 1.46487625242382
+HardwareSetting|ScannerSettingRecord|dwChannelMask #1: 44
+HardwareSetting|ScannerSettingRecord|dwLogiChMask #1: 22
+HardwareSetting|ScannerSettingRecord|eAFAnalyseType #1: 1
+HardwareSetting|ScannerSettingRecord|eAFSubsystem #1: 0
+HardwareSetting|ScannerSettingRecord|eAFWorkflowTimelapse #1: 2
+HardwareSetting|ScannerSettingRecord|eAFWorkflowXY #1: 2
+HardwareSetting|ScannerSettingRecord|eAFZUseMode #1: 2
+HardwareSetting|ScannerSettingRecord|eAOBSIntensityLow_World488 #1: 0
+HardwareSetting|ScannerSettingRecord|eAOBSIntensity_World488 #1: 100
+HardwareSetting|ScannerSettingRecord|eAOBSMode_488 #1: 3
+HardwareSetting|ScannerSettingRecord|eDataSource #1: 0
+HardwareSetting|ScannerSettingRecord|eDirectional #1: 1
+HardwareSetting|ScannerSettingRecord|eDirectionalY #1: 1
+HardwareSetting|ScannerSettingRecord|eSequentialMode #1: 0
+HardwareSetting|ScannerSettingRecord|eZUseMode #1: 2
+HardwareSetting|ScannerSettingRecord|m_bConstantIntegrationTimeActive #1: 0
+HardwareSetting|ScannerSettingRecord|nAFFixSliceNumber #1: 4
+HardwareSetting|ScannerSettingRecord|nAFPrecision #1: 2
+HardwareSetting|ScannerSettingRecord|nAFWorkflowTimelapseIterator #1: 1
+HardwareSetting|ScannerSettingRecord|nAFWorkflowXYIterator #1: 1
+HardwareSetting|ScannerSettingRecord|nAOBSConfigs #1: 8
+HardwareSetting|ScannerSettingRecord|nAccumulation #1: 1
+HardwareSetting|ScannerSettingRecord|nAverageFrame #1: 1
+HardwareSetting|ScannerSettingRecord|nAverageLine #1: 1
+HardwareSetting|ScannerSettingRecord|nBegin #1: 1067988
+HardwareSetting|ScannerSettingRecord|nBit #1: 8
+HardwareSetting|ScannerSettingRecord|nChannels #1: 3
+HardwareSetting|ScannerSettingRecord|nDelayTime_ms #1: 811
+HardwareSetting|ScannerSettingRecord|nDelayTime_s #1: 22
+HardwareSetting|ScannerSettingRecord|nEnd #1: 1106598
+HardwareSetting|ScannerSettingRecord|nFormatInDimension #1: 512
+HardwareSetting|ScannerSettingRecord|nFormatOutDimension #1: 512
+HardwareSetting|ScannerSettingRecord|nLineAccumulation #1: 1
+HardwareSetting|ScannerSettingRecord|nLines #1: 1.46487617492687
+HardwareSetting|ScannerSettingRecord|nPages #1: 1.46487617492676
+HardwareSetting|ScannerSettingRecord|nRepeatActions #1: 27
+HardwareSetting|ScannerSettingRecord|nSections #1: 16
+Image name: Job 2_009
+Quantity|Unit: V
+Quantity|Value: 0
+Reverse X orientation: true
+Reverse Y orientation: true

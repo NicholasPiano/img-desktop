@@ -59,8 +59,8 @@ class Command(BaseCommand):
     showinf = join(data_root, 'bftools', 'showinf')
 
     # 1. create experiment and series
-    if experiment_name!='':
-      print('step01 | experiment path exists, experiment {}... '.format(experiment_name), end='\r')
+    if experiment_name!='' and series_name!='':
+      print('step01 | experiment path exists, experiment {}... '.format(experiment_name))
       experiment, experiment_created = Experiment.objects.get_or_create(name=experiment_name)
       if experiment_created:
         # set metadata
@@ -82,11 +82,11 @@ class Command(BaseCommand):
 
         # extract lif
         lif_path = join(lif_root, lif_name)
-        lif_template = '{}/{}_s%s_ch%c_t%t_z%z.tiff'.format(experiment_path, experiment_name)
+        lif_template = '{}/{}_s%s_ch%c_t%t_z%z.tiff'.format(experiment.storage_path, experiment_name)
 
         # run extract
         print('step01 | Extracting lif ')
-        call('{} {} {}'.format(bfconvert, lif_path, lif_template))
+        call('{} {} {}'.format(bfconvert, lif_path, lif_template), shell=True)
 
       else:
         print('step01 | .lif already extracted for experiment {}, series {}; continuing... '.format(experiment_name, series_name))
@@ -98,57 +98,50 @@ class Command(BaseCommand):
         # run show inf
         lif_path = join(lif_root, lif_name)
         print('step01 | Extracting lif metadata for experiment {}, series {}... '.format(experiment_name, series_name))
-        call('{} -nopix {} > {}'.format(showinf, lif_path, series_metadata_file_name))
+        call('{} -nopix -series {} {} > {}'.format(showinf, series_name, lif_path, series_metadata_file_name), shell=True)
 
-        series_metadata = series_metadata_from_file(series_metadata_file_name)
+      series_metadata = series_metadata_from_file(series_metadata_file_name)
 
-        series.rmop = series_metadata['rmop']
-        series.cmop = series_metadata['cmop']
-        series.zmop = series_metadata['zmop']
-        series.tpf = series_metadata['tpf']
-        series.rs = series_metadata['rs']
-        series.cs = series_metadata['cs']
-        series.zs = series_metadata['zs']
-        series.ts = series_metadata['ts']
-        series.save()
+      series.rmop = series_metadata['rmop']
+      series.cmop = series_metadata['cmop']
+      series.zmop = series_metadata['zmop']
+      series.tpf = series_metadata['tpf']
+      series.rs = series_metadata['rs']
+      series.cs = series_metadata['cs']
+      series.zs = series_metadata['zs']
+      series.ts = series_metadata['ts']
+      series.save()
 
       # 4. import specified series
-      if series_name!='':
-        # for each path in the experiment folder, create new path if the series matches.
-        for root in experiment.img_roots():
+      # for each path in the experiment folder, create new path if the series matches.
+      for root in experiment.img_roots():
 
-          img_files = [f for f in os.listdir(root) if (os.path.splitext(f)[1] in allowed_img_extensions and experiment.path_matches_series(f, series_name))]
-          num_img_files = len(img_files)
+        img_files = [f for f in os.listdir(root) if (os.path.splitext(f)[1] in allowed_img_extensions and experiment.path_matches_series(f, series_name))]
+        num_img_files = len(img_files)
 
-          if num_img_files>0:
-            for i, file_name in enumerate(img_files):
-              path, path_created, path_message = experiment.get_or_create_path(series, root, file_name)
-              print('step01 | adding image files in {}: ({}/{}) {} ...path {}{}'.format(root, i+1, num_img_files, file_name, path_message, spacer), end='\r' if i<num_img_files-1 else '\n')
-
-          else:
-            print('step01 | no files found in {}'.format(root))
-
-        # 5. measurements
-        print('step01 | setting measurements for {} series {}'.format(experiment_name, series_name))
-
-        # 6. composite
-        print('step01 | creating composite for {} series {}'.format(experiment_name, series_name))
-        composite = series.compose()
-
-        # 7. make zmod channels
-        if composite.channels.filter(name='-zmod').count()==0:
-          mod = composite.mods.create(id_token=generate_id_token('img', 'Mod'), algorithm='mod_zmod')
-
-          # 3. Run mod
-          print('step01 | processing mod_zmod...', end='\r')
-          mod.run()
-          print('step01 | processing mod_zmod... done.{}'.format(spacer))
+        if num_img_files>0:
+          for i, file_name in enumerate(img_files):
+            path, path_created, path_message = experiment.get_or_create_path(series, root, file_name)
+            print('step01 | adding image files in {}: ({}/{}) {} ...path {}{}'.format(root, i+1, num_img_files, file_name, path_message, spacer), end='\r' if i<num_img_files-1 else '\n')
 
         else:
-          print('step01 | zmod already exists...')
+          print('step01 | no files found in {}'.format(root))
+
+      # 5. composite
+      print('step01 | creating composite for experiment {} series {}'.format(experiment_name, series_name))
+      composite = series.compose()
+
+      # 6. make zmod channels
+      if composite.channels.filter(name='-zmod').count()==0:
+        mod = composite.mods.create(id_token=generate_id_token('img', 'Mod'), algorithm='mod_zmod')
+
+        # Run mod
+        print('step01 | processing mod_zmod...', end='\r')
+        mod.run()
+        print('step01 | processing mod_zmod... done.{}'.format(spacer))
 
       else:
-        print('Please enter a series')
+        print('step01 | zmod already exists...')
 
     else:
       print('Please enter an experiment')

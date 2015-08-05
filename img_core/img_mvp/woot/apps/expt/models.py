@@ -26,14 +26,15 @@ class Experiment(models.Model):
   base_path = models.CharField(max_length=255)
   storage_path = models.CharField(max_length=255)
   composite_path = models.CharField(max_length=255)
-  mask_path = models.CharField(max_length=255)
   cp_path = models.CharField(max_length=255)
+  ij_path = models.CharField(max_length=255)
 
-  output_path = models.CharField(max_length=255)
   plot_path = models.CharField(max_length=255)
   track_path = models.CharField(max_length=255)
   data_path = models.CharField(max_length=255)
   pipeline_path = models.CharField(max_length=255)
+  video_path = models.CharField(max_length=255)
+  inf_path = models.CharField(max_length=255)
 
   def __str__(self):
     return self.name
@@ -51,15 +52,13 @@ class Experiment(models.Model):
     self.data_path = os.path.join(self.base_path, default_paths['data'])
     self.pipeline_path = os.path.join(self.base_path, default_paths['pipeline'])
     self.video_path = os.path.join(self.base_path, default_paths['video'])
+    self.inf_path = os.path.join(self.base_path, default_paths['inf'])
 
     self.save()
 
-    for path in [self.storage_path, self.composite_path, self.cp_path, self.ij_path, self.plot_path, self.track_path, self.data_path, self.pipeline_path, self.video_path]:
+    for path in [self.storage_path, self.composite_path, self.cp_path, self.ij_path, self.plot_path, self.track_path, self.data_path, self.pipeline_path, self.video_path, self.inf_path]:
       if not os.path.exists(path):
         os.makedirs(path)
-
-  def prototype(self):
-    return list(filter(lambda x: x.name==self.name, experiments))[0]
 
   def get_templates(self):
     # templates
@@ -67,9 +66,6 @@ class Experiment(models.Model):
       self.templates.get_or_create(name=name, rx=template['rx'], rv=template['rv'])
 
     self.save()
-
-  def is_allowed_series(self, series_name):
-    return (series_name in [s.name for s in filter(lambda x: x.experiment==self.name, series)])
 
   def img_roots(self):
     return [self.storage_path, self.composite_path]
