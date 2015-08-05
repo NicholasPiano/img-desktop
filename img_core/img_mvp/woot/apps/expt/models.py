@@ -253,6 +253,7 @@ class Series(models.Model):
             gon.save()
 
     composite.save()
+    return composite
 
   def vertical_sort_for_region_index(self, index):
     region = list(filter(lambda x: x.experiment==self.experiment.name and x.series==self.name and x.index==index, regions))[0]

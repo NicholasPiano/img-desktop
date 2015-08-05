@@ -102,14 +102,15 @@ class Command(BaseCommand):
 
         series_metadata = series_metadata_from_file(series_metadata_file_name)
 
-        rmop
-        cmop
-        zmop
-        tpf
-        rs
-        cs
-        zs
-        ts
+        series.rmop = series_metadata['rmop']
+        series.cmop = series_metadata['cmop']
+        series.zmop = series_metadata['zmop']
+        series.tpf = series_metadata['tpf']
+        series.rs = series_metadata['rs']
+        series.cs = series_metadata['cs']
+        series.zs = series_metadata['zs']
+        series.ts = series_metadata['ts']
+        series.save()
 
       # 4. import specified series
       if series_name!='':
@@ -127,10 +128,27 @@ class Command(BaseCommand):
           else:
             print('step01 | no files found in {}'.format(root))
 
-        # 4. measurements
+        # 5. measurements
         print('step01 | setting measurements for {} series {}'.format(experiment_name, series_name))
 
-      else:
+        # 6. composite
+        print('step01 | creating composite for {} series {}'.format(experiment_name, series_name))
+        composite = series.compose()
 
+        # 7. make zmod channels
+        if composite.channels.filter(name='-zmod').count()==0:
+          mod = composite.mods.create(id_token=generate_id_token('img', 'Mod'), algorithm='mod_zmod')
+
+          # 3. Run mod
+          print('step01 | processing mod_zmod...', end='\r')
+          mod.run()
+          print('step01 | processing mod_zmod... done.{}'.format(spacer))
+
+        else:
+          print('step01 | zmod already exists...')
+
+      else:
+        print('Please enter a series')
 
     else:
+      print('Please enter an experiment')
