@@ -35,12 +35,6 @@ class Experiment(models.Model):
   data_path = models.CharField(max_length=255)
   pipeline_path = models.CharField(max_length=255)
 
-  # 2. scaling
-  rmop = models.FloatField(default=0.0) # microns over pixel ratio
-  cmop = models.FloatField(default=0.0)
-  zmop = models.FloatField(default=0.0)
-  tpf = models.FloatField(default=0.0) # minutes in a frame
-
   def __str__(self):
     return self.name
 
@@ -67,14 +61,7 @@ class Experiment(models.Model):
   def prototype(self):
     return list(filter(lambda x: x.name==self.name, experiments))[0]
 
-  def get_metadata(self):
-    # data
-    prototype = self.prototype()
-    self.rmop = prototype.rmop
-    self.cmop = prototype.cmop
-    self.zmop = prototype.zmop
-    self.tpf = prototype.tpf
-
+  def get_templates(self):
     # templates
     for name, template in templates.items():
       self.templates.get_or_create(name=name, rx=template['rx'], rv=template['rv'])
@@ -174,11 +161,17 @@ class Series(models.Model):
   # properties
   name = models.CharField(max_length=255)
 
-  # extent
+  # 1. extent
   rs = models.IntegerField(default=-1)
   cs = models.IntegerField(default=-1)
   zs = models.IntegerField(default=-1)
   ts = models.IntegerField(default=-1)
+
+  # 2. scaling
+  rmop = models.FloatField(default=0.0) # microns over pixel ratio
+  cmop = models.FloatField(default=0.0)
+  zmop = models.FloatField(default=0.0)
+  tpf = models.FloatField(default=0.0) # minutes in a frame
 
   # methods
   def __str__(self):

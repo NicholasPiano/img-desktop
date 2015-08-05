@@ -170,4 +170,5 @@ default_paths = {
   'data':'data/',
   'pipeline':'pipelines/',
   'video':'video/',
+  'inf':'inf/',
 }

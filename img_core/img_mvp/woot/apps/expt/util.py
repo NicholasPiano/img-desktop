@@ -26,3 +26,11 @@ def generate_id_token(app_name, obj_name):
 
 def random_string():
   return ''.join([random.choice(chars) for _ in range(8)]) #8 character string
+
+def series_metadata_from_file(file_name):
+
+  voxel_r_metadata_template = r'HardwareSetting\|ScannerSettingRecord\|dblVoxelX #1: (.*)\n'
+  voxel_c_metadata_template = r'HardwareSetting\|ScannerSettingRecord\|dblVoxelY #1: (.*)\n'
+
+  value = lambda lines, template: re.match(template, list(filter(lambda l: re.match(template, l) is not None, lines))[0].rstrip()).group(1)
+  return value(lines, template)

@@ -188,31 +188,31 @@ class CellInstance(models.Model):
 
   # methods
   def R(self):
-    return self.r*self.experiment.rmop
+    return self.r*self.series.rmop
 
   def C(self):
-    return self.c*self.experiment.cmop
+    return self.c*self.series.cmop
 
   def Z(self):
-    return self.z*self.experiment.zmop
+    return self.z*self.series.zmop
 
   def T(self):
-    return self.t*self.experiment.tpf
+    return self.t*self.series.tpf
 
   def V(self):
     return np.sqrt(self.VR()**2 + self.VC()**2)
 
   def VR(self):
-    return self.vr*self.experiment.rmop / self.experiment.tpf
+    return self.vr*self.series.rmop / self.series.tpf
 
   def VC(self):
-    return self.vc*self.experiment.cmop / self.experiment.tpf
+    return self.vc*self.series.cmop / self.series.tpf
 
   def VZ(self):
-    return self.vz*self.experiment.zmop / self.experiment.tpf
+    return self.vz*self.series.zmop / self.series.tpf
 
   def A(self):
-    return self.AreaShape_Area*self.experiment.rmop*self.experiment.cmop
+    return self.AreaShape_Area*self.series.rmop*self.series.cmop
 
   def raw_line(self):
     return '{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{} \n'.format(self.experiment.name,
@@ -309,31 +309,31 @@ class CellMask(models.Model):
 
   # methods
   def R(self):
-    return self.r*self.experiment.rmop
+    return self.r*self.series.rmop
 
   def C(self):
-    return self.c*self.experiment.cmop
+    return self.c*self.series.cmop
 
   def Z(self):
-    return self.z*self.experiment.zmop
+    return self.z*self.series.zmop
 
   def T(self):
-    return self.t*self.experiment.tpf
+    return self.t*self.series.tpf
 
   def V(self):
     return np.sqrt(self.VR()**2 + self.VC()**2)
 
   def VR(self):
-    return self.vr*self.experiment.rmop / self.experiment.tpf
+    return self.vr*self.series.rmop / self.series.tpf
 
   def VC(self):
-    return self.vc*self.experiment.cmop / self.experiment.tpf
+    return self.vc*self.series.cmop / self.series.tpf
 
   def VZ(self):
-    return self.vz*self.experiment.zmop / self.experiment.tpf
+    return self.vz*self.series.zmop / self.series.tpf
 
   def A(self):
-    return self.AreaShape_Area*self.experiment.rmop*self.experiment.cmop
+    return self.AreaShape_Area*self.series.rmop*self.series.cmop
 
   def raw_line(self):
     return '{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{} \n'.format(self.experiment.name,
