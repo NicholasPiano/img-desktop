@@ -126,7 +126,8 @@ class Channel(models.Model):
       mask = mask_mask.load()
 
       t_data = list(filter(lambda d: int(d['ImageNumber'])-1==t, data))
-      print(t_data)
+      for D in t_data:
+        print(D['AreaShape_Center_X'], D['AreaShape_Center_Y'], D['Number_Object_Number'], D['ObjectNumber'])
 
       markers = marker_channel.markers.filter(track_instance__t=t)
       for marker in markers:
@@ -146,9 +147,11 @@ class Channel(models.Model):
                                                marker=marker,
                                                gray_value_id=mask[marker.c, marker.r])
 
+        print(t, marker, marker.r, marker.c, mask[marker.c, marker.r])
+
         cell_mask_data = list(filter(lambda d: int(d['ObjectNumber'])==cell_mask.gray_value_id, t_data))[0]
 
-        print(t, marker, marker.r, marker.c)
+
 
         # 4. assign data
         cell_mask.AreaShape_Area = float(cell_mask_data['AreaShape_Area'])
