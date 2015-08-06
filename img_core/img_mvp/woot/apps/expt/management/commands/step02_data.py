@@ -48,13 +48,17 @@ class Command(BaseCommand):
 
     if experiment_name!='' and series_name!='':
       # 1. Convert track files to csv
+      def convert_track_file(file_name):
+        pass
 
+      # for each track file in the track directory, if there is not a .csv file with the same name, then translate it into the new format
+      
 
       # 2. Import tracks
 
       # 3. Segment ZCOMP channel
 
-      # 4. 
+      # 4. Export data to data directory
 
     else:
       print('Please enter an experiment')
