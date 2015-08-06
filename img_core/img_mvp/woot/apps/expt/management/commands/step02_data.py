@@ -11,7 +11,7 @@ from apps.expt.util import *
 
 # util
 import os
-from os.path import join, exists
+from os.path import join, exists, splitext
 from optparse import make_option
 from subprocess import call
 
@@ -47,12 +47,22 @@ class Command(BaseCommand):
     series_name = options['series']
 
     if experiment_name!='' and series_name!='':
+      experiment = Experiment.objects.get(name=experiment_name)
+      series = experiment.series.get(name=series_name)
+
       # 1. Convert track files to csv
-      def convert_track_file(file_name):
-        pass
+      def convert_track_file(name):
+        # names
+        csv_file_name = '{}.csv'.format(name)
+        xls_file_name = '{}.xls'.format(name)
+
+        
 
       # for each track file in the track directory, if there is not a .csv file with the same name, then translate it into the new format
-      
+      for file_name in [f for f in os.listdir(experiment.track_path) if 'xls' in f]:
+        name, ext = splitext(file_name)
+        if not exists(join(experiment.track_path, '{}.csv'.format(name))):
+          convert_track_file(name)
 
       # 2. Import tracks
 
