@@ -53,7 +53,7 @@ class Command(BaseCommand):
       # 1. Convert track files to csv
       def convert_track_file(path, name):
         # names
-        csv_file_name = '{}.csv'.format(join(path, name))
+        csv_file_name = '{}_5GT4R32F_markers.csv'.format(join(path, name))
         xls_file_name = '{}.xls'.format(join(path, name))
 
         tracks = {} # stores list of tracks that can then be put into the database
@@ -79,7 +79,7 @@ class Command(BaseCommand):
           out_file.write('expt,series,channel,id,t,r,c\n')
           for track_id, track in tracks.items():
             for frame in list(sorted(track, key=lambda t: t[2])):
-              out_file.write('{},{},{},{},{},{},{}\n'.format(experiment_name,series_name,'-zbf',track_id,frame[2],frame[0],frame[1]))
+              out_file.write('{},{},{},{},{},{},{}\n'.format(experiment_name,series_name,'-zbf',track_id,frame[2],frame[1],frame[0]))
 
       # for each track file in the track directory, if there is not a .csv file with the same name, then translate it into the new format
       for file_name in [f for f in os.listdir(experiment.track_path) if '.xls' in f]:
@@ -94,44 +94,42 @@ class Command(BaseCommand):
       # add all track files to composite
       data_file_list = [f for f in os.listdir(composite.experiment.track_path) if (os.path.splitext(f)[1] in allowed_data_extensions and composite.experiment.path_matches_series(f, composite.series.name))]
 
-      print(data_file_list)
+      for df_name in data_file_list:
+        print('step02 | data file {}... '.format(df_name), end='\r')
+        data_file, data_file_created, status = composite.get_or_create_data_file(composite.experiment.track_path, df_name)
+        print('step02 | data file {}... {}'.format(df_name, status))
 
-      # for df_name in data_file_list:
-      #   print('step02 | data file {}... '.format(df_name), end='\r')
-      #   data_file, data_file_created, status = composite.get_or_create_data_file(composite.experiment.track_path, df_name)
-      #   print('step02 | data file {}... {}'.format(df_name, status))
-      #
-      # ### MARKERS
-      # for data_file in composite.data_files.filter(data_type='markers'):
-      #   data = data_file.load()
-      #   for i, marker_prototype in enumerate(data):
-      #     track, track_created = composite.tracks.get_or_create(experiment=composite.experiment,
-      #                                                           series=composite.series,
-      #                                                           composite=composite,
-      #                                                           channel=composite.channels.get(name=marker_prototype['channel']),
-      #                                                           track_id=marker_prototype['id'])
-      #
-      #     track_instance, track_instance_created = track.instances.get_or_create(experiment=composite.experiment,
-      #                                                                            series=composite.series,
-      #                                                                            composite=composite,
-      #                                                                            channel=composite.channels.get(name=marker_prototype['channel']),
-      #                                                                            t=int(marker_prototype['t']))
-      #
-      #     marker, marker_created = track_instance.markers.get_or_create(experiment=composite.experiment,
-      #                                                                   series=composite.series,
-      #                                                                   composite=composite,
-      #                                                                   channel=composite.channels.get(name=marker_prototype['channel']),
-      #                                                                   track=track,
-      #                                                                   r=int(marker_prototype['r']),
-      #                                                                   c=int(marker_prototype['c']))
-      #
-      #     print('step02 | processing marker ({}/{})... {} tracks, {} instances, {} markers'.format(i+1,len(data),composite.tracks.count(), composite.track_instances.count(), composite.markers.count()), end='\n' if i==len(data)-1 else '\r')
-      #
+      ### MARKERS
+      for data_file in composite.data_files.filter(data_type='markers'):
+        data = data_file.load()
+        for i, marker_prototype in enumerate(data):
+          track, track_created = composite.tracks.get_or_create(experiment=composite.experiment,
+                                                                series=composite.series,
+                                                                composite=composite,
+                                                                channel=composite.channels.get(name=marker_prototype['channel']),
+                                                                track_id=marker_prototype['id'])
+
+          track_instance, track_instance_created = track.instances.get_or_create(experiment=composite.experiment,
+                                                                                 series=composite.series,
+                                                                                 composite=composite,
+                                                                                 channel=composite.channels.get(name=marker_prototype['channel']),
+                                                                                 t=int(marker_prototype['t']))
+
+          marker, marker_created = track_instance.markers.get_or_create(experiment=composite.experiment,
+                                                                        series=composite.series,
+                                                                        composite=composite,
+                                                                        channel=composite.channels.get(name=marker_prototype['channel']),
+                                                                        track=track,
+                                                                        r=int(marker_prototype['r']),
+                                                                        c=int(marker_prototype['c']))
+
+          print('step02 | processing marker ({}/{})... {} tracks, {} instances, {} markers'.format(i+1,len(data),composite.tracks.count(), composite.track_instances.count(), composite.markers.count()), end='\n' if i==len(data)-1 else '\r')
+
       # # 3. Segment ZCOMP channel
-      # channel = composite.channels.get(name='-zcomp')
-      # marker_channel_name = '-zbf'
-      #
-      # channel.segment(marker_channel_name)
+      channel = composite.channels.get(name='-zcomp')
+      marker_channel_name = '-zbf'
+
+      channel.segment(marker_channel_name)
 
       # 4. Export data to data directory
 

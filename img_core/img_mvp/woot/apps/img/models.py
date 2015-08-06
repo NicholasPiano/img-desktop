@@ -116,13 +116,17 @@ class Channel(models.Model):
     # 5. create cells and cell instances from tracks
     cell_data_file = self.composite.data_files.get(id_token=unique, data_type='Cells')
     data = cell_data_file.load()
+    print('data')
+    print(data)
 
     # load masks and associate with grayscale id's
     for t in range(self.composite.series.ts):
+      print(t)
       mask_mask = mask_channel.masks.get(t=t)
       mask = mask_mask.load()
 
       t_data = list(filter(lambda d: int(d['ImageNumber'])-1==t, data))
+      print(t_data)
 
       markers = marker_channel.markers.filter(track_instance__t=t)
       for marker in markers:
@@ -143,6 +147,8 @@ class Channel(models.Model):
                                                gray_value_id=mask[marker.c, marker.r])
 
         cell_mask_data = list(filter(lambda d: int(d['ObjectNumber'])==cell_mask.gray_value_id, t_data))[0]
+
+        print(t, marker, marker.r, marker.c)
 
         # 4. assign data
         cell_mask.AreaShape_Area = float(cell_mask_data['AreaShape_Area'])

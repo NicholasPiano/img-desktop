@@ -68,7 +68,7 @@ class Experiment(models.Model):
     self.save()
 
   def img_roots(self):
-    return [self.storage_path, self.composite_path]
+    return [self.storage_path, self.composite_path, self.ij_path]
 
   def path_matches_series(self, path, series_name):
 
