@@ -48,7 +48,7 @@ class Command(BaseCommand):
 
     # vars
     backup_path = settings.BACKUP_ROOT
-    django_path = settings.DJANGO_ROOT
+    site_path = settings.SITE_ROOT
     data_path = settings.DATA_ROOT
 
     # create backup path if it does not exist
@@ -66,7 +66,7 @@ class Command(BaseCommand):
 
     # copy files and folders
     # - database file
-    db_path = join(settings.DJANGO_ROOT, 'db', 'img_db.sqlite3')
+    db_path = join(site_path, 'db', 'img_db.sqlite3')
     sh.copy2(db_path, join(now_path, 'img_db.sqlite3'))
     print('copying db file from {} to {}'.format(db_path, join(now_path, 'img_db.sqlite3')))
 
