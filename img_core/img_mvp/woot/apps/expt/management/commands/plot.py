@@ -97,7 +97,7 @@ class Command(BaseCommand):
           if len(cells) > 0:
             fig = plt.figure()
 
-            ax1 = fig.subplot(111)
+            ax1 = fig.add_subplot(111)
             ax1.set_xlabel('Time (min)')
             ax1.set_xlim([0,series.ts*series.tpf])
 
