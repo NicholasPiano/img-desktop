@@ -501,9 +501,9 @@ class DataFile(models.Model):
           self.data.append(line_dict)
     return self.data
 
-  def save_data(self):
+  def save_data(self, data_headers):
     with open(self.url, 'w+') as df:
-      df.write(headers)
+      df.write('{}\n'.format(','.join(data_headers)))
       for line in self.data:
         df.write(line)
 

@@ -275,7 +275,7 @@ class Series(models.Model):
 
     # populate data
     data_file.data = [cell_instance.line() for cell_instance in self.cell_instances.all()]
-    data_file.save_data()
+    data_file.save_data(headers)
     data_file.save()
 
 class PathChannel(models.Model):
