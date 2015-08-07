@@ -147,7 +147,7 @@ class Experiment(models.Model):
     pipeline = os.path.join(self.pipeline_path, 'markers.cppipe')
     if key!='marker':
       pipeline = os.path.join(self.pipeline_path, 'regions.cppipe')
-    cmd = '/Applications/CellProfiler.app/Contents/MacOS/CellProfiler -c -r -i {} -o {} -p {}'.format(self.composite_path, self.cp_path, pipeline)
+    cmd = '/Applications/CellProfiler.app/Contents/MacOS/CellProfiler -c -r -i {} -o {} -p {}'.format(self.ij_path, self.cp_path, pipeline)
     subprocess.call(cmd, shell=True)
 
 class Series(models.Model):
