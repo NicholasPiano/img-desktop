@@ -88,4 +88,27 @@ class Command(BaseCommand):
     if options['revert']:
       # recreate system from last backup
       print('Reverting...')
-      print(previous_path)
+      print('Removing db {}'.format(db_path))
+      os.remove(db_path)
+      new_db_path = join(previous_path, 'img_db.sqlite3')
+      print('Adding new db {}'.format(new_db_path))
+      sh.copy2(new_db_path, db_path)
+
+      for experiment_path in experiment_paths:
+        # - track directory
+        print('experiment {}, removing track directory...')
+        sh.rmtree(join(data_path, experiment_path, 'track'))
+        print('experiment {}, copying track directory from {} to {}'.format(experiment_path, join(previous_path, experiment_path, 'track'), join(data_path, experiment_path, 'track')))
+        sh.copytree(join(previous_path, experiment_path, 'track'), join(data_path, experiment_path, 'track'))
+
+        # - inf directory
+        print('experiment {}, removing inf directory...')
+        sh.rmtree(join(data_path, experiment_path, 'inf'))
+        print('experiment {}, copying inf directory from {} to {}'.format(experiment_path, join(previous_path, experiment_path, 'inf'), join(data_path, experiment_path, 'inf')))
+        sh.copytree(join(previous_path, experiment_path, 'inf'), join(data_path, experiment_path, 'inf'))
+
+        # - data directory
+        print('experiment {}, removing data directory...')
+        sh.rmtree(join(data_path, experiment_path, 'data'))
+        print('experiment {}, copying data directory from {} to {}'.format(experiment_path, join(previous_path, experiment_path, 'data'), join(data_path, experiment_path, 'data')))
+        sh.copytree(join(previous_path, experiment_path, 'data'), join(data_path, experiment_path, 'data'))
