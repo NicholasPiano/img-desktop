@@ -134,6 +134,7 @@ class Command(BaseCommand):
       series.export_data()
 
       # 5. Tile mod
+      ### RED OUTLINES
       tile_mod = composite.mods.create(id_token=generate_id_token('img', 'Mod'), algorithm='mod_tile')
 
       # Run mod
