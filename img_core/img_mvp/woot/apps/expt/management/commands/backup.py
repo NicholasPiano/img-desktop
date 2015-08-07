@@ -96,19 +96,19 @@ class Command(BaseCommand):
 
       for experiment_path in experiment_paths:
         # - track directory
-        print('experiment {}, removing track directory...')
+        print('experiment {}, removing track directory...'.format(experiment_path))
         sh.rmtree(join(data_path, experiment_path, 'track'))
         print('experiment {}, copying track directory from {} to {}'.format(experiment_path, join(backup_path, previous_path, experiment_path, 'track'), join(data_path, experiment_path, 'track')))
         sh.copytree(join(backup_path, previous_path, experiment_path, 'track'), join(data_path, experiment_path, 'track'))
 
         # - inf directory
-        print('experiment {}, removing inf directory...')
+        print('experiment {}, removing inf directory...'.format(experiment_path))
         sh.rmtree(join(data_path, experiment_path, 'inf'))
         print('experiment {}, copying inf directory from {} to {}'.format(experiment_path, join(backup_path, previous_path, experiment_path, 'inf'), join(data_path, experiment_path, 'inf')))
         sh.copytree(join(backup_path, previous_path, experiment_path, 'inf'), join(data_path, experiment_path, 'inf'))
 
         # - data directory
-        print('experiment {}, removing data directory...')
+        print('experiment {}, removing data directory...'.format(experiment_path))
         sh.rmtree(join(data_path, experiment_path, 'data'))
         print('experiment {}, copying data directory from {} to {}'.format(experiment_path, join(backup_path, previous_path, experiment_path, 'data'), join(data_path, experiment_path, 'data')))
         sh.copytree(join(backup_path, previous_path, experiment_path, 'data'), join(data_path, experiment_path, 'data'))
