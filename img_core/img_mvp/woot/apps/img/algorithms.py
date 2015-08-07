@@ -103,7 +103,7 @@ def mod_zmod(composite, mod_id, algorithm):
     zbf_gon.set_extent(composite.series.rs, composite.series.cs, 1)
 
     zbf_gon.array = Zbf
-    zbf_gon.save_array(composite.series.experiment.ij_path, template) # WARNING: saving to ij path for ease of use
+    zbf_gon.save_array(composite.series.experiment.composite_path, template)
     zbf_gon.save()
 
     zcomp_gon, zcomp_gon_created = composite.gons.get_or_create(experiment=composite.experiment, series=composite.series, channel=zcomp_channel, t=t)
@@ -111,7 +111,7 @@ def mod_zmod(composite, mod_id, algorithm):
     zcomp_gon.set_extent(composite.series.rs, composite.series.cs, 1)
 
     zcomp_gon.array = Zcomp
-    zcomp_gon.save_array(composite.series.experiment.composite_path, template)
+    zcomp_gon.save_array(composite.series.experiment.ij_path, template) # WARNING: saving to ij path for ease of use
     zcomp_gon.save()
 
 def mod_tile(composite, mod_id, algorithm):
