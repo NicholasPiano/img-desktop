@@ -297,7 +297,7 @@ class CellInstance(models.Model):
 
     self.r = marker.r
     self.c = marker.c
-    self.t = marker.t
+    self.t = marker.track_instance.t
     self.save()
 
 class CellMask(models.Model):
