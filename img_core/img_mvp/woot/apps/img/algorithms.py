@@ -114,42 +114,6 @@ def mod_zmod(composite, mod_id, algorithm):
     zcomp_gon.save_array(composite.series.experiment.composite_path, template)
     zcomp_gon.save()
 
-def mod_regions(composite, mod_id, algorithm):
-  # paths
-  template = composite.templates.get(name='region') # REGION TEMPLATE
-
-  # get region img set that has the region template
-  region_img_set = composite.gons.filter(channel__name='-regionimg', template__name='region')
-
-  # channel
-  region_channel, region_channel_created = composite.channels.get_or_create(name='-regions')
-
-  # iterate
-  for t in range(composite.series.ts):
-    print(t)
-    region_img = region_img_set.filter(t=t)
-    if region_img.count()==0:
-      region_img = region_img_set.get(t=t-1)
-    else:
-      region_img = region_img_set.get(t=t)
-
-    # for each image, determine unique values of labelled array
-    # make gon with label array and save
-
-    region_gon = composite.gons.create(experiment=composite.experiment, series=composite.series, channel=region_channel, template=template)
-    region_gon.set_origin(0, 0, 0, t)
-    region_gon.set_extent(composite.series.rs, composite.series.cs, 1)
-
-    # modify image
-    region_array = region_img.load()
-    region_array = region_array[:,:,0]
-    region_array[region_array>0] = 1
-    region_array, n = label(region_array)
-
-    region_gon.array = region_array.copy()
-    region_gon.save_array(composite.experiment.composite_path, template)
-    region_gon.save()
-
 def mod_primary(composite, mod_id, algorithm):
   # paths
   template = composite.templates.get(name='source') # SOURCE TEMPLATE
@@ -178,3 +142,9 @@ def mod_primary(composite, mod_id, algorithm):
 
     gon.save_array(composite.experiment.composite_path, template)
     gon.save()
+
+def mod_tile(composite, mod_id, algorithm):
+  pass
+
+def mod_label(composite, mod_id, algorithm):
+  pass

@@ -35,6 +35,20 @@ class Command(BaseCommand):
       help='Name of the series' # who cares
     ),
 
+    make_option('--cells', # option that will appear in cmd
+      action='store', # no idea
+      dest='cells', # refer to this in options variable
+      default='', # some default
+      help='' # who cares
+    ),
+
+    make_option('--properties', # option that will appear in cmd
+      action='store', # no idea
+      dest='properties', # refer to this in options variable
+      default='', # some default
+      help='' # who cares
+    ),
+
   )
 
   args = ''
@@ -45,9 +59,14 @@ class Command(BaseCommand):
     # vars
     experiment_name = options['expt']
     series_name = options['series']
+    data_root = settings.DATA_ROOT
 
+    # 1. create experiment and series
     if experiment_name!='' and series_name!='':
-      
+      experiment = Experiment.objects.get(name=experiment_name)
+      series = experiment.series.get(name=series_name)
+
+
 
     else:
       print('Please enter an experiment')

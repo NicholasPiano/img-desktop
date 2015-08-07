@@ -172,3 +172,32 @@ default_paths = {
   'video':'video/',
   'inf':'inf/',
 }
+
+# headers
+headers = [
+  'experiment',
+  'series',
+  'cell.pk',
+  'r',
+  'c',
+  'z',
+  't',
+  'vr',
+  'vc',
+  'vz',
+  'region.index',
+  'AreaShape_Area',
+  'AreaShape_Compactness',
+  'AreaShape_Eccentricity',
+  'AreaShape_EulerNumber',
+  'AreaShape_Extent',
+  'AreaShape_FormFactor',
+  'AreaShape_MajorAxisLength',
+  'AreaShape_MaximumRadius',
+  'AreaShape_MeanRadius',
+  'AreaShape_MedianRadius',
+  'AreaShape_MinorAxisLength',
+  'AreaShape_Orientation',
+  'AreaShape_Perimeter',
+  'AreaShape_Solidity',
+]

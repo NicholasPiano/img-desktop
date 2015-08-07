@@ -79,7 +79,7 @@ class Command(BaseCommand):
           out_file.write('expt,series,channel,id,t,r,c\n')
           for track_id, track in tracks.items():
             for frame in list(sorted(track, key=lambda t: t[2])):
-              out_file.write('{},{},{},{},{},{},{}\n'.format(experiment_name,series_name,'-zbf',track_id,frame[2],frame[1],frame[0]))
+              out_file.write('{},{},{},{},{},{},{}\n'.format(experiment_name,series_name,'-zbf',track_id,frame[2],frame[0],frame[1]))
 
       # for each track file in the track directory, if there is not a .csv file with the same name, then translate it into the new format
       for file_name in [f for f in os.listdir(experiment.track_path) if '.xls' in f]:
@@ -132,7 +132,7 @@ class Command(BaseCommand):
       channel.segment(marker_channel_name)
 
       # 4. Export data to data directory
-
+      series.export_data()
 
     else:
       print('Please enter an experiment')

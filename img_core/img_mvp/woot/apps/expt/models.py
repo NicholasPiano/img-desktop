@@ -261,6 +261,23 @@ class Series(models.Model):
     else:
       return (self.rs, self.cs, self.zs)
 
+  def export_data(self):
+    # composite for datafile
+    composite = self.composites.get()
+    template = composite.templates.get(name='data')
+    id_token = generate_id_token('img', 'DataFile')
+    data_type = 'output'
+    file_name = template.rv.format(self.experiment.name, self.name, id_token, data_type)
+    url = os.path.join(self.experiment.data_path, file_name)
+
+    # datafile
+    data_file = self.data_files.create(experiment=self.experiment, composite=composite, template=template, id_token=id_token, data_type=data_type, url=url, file_name=file_name)
+
+    # populate data
+    data_file.data = [cell_instance.line() for cell_instance in self.cell_instances.all()]
+    data_file.save_data()
+    data_file.save()
+
 class PathChannel(models.Model):
   # connections
   experiment = models.ForeignKey(Experiment, related_name='channels')

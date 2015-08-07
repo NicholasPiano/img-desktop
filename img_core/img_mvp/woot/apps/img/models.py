@@ -6,6 +6,7 @@ from django.db import models
 # local
 from apps.expt.models import Experiment, Series
 from apps.expt.util import generate_id_token
+from apps.expt.data import *
 from apps.img import algorithms
 
 # util
@@ -31,6 +32,8 @@ class Composite(models.Model):
 
   def save_data_file(self):
     # save data on all cell instances
+    # data_file_name =
+    # with op
     pass
 
   def get_or_create_data_file(self, root, file_name):
@@ -126,8 +129,6 @@ class Channel(models.Model):
       mask = mask_mask.load()
 
       t_data = list(filter(lambda d: int(d['ImageNumber'])-1==t, data))
-      for D in t_data:
-        print(D['AreaShape_Center_X'], D['AreaShape_Center_Y'], D['Number_Object_Number'], D['ObjectNumber'])
 
       markers = marker_channel.markers.filter(track_instance__t=t)
       for marker in markers:
@@ -145,21 +146,35 @@ class Channel(models.Model):
                                                cell=cell,
                                                mask=mask_mask,
                                                marker=marker,
-                                               gray_value_id=mask[marker.c, marker.r])
+                                               gray_value_id=mask[marker.r, marker.c])
 
-        print(t, marker, marker.r, marker.c, mask[marker.c, marker.r])
+        print(t, marker, marker.r, marker.c, mask[marker.r, marker.c])
 
         cell_mask_data = list(filter(lambda d: int(d['ObjectNumber'])==cell_mask.gray_value_id, t_data))[0]
 
-
-
         # 4. assign data
-        cell_mask.AreaShape_Area = float(cell_mask_data['AreaShape_Area'])
-        cell_mask.t = t
-        cell_mask.AreaShape_Perimeter = float(cell_mask_data['AreaShape_Perimeter'])
         cell_mask.r = cell_mask.marker.r
         cell_mask.c = cell_mask.marker.c
+        cell_mask.t = t
+        cell_mask.AreaShape_Area = float(cell_mask_data['AreaShape_Area'])
+        cell_mask.AreaShape_Compactness = float(cell_mask_data['AreaShape_Compactness'])
+        cell_mask.AreaShape_Eccentricity = float(cell_mask_data['AreaShape_Eccentricity'])
+        cell_mask.AreaShape_EulerNumber = float(cell_mask_data['AreaShape_EulerNumber'])
+        cell_mask.AreaShape_Extent = float(cell_mask_data['AreaShape_Extent'])
+        cell_mask.AreaShape_FormFactor = float(cell_mask_data['AreaShape_FormFactor'])
+        cell_mask.AreaShape_MajorAxisLength = float(cell_mask_data['AreaShape_MajorAxisLength'])
+        cell_mask.AreaShape_MaximumRadius = float(cell_mask_data['AreaShape_MaximumRadius'])
+        cell_mask.AreaShape_MeanRadius = float(cell_mask_data['AreaShape_MeanRadius'])
+        cell_mask.AreaShape_MedianRadius = float(cell_mask_data['AreaShape_MedianRadius'])
+        cell_mask.AreaShape_MinorAxisLength = float(cell_mask_data['AreaShape_MinorAxisLength'])
+        cell_mask.AreaShape_Orientation = float(cell_mask_data['AreaShape_Orientation'])
+        cell_mask.AreaShape_Perimeter = float(cell_mask_data['AreaShape_Perimeter'])
+        cell_mask.AreaShape_Solidity = float(cell_mask_data['AreaShape_Solidity'])
+
         cell_mask.save()
+
+        # for now
+        cell_instance.set_from_masks()
 
   def segment_regions(self, region_marker_channel_name):
     pass
@@ -215,48 +230,21 @@ class Channel(models.Model):
       print('primary for composite {} {} {} channel {} has already been created.'.format(self.composite.experiment.name, self.composite.series.name, self.composite.id_token, self.name))
       return '{}-primary'.format(self.name)
 
-  def region_primary(self):
-    if self.composite.channels.filter(name='{}-regions'.format(self.name)).count()==0:
-      if self.region_markers.count()!=0:
-        # 1. loop through time series
-        for t in range(self.composite.series.ts):
-          # load all markers for this frame
-          markers = self.region_markers.filter(region_track_instance__t=t)
+  def outline(self, outline_channel=None):
+    '''
+    Use cells to overlay outlines on images. Take masks from outline_channel or same channel if None.
+    '''
 
-          blank_sum = np.zeros(self.composite.shape()) # gather all primaries
+    pass
 
-          for name in self.region_labels():
+    # if outline_channel is None:
+    #
+    #
+    # else:
 
-            # markers per region
-            region_markers = markers.filter(region_track__name=name)
 
-            # blank image
-            blank = np.zeros(self.composite.shape())
-
-            for marker in region_markers:
-              blank[marker.r, marker.c] = 255
-
-            for r in range(blank.shape[0]):
-              for c in range(blank.shape[1]):
-                print('region primary for composite {} {} {} channel {} | t{}/{} region {} r{} c{}'.format(self.composite.experiment.name, self.composite.series.name, self.composite.id_token, self.name, t, self.composite.series.ts-1, name, r, c), end='\n' if t==self.composite.series.ts-1 else '\r')
-                up = blank[:r,c]
-                down = blank[r:,c]
-                left = blank[r,:c]
-                right = blank[r,c:]
-                if up.sum()>0 and down.sum()>0 and left.sum()>0 and right.sum()>0:
-                  blank[r,c] = 255
-
-            blank_sum += blank
-
-          # create channel and add blank sum
-          region_channel, region_channel_created = self.composite.channels.get_or_create(name='{}-regions'.format(self.name))
-          blank_sum_gon, blank_sum_gon_created = region_channel.get_or_create_gon(blank_sum, t)
-
-      else:
-        print('region primary for composite {} {} {} channel {} | no region markers have been defined.'.format(self.composite.experiment.name, self.composite.series.name, self.composite.id_token, self.name))
-
-    else:
-      print('region primary for composite {} {} {} channel {} has already been created.'.format(self.composite.experiment.name, self.composite.series.name, self.composite.id_token, self.name))
+  def label(self, label_channel=None):
+    pass
 
 class Gon(models.Model):
   # connections
@@ -506,6 +494,12 @@ class DataFile(models.Model):
             line_dict[headers[i]] = token
           self.data.append(line_dict)
     return self.data
+
+  def save_data(self):
+    with open(self.url, 'w+') as df:
+      df.write(headers)
+      for line in self.data:
+        df.write(line)
 
     # parse cell profiler results spreadsheet into array that can be used to make cell instances
     # 1. generate dictionary keys from title line
