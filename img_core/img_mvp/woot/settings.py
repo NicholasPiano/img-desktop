@@ -33,6 +33,7 @@ path.append(DJANGO_ROOT)
 
 DATA_ROOT = '/Volumes/transport/data/puzzle/'
 LIF_ROOT = join(DATA_ROOT, 'lif')
+BACKUP_ROOT = join(DATA_ROOT, 'backup')
 ########## END PATH CONFIGURATION
 
 
