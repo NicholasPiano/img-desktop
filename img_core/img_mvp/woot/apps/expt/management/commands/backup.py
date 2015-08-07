@@ -41,7 +41,7 @@ class Command(BaseCommand):
     # methods
     def datetime_from_path(path):
       data = re.match(path_template_rx, path).groupdict()
-      return datetime.datetime(year=data['year'], month=data['month'], day=data['day'], hour=data['hour'], minute=data['minute'], second=data['second'])
+      return datetime.datetime(year=int(data['year']), month=int(data['month']), day=int(data['day']), hour=int(data['hour']), minute=int(data['minute']), second=int(data['second']))
 
     def path_from_datetime(datetime):
       return path_template_rv.format(datetime.year, datetime.month, datetime.day, datetime.hour, datetime.minute, datetime.second)
@@ -69,7 +69,7 @@ class Command(BaseCommand):
     # sh.copy2(db_path, join(now_path, 'img_db.sqlite3'))
     print('copying db file from {} to {}'.format(db_path, join(now_path, 'img_db.sqlite3')))
 
-    experiment_paths = [p for p in os.listdir(data_path) if exists(join(p, 'img'))]
+    experiment_paths = [p for p in os.listdir(data_path) if 'img' in os.listdir(join(data_path, p))]
     for experiment_path in experiment_paths:
       # - track directory
       print('experiment {}, copying track directory from {} to {}'.format(experiment_path, join(data_path, experiment_path, 'track'), join(now_path, experiment_path, 'track')))
