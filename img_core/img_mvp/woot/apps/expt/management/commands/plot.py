@@ -140,7 +140,7 @@ class Command(BaseCommand):
         else:
           print('Please enter one or two properties from this list:')
           for header, description in plot_headers.items():
-            print(header, description)
+            print('"{}" ... {}'.format(header, description))
 
       else:
         print('Please enter one or two properties:')
