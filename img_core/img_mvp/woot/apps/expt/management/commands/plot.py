@@ -125,7 +125,7 @@ class Command(BaseCommand):
                 cell_y = property_dict[properties[0]]
 
                 ax1.set_ylabel('"{}" ... {}'.format(properties[0], plot_headers[properties[0]]))
-                ax1.plot(cell_x, cell_y, linestyles[i])
+                ax1.plot(cell_x, cell_y, linestyles[i if i<len(linestyles) else 0])
 
             else:
               pass # multiple properties
