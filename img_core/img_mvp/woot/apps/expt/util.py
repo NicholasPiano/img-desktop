@@ -64,3 +64,10 @@ def series_metadata(file_name, series_name):
 
   metadata['tpf_in_seconds'] = tpf_in_seconds
   return metadata
+
+def str_value(v, vs):
+  v_str_len = len(str(v))
+  vs_str_len = len(str(vs))
+
+  diff = vs_str_len - v_str_len
+  return '{}{}'.format('0'*diff, v)

@@ -5,7 +5,7 @@ from django.db import models
 
 # local
 from apps.expt.models import Experiment, Series
-from apps.expt.util import generate_id_token
+from apps.expt.util import generate_id_token, str_value
 from apps.expt.data import *
 from apps.img import algorithms
 
@@ -314,19 +314,19 @@ class Gon(models.Model):
     if not os.path.exists(root):
       os.makedirs(root)
 
-    file_name = template.rv.format(self.experiment.name, self.series.name, self.channel.name, self.t, '{}')
+    file_name = template.rv.format(self.experiment.name, self.series.name, self.channel.name, str_value(self.t, self.series.ts), '{}')
     url = os.path.join(root, file_name)
 
     if len(self.array.shape)==2:
-      imsave(url.format(self.z), self.array)
+      imsave(url.format(str_value(self.z, self.series.zs)), self.array)
       self.paths.create(composite=self.composite if self.composite is not None else self.gon.composite, channel=self.channel, template=template, url=url.format(self.z), file_name=file_name.format(self.z), t=self.t, z=self.z)
 
     else:
       for z in range(self.array.shape[2]):
         plane = self.array[:,:,z].copy()
 
-        imsave(url.format(z+self.z), plane) # z level is offset by that of original gon.
-        self.paths.create(composite=self.composite, channel=self.channel, template=template, url=url.format(self.z), file_name=file_name.format(self.z), t=self.t, z=z+self.z)
+        imsave(url.format(str_value(z+self.z, self.series.zs)), plane) # z level is offset by that of original gon.
+        self.paths.create(composite=self.composite, channel=self.channel, template=template, url=url.format(str_value(self.z, self.series.zs)), file_name=file_name.format(str_value(self.z, self.series.zs)), t=self.t, z=z+self.z)
 
         # create gons
         gon = self.gons.create(experiment=self.composite.experiment, series=self.composite.series, channel=self.channel, template=template)
@@ -459,7 +459,7 @@ class Mask(models.Model):
     if not os.path.exists(root):
       os.makedirs(root)
 
-    self.file_name = template.rv.format(self.experiment.name, self.series.name, self.channel.name, self.t)
+    self.file_name = template.rv.format(self.experiment.name, self.series.name, self.channel.name, str_value(self.t, self.series.ts))
     self.url = os.path.join(root, self.file_name)
 
     imsave(self.url, self.array)
