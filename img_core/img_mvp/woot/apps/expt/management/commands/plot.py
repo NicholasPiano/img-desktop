@@ -129,6 +129,8 @@ class Command(BaseCommand):
             else:
               pass # multiple properties
 
+            plt.show()
+
           else:
             print('Please enter some cells to plot')
 
