@@ -91,24 +91,24 @@ class Command(BaseCommand):
         print('step01 | .lif already extracted for experiment {}, series {}; continuing... '.format(experiment_name, series_name))
 
       # 3. series measurements
-      series_metadata_file_name = join(experiment.inf_path, '{}_s{}.txt'.format(experiment_name, series_name))
-      if not exists(series_metadata_file_name):
+      metadata_file_name = join(experiment.inf_path, '{}.txt'.format(experiment_name))
+      if not exists(metadata_file_name):
 
         # run show inf
         lif_path = join(lif_root, lif_name)
-        print('step01 | Extracting lif metadata for experiment {}, series {}... '.format(experiment_name, series_name))
-        call('{} -nopix -series {} {} > {}'.format(showinf, series_name, lif_path, series_metadata_file_name), shell=True)
+        print('step01 | Extracting lif metadata for experiment {}... '.format(experiment_name))
+        call('{} -nopix -omexml {} > {}'.format(showinf, lif_path, metadata_file_name), shell=True)
 
-      series_metadata = series_metadata_from_file(series_metadata_file_name)
+      series_metadata = series_metadata(metadata_file_name, series_name)
 
-      series.rmop = series_metadata['rmop']
-      series.cmop = series_metadata['cmop']
-      series.zmop = series_metadata['zmop']
-      series.tpf = series_metadata['tpf']
-      series.rs = series_metadata['rs']
-      series.cs = series_metadata['cs']
-      series.zs = series_metadata['zs']
-      series.ts = series_metadata['ts']
+      series.rmop = float(series_metadata['rmop'])
+      series.cmop = float(series_metadata['cmop'])
+      series.zmop = float(series_metadata['zmop'])
+      series.tpf = float(series_metadata['tpf_in_seconds']) / 60.0
+      series.rs = int(series_metadata['rs'])
+      series.cs = int(series_metadata['cs'])
+      series.zs = int(series_metadata['zs'])
+      series.ts = int(series_metadata['ts'])
       series.save()
 
       # 4. import specified series

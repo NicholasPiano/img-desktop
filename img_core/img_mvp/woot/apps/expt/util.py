@@ -28,42 +28,39 @@ def generate_id_token(app_name, obj_name):
 def random_string():
   return ''.join([random.choice(chars) for _ in range(8)]) #8 character string
 
-def series_metadata_from_file(file_name):
+def series_metadata(file_name, series_name):
 
-  value = lambda lines, template: re.match(template, list(filter(lambda l: re.match(template, l) is not None, lines))[0].rstrip()).group(1)
+  def block(whole, start, end):
+    start_block = whole[whole.index(start):]
+    block = start_block[:start_block.index(end)]
 
-  voxel_r_metadata_template = r'HardwareSetting\|ScannerSettingRecord\|dblVoxelX #1: (.*)' # directly to rmop
-  voxel_c_metadata_template = r'HardwareSetting\|ScannerSettingRecord\|dblVoxelY #1: (.*)' # directly to cmop
-  total_z_metadata_template = r'HardwareSetting\|ScannerSettingRecord\|dblSizeZ #1: (.*)' # zmop = <ans> / zs
-  tpf_in_seconds_metadata_template = r'HardwareSetting\|ScannerSettingRecord\|nDelayTime_s #1: (.*)' # tpf = <ans> / 60
-  rs_template = r'HardwareSetting\|ScannerSettingRecord\|nFormatInDimension #1: (.*)'
-  cs_template = r'HardwareSetting\|ScannerSettingRecord\|nFormatOutDimension #1: (.*)'
-  zs_template = r'HardwareSetting\|ScannerSettingRecord\|nSections #1: (.*)'
-  ts_template = r'HardwareSetting\|ScannerSettingRecord\|nRepeatActions #1: (.*)'
+    return block
 
-  metadata = {}
+  content = ''
+  with open(file_name) as omexml:
+    content = omexml.read()
 
-  with open(file_name) as inf_file:
+  # 1. cut the block of text representing the series from the content
+  series_block = block(content, 'Image:{}'.format(series_name), '</Image>')
 
-    lines = inf_file.readlines()
+  # 2. rs, cs, zs, ts, rmop, cmop, zmop
+  # stored in the line
+  # <Pixels ... PhysicalSizeX="3.829397265625" PhysicalSizeY="3.829397265625" PhysicalSizeZ="1.482" ... SizeC="2" SizeT="1" SizeX="256" SizeY="256" SizeZ="1">
+  pixels_line = block(series_block, '<Pixels', '>')
+  pixels_line_template = r'^<.+PhysicalSizeX="(?P<cmop>.+)" PhysicalSizeY="(?P<rmop>.+)" PhysicalSizeZ="(?P<zmop>.+)" SignificantBits=".+" SizeC=".+" SizeT="(?P<ts>.+)" SizeX="(?P<cs>.+)" SizeY="(?P<rs>.+)" SizeZ="(?P<zs>.+)" Type=".+"$'
 
-    voxel_r = float(value(lines, voxel_r_metadata_template))
-    voxel_c = float(value(lines, voxel_c_metadata_template))
+  metadata = re.match(pixels_line_template, pixels_line).groupdict()
 
-    total_z = float(value(lines, total_z_metadata_template))
-    tpf_in_seconds = float(value(lines, tpf_in_seconds_metadata_template))
-    rs = float(value(lines, rs_template))
-    cs = float(value(lines, cs_template))
-    zs = float(value(lines, zs_template))
-    ts = float(value(lines, ts_template))
+  # 3. finally, tpf. A little more complicated. Need to find the line in the planes section where C,T,Z = 0,1,0 -> then take DeltaT
+  # <Plane DeltaT="458.7209987640381" PositionX="0.06314316103006" PositionY="0.04187452934148" PositionZ="0.0" TheC="0" TheT="1" TheZ="0"/>
 
-    metadata['rmop'] = voxel_r
-    metadata['cmop'] = voxel_c
-    metadata['zmop'] = total_z / zs
-    metadata['tpf'] = tpf_in_seconds / 60.0
-    metadata['rs'] = int(rs)
-    metadata['cs'] = int(cs)
-    metadata['zs'] = int(zs)
-    metadata['ts'] = int(ts)
+  tpf_in_seconds = 0
+  line_template = r'^<Plane DeltaT="(?P<delta_t>.+)" PositionX=".+" PositionY=".+" PositionZ=".+" TheC="(?P<c>.+)" TheT="(?P<t>.+)" TheZ="(?P<z>.+)"/>$'
+  lines = [l for l in series_block.split('\n') if 'Plane DeltaT' in l]
+  for line in lines:
+    line_dict = re.match(line_template, line.strip()).groupdict()
+    if (line_dict['c'], line_dict['t'], line_dict['z']) == ('0','1','0'):
+      tpf_in_seconds = float(line_dict['delta_t'])
 
+  metadata['tpf_in_seconds'] = tpf_in_seconds
   return metadata
