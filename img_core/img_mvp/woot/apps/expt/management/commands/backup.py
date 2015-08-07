@@ -92,7 +92,7 @@ class Command(BaseCommand):
       os.remove(db_path)
       new_db_path = join(previous_path, 'img_db.sqlite3')
       print('Adding new db {}'.format(new_db_path))
-      sh.copy2(new_db_path, db_path)
+      sh.copy2(join(backup_path, new_db_path), db_path)
 
       for experiment_path in experiment_paths:
         # - track directory
