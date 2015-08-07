@@ -99,16 +99,16 @@ class Command(BaseCommand):
         print('step01 | Extracting lif metadata for experiment {}... '.format(experiment_name))
         call('{} -nopix -omexml {} > {}'.format(showinf, lif_path, metadata_file_name), shell=True)
 
-      series_metadata = series_metadata(metadata_file_name, series_name)
+      metadata = series_metadata(metadata_file_name, series_name)
 
-      series.rmop = float(series_metadata['rmop'])
-      series.cmop = float(series_metadata['cmop'])
-      series.zmop = float(series_metadata['zmop'])
-      series.tpf = float(series_metadata['tpf_in_seconds']) / 60.0
-      series.rs = int(series_metadata['rs'])
-      series.cs = int(series_metadata['cs'])
-      series.zs = int(series_metadata['zs'])
-      series.ts = int(series_metadata['ts'])
+      series.rmop = float(metadata['rmop'])
+      series.cmop = float(metadata['cmop'])
+      series.zmop = float(metadata['zmop'])
+      series.tpf = float(metadata['tpf_in_seconds']) / 60.0
+      series.rs = int(metadata['rs'])
+      series.cs = int(metadata['cs'])
+      series.zs = int(metadata['zs'])
+      series.ts = int(metadata['ts'])
       series.save()
 
       # 4. import specified series
