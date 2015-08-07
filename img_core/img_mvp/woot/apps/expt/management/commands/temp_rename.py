@@ -69,9 +69,12 @@ class Command(BaseCommand):
           new_url = join(dirname(old_url), new_file_name)
 
           print(old_url, new_file_name, new_url)
+          path.file_name = new_file_name
+          path.url = new_url
+          path.save()
 
           # copy old image to new image
-          # sh.move(old_url, new_url)
+          sh.move(old_url, new_url)
 
     else:
       print('Please enter an experiment')
