@@ -144,4 +144,16 @@ def mod_tile(composite, mod_id, algorithm):
 def mod_label(composite, mod_id, algorithm):
 
   for t in range(composite.series.ts):
-    
+    zbf_gon = composite.gons.get(t=t, channel__name='-zbf')
+    zbf = zbf_gon.load()
+
+    cell_instances = composite.series.cell_instances.filter(t=t)
+
+    plt.imshow(zbf, cmap='Greys_r')
+    for cell_instance in cell_instances:
+      plt.scatter(cell_instance.c, cell_instance.r, color='red', s=5)
+      plt.text(cell_instance.c+5, cell_instance.r+5, '{}'.format(cell_instance.cell.pk), fontsize=8, color='white')
+
+    plt.text(-50, -50, 'expt={} series={} t={}'.format(series.experiment.name, series.name, t), fontsize=15, color='black')
+    plt.savefig(os.path.join(series.experiment.video_path, 'labels', 'labels_{}_s{}_t{}.png'.format(composite.experiment.name, composite.series.name, str_value(t, composite.series.ts))), dpi=100)
+    plt.cla()
