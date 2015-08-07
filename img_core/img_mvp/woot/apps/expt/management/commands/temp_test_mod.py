@@ -53,20 +53,20 @@ class Command(BaseCommand):
       composite = series.composites.get()
 
       # 5. Tile mod
-      # tile_mod = composite.mods.create(id_token=generate_id_token('img', 'Mod'), algorithm='mod_tile')
-      #
-      # # Run mod
-      # print('step02 | processing mod_tile...', end='\r')
-      # tile_mod.run()
-      # print('step02 | processing mod_tile... done.{}'.format(spacer))
-
-      # 6. Label mod
-      label_mod = composite.mods.create(id_token=generate_id_token('img', 'Mod'), algorithm='mod_label')
+      tile_mod = composite.mods.create(id_token=generate_id_token('img', 'Mod'), algorithm='mod_tile')
 
       # Run mod
-      print('step02 | processing mod_label...', end='\r')
-      label_mod.run()
-      print('step02 | processing mod_label... done.{}'.format(spacer))
+      print('step02 | processing mod_tile...', end='\r')
+      tile_mod.run()
+      print('step02 | processing mod_tile... done.{}'.format(spacer))
+
+      # 6. Label mod
+      # label_mod = composite.mods.create(id_token=generate_id_token('img', 'Mod'), algorithm='mod_label')
+      #
+      # # Run mod
+      # print('step02 | processing mod_label...', end='\r')
+      # label_mod.run()
+      # print('step02 | processing mod_label... done.{}'.format(spacer))
 
     else:
       print('Please enter an experiment')
