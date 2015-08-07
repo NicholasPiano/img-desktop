@@ -87,4 +87,5 @@ class Command(BaseCommand):
     # revert?
     if options['revert']:
       # recreate system from last backup
-      pass
+      print('Reverting...')
+      print(previous_path)
