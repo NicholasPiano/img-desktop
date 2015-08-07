@@ -14,6 +14,7 @@ import os
 from os.path import join, exists
 from optparse import make_option
 from subprocess import call
+import shutil as sh
 
 spacer = ' ' *  20
 
@@ -141,6 +142,10 @@ class Command(BaseCommand):
 
       else:
         print('step01 | zmod already exists...')
+
+      # 7. copy zmod (for tracking) to ij directory
+      for gon in composite.channels.get(name='-zmod').gons.all():
+        sh.copy2(gon.paths.get().url, join(composite.experiment.ij_path, gon.paths.get().file_name))
 
     else:
       print('Please enter an experiment')
