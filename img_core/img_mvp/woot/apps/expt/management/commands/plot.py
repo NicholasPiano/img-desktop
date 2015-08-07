@@ -59,7 +59,7 @@ class Command(BaseCommand):
 
     # vars
     colors = ('b', 'g', 'r', 'c', 'm', 'y', 'k')
-    linestyles = ['_', '-', '--', ':']
+    linestyles = ['-', '-+', '--', '-*']
     experiment_name = options['expt']
     series_name = options['series']
     cells = [int(c) for c in options['cells'].split(',')]
@@ -124,6 +124,7 @@ class Command(BaseCommand):
                 }
                 cell_y = property_dict[properties[0]]
 
+                ax1.set_ylabel('"{}" ... {}'.format(properties[0], property_dict[properties[0]]))
                 ax1.plot(cell_x, cell_y, linestyles[i])
 
             else:
