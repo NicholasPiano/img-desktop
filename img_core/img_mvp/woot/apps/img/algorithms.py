@@ -115,7 +115,6 @@ def mod_zmod(composite, mod_id, algorithm):
     zcomp_gon.save()
 
 def mod_tile(composite, mod_id, algorithm):
-  # channels
 
   for t in range(composite.series.ts):
     zbf_gon = composite.gons.get(t=t, channel__name='-zbf')
@@ -140,7 +139,9 @@ def mod_tile(composite, mod_id, algorithm):
 
     whole = np.concatenate((top_half, bottom_half), axis=1)
 
-    imsave(os.path.join(composite.experiment.video_path, 'tile_{}_s{}_t{}.tiff'.format(composite.experiment.name, composite.series.name, str_value(t, composite.series.ts))), whole)
+    imsave(os.path.join(composite.experiment.video_path, 'tile', 'tile_{}_s{}_t{}.tiff'.format(composite.experiment.name, composite.series.name, str_value(t, composite.series.ts))), whole)
 
 def mod_label(composite, mod_id, algorithm):
-  pass
+
+  for t in range(composite.series.ts):
+    
