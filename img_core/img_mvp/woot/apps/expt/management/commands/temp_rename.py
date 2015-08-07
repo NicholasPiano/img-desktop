@@ -11,9 +11,10 @@ from apps.expt.util import *
 
 # util
 import os
-from os.path import join, exists, splitext
+from os.path import join, exists, splitext, dirname
 from optparse import make_option
 from subprocess import call
+import shutil as sh
 
 spacer = ' ' *  20
 
@@ -52,6 +53,7 @@ class Command(BaseCommand):
 
       # paths, image files,
       composite = series.composites.get()
+      template = composite.templates.get(name='source')
 
       channels = ['-zbf', '-zcomp', '-zmean', '-zmod']
 
@@ -59,7 +61,17 @@ class Command(BaseCommand):
         channel = composite.channels.get(name=channel_name)
 
         for path in channel.paths.all():
-          print(path.url)
+
+          old_url = path.url
+
+          # change path.file_name, path.url
+          new_file_name = template.rv.format('050714', '13', channel_name, str_value(path.t, series.ts), str_value(path.z, series.zs))
+          new_url = join(dirname(old_url), new_file_name)
+
+          print(old_url, new_file_name, new_url)
+
+          # copy old image to new image
+          # sh.move(old_url, new_url)
 
     else:
       print('Please enter an experiment')
