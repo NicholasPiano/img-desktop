@@ -2,7 +2,7 @@
 
 # local
 from apps.img.util import cut_to_black, create_bulk_from_image_set, nonzero_mean, edge_image
-from apps.expt.util import generate_id_token
+from apps.expt.util import generate_id_token, str_value
 
 # util
 import os
@@ -114,37 +114,33 @@ def mod_zmod(composite, mod_id, algorithm):
     zcomp_gon.save_array(composite.series.experiment.composite_path, template)
     zcomp_gon.save()
 
-def mod_primary(composite, mod_id, algorithm):
-  # paths
-  template = composite.templates.get(name='source') # SOURCE TEMPLATE
-
-  # channel
-  channel, channel_created = composite.channels.get_or_create(name='-primary')
-
-  # iterate
-  for t in range(composite.series.ts):
-    print(t)
-
-    # get markers
-    markers = composite.experiment.markers.filter(t=t)
-    primary = np.zeros(composite.series.shape(d=2))
-
-    for marker in markers:
-      primary[marker.r-3:marker.r+2, marker.c-3:marker.c+2] = 255
-
-    # make blank image and print dots
-    gon = composite.gons.create(experiment=composite.experiment, series=composite.series, channel=channel, template=template)
-    gon.id_token = generate_id_token('img','Gon')
-    gon.set_origin(0,0,0,t)
-    gon.set_extent(composite.series.rs,composite.series.cs,1)
-
-    gon.array = primary.copy()
-
-    gon.save_array(composite.experiment.composite_path, template)
-    gon.save()
-
 def mod_tile(composite, mod_id, algorithm):
-  pass
+  # channels
+
+  for t in range(composite.series.ts):
+    zbf_gon = composite.gons.get(t=t, channel__name='-zbf')
+    zcomp_gon = composite.gons.get(t=t, channel__name='-zcomp')
+    mask_mask = composite.masks.get(t=t)
+
+    zbf = zbf_gon.load()
+    zcomp = zcomp_gon.load()
+    mask = mask_mask.load()
+
+    mask_outline = edge_image(mask>0)
+
+    zbf_mask = zbf.copy()
+    zbf_mask[mask_outline>0] = 255
+
+    zcomp_mask = zcomp.copy()
+    zcomp_mask[mask_outline>0] = 255
+
+    # tile zbf, zbf_mask, zcomp, zcomp_mask
+    top_half = np.concatenate((zbf, zbf_mask), axis=0)
+    bottom_half = np.concatenate((zcomp, zcomp_mask), axis=0)
+
+    whole = np.concatenate((top_half, bottom_half), axis=1)
+
+    imsave(os.path.join(composite.experiment.video_path, 'tile_{}_s{}_t{}.tiff'.format(composite.experiment.name, composite.series.name, str_value(t, composite.series.ts)), whole)
 
 def mod_label(composite, mod_id, algorithm):
   pass
