@@ -99,36 +99,39 @@ class Command(BaseCommand):
 
             ax1 = fig.add_subplot(111)
             ax1.set_xlabel('Time (min)')
-            # ax1.set_xlim([0,series.ts*series.tpf])
+            ax1.set_ylabel('"{}" ... {}'.format(properties[0], plot_headers[properties[0]]))
 
-            if len(properties)==1:
-              for i, cell_id in enumerate(cells):
-                cell = series.cells.get(pk=cell_id)
-                cell_x = [cell_instance.T() for cell_instance in cell.instances.order_by('t')]
+            for i, cell_id in enumerate(cells):
+              cell = series.cells.get(pk=cell_id)
+              cell_x = [cell_instance.T() for cell_instance in cell.instances.order_by('t')]
 
-                property_dict = {
-                  'r': [cell_instance.R() for cell_instance in cell.instances.order_by('t')],
-                  'c': [cell_instance.C() for cell_instance in cell.instances.order_by('t')],
-                  'z': [cell_instance.Z() for cell_instance in cell.instances.order_by('t')],
-                  'vr': [cell_instance.VR() for cell_instance in cell.instances.order_by('t')],
-                  'vc': [cell_instance.VC() for cell_instance in cell.instances.order_by('t')],
-                  'vz': [cell_instance.VZ() for cell_instance in cell.instances.order_by('t')],
-                  'v': [cell_instance.V() for cell_instance in cell.instances.order_by('t')],
-                  'area': [cell_instance.A() for cell_instance in cell.instances.order_by('t')],
-                  'compactness': [cell_instance.AreaShape_Compactness for cell_instance in cell.instances.order_by('t')],
-                  'eccentricity': [cell_instance.AreaShape_Eccentricity for cell_instance in cell.instances.order_by('t')],
-                  'eulerNumber': [cell_instance.AreaShape_EulerNumber for cell_instance in cell.instances.order_by('t')],
-                  'formFactor': [cell_instance.AreaShape_FormFactor for cell_instance in cell.instances.order_by('t')],
-                  'orientation': [cell_instance.AreaShape_Orientation for cell_instance in cell.instances.order_by('t')],
-                  'solidity': [cell_instance.AreaShape_Solidity for cell_instance in cell.instances.order_by('t')],
-                }
-                cell_y = property_dict[properties[0]]
+              property_dict = {
+                'r': [cell_instance.R() for cell_instance in cell.instances.order_by('t')],
+                'c': [cell_instance.C() for cell_instance in cell.instances.order_by('t')],
+                'z': [cell_instance.Z() for cell_instance in cell.instances.order_by('t')],
+                'vr': [cell_instance.VR() for cell_instance in cell.instances.order_by('t')],
+                'vc': [cell_instance.VC() for cell_instance in cell.instances.order_by('t')],
+                'vz': [cell_instance.VZ() for cell_instance in cell.instances.order_by('t')],
+                'v': [cell_instance.V() for cell_instance in cell.instances.order_by('t')],
+                'area': [cell_instance.A() for cell_instance in cell.instances.order_by('t')],
+                'compactness': [cell_instance.AreaShape_Compactness for cell_instance in cell.instances.order_by('t')],
+                'eccentricity': [cell_instance.AreaShape_Eccentricity for cell_instance in cell.instances.order_by('t')],
+                'eulerNumber': [cell_instance.AreaShape_EulerNumber for cell_instance in cell.instances.order_by('t')],
+                'formFactor': [cell_instance.AreaShape_FormFactor for cell_instance in cell.instances.order_by('t')],
+                'orientation': [cell_instance.AreaShape_Orientation for cell_instance in cell.instances.order_by('t')],
+                'solidity': [cell_instance.AreaShape_Solidity for cell_instance in cell.instances.order_by('t')],
+              }
+              cell_y = property_dict[properties[0]]
 
-                ax1.set_ylabel('"{}" ... {}'.format(properties[0], plot_headers[properties[0]]))
-                ax1.plot(cell_x, cell_y, linestyles[i if i<len(linestyles) else 0], label='cell {}'.format(cell_id))
+              ax1.plot(cell_x, cell_y, linestyles[i if i<len(linestyles) else 0], label='cell {}'.format(cell_id))
 
-            else:
-              pass # multiple properties
+            if len(properties)>1:
+              ax2 = ax1.twiny()
+
+              ax2.set_xlabel('Time (frames)')
+              ax2.xaxis.set_label_position('top')
+              ax2.set_ylabel('"{}" ... {}'.format(properties[1], plot_headers[properties[1]]))
+
 
             plt.title('{} for cells {}'.format(properties, cells))
             plt.legend()
