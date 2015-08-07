@@ -90,7 +90,7 @@ class Command(BaseCommand):
       if len(properties) < 2 and len(properties) > 0:
         flag = True
         for p in properties:
-          if p not in headers:
+          if p not in plot_headers.keys():
             flag = False
 
         if flag:
