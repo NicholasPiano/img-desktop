@@ -99,7 +99,7 @@ class Command(BaseCommand):
 
             ax1 = fig.add_subplot(111)
             ax1.set_xlabel('Time (min)')
-            ax1.set_xlim([0,series.ts*series.tpf])
+            # ax1.set_xlim([0,series.ts*series.tpf])
 
             if len(properties)==1:
               for i, cell_id in enumerate(cells):
@@ -124,12 +124,13 @@ class Command(BaseCommand):
                 }
                 cell_y = property_dict[properties[0]]
 
-                ax1.set_ylabel('"{}" ... {}'.format(properties[0], property_dict[properties[0]]))
+                ax1.set_ylabel('"{}" ... {}'.format(properties[0], plot_headers[properties[0]]))
                 ax1.plot(cell_x, cell_y, linestyles[i])
 
             else:
               pass # multiple properties
 
+            plt.title('{} for cells {}'.format(properties, cells))
             plt.show()
 
           else:
