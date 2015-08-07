@@ -116,6 +116,10 @@ def mod_zmod(composite, mod_id, algorithm):
 
 def mod_tile(composite, mod_id, algorithm):
 
+  tile_path = os.path.join(composite.experiment.video_path, 'tile')
+  if not os.path.exists(tile_path):
+    os.makedirs(tile_path)
+
   for t in range(composite.series.ts):
     zbf_gon = composite.gons.get(t=t, channel__name='-zbf')
     zcomp_gon = composite.gons.get(t=t, channel__name='-zcomp')
@@ -139,9 +143,13 @@ def mod_tile(composite, mod_id, algorithm):
 
     whole = np.concatenate((top_half, bottom_half), axis=1)
 
-    imsave(os.path.join(composite.experiment.video_path, 'tile', 'tile_{}_s{}_t{}.tiff'.format(composite.experiment.name, composite.series.name, str_value(t, composite.series.ts))), whole)
+    imsave(os.path.join(tile_path, 'tile_{}_s{}_t{}.tiff'.format(composite.experiment.name, composite.series.name, str_value(t, composite.series.ts))), whole)
 
 def mod_label(composite, mod_id, algorithm):
+
+  label_path = os.path.join(composite.experiment.video_path, 'labels')
+  if not os.path.exists(label_path):
+    os.makedirs(label_path)
 
   for t in range(composite.series.ts):
     zbf_gon = composite.gons.get(t=t, channel__name='-zbf')
@@ -155,5 +163,5 @@ def mod_label(composite, mod_id, algorithm):
       plt.text(cell_instance.c+5, cell_instance.r+5, '{}'.format(cell_instance.cell.pk), fontsize=8, color='white')
 
     plt.text(-50, -50, 'expt={} series={} t={}'.format(composite.experiment.name, composite.series.name, t), fontsize=15, color='black')
-    plt.savefig(os.path.join(composite.experiment.video_path, 'labels', 'labels_{}_s{}_t{}.png'.format(composite.experiment.name, composite.series.name, str_value(t, composite.series.ts))), dpi=100)
+    plt.savefig(os.path.join(label_path, 'labels_{}_s{}_t{}.png'.format(composite.experiment.name, composite.series.name, str_value(t, composite.series.ts))), dpi=100)
     plt.cla()
