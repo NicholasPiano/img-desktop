@@ -272,6 +272,9 @@ class CellInstance(models.Model):
     # some decision making can be made here, but what I will do for now is just take the only make it has
     mask = self.masks.get()
 
+    self.r = mask.r
+    self.c = mask.c
+    self.t = mask.t
     self.AreaShape_Area = mask.AreaShape_Area
     self.AreaShape_Compactness = mask.AreaShape_Compactness
     self.AreaShape_Eccentricity = mask.AreaShape_Eccentricity
@@ -286,6 +289,16 @@ class CellInstance(models.Model):
     self.AreaShape_Orientation = mask.AreaShape_Orientation
     self.AreaShape_Perimeter = mask.AreaShape_Perimeter
     self.AreaShape_Solidity = mask.AreaShape_Solidity
+    self.save()
+
+  def set_from_markers(self):
+    # some decision making can be made here, but what I will do for now is just take the only make it has
+    marker = self.track_instance.markers.get()
+
+    self.r = marker.r
+    self.c = marker.c
+    self.t = marker.t
+    self.save()
 
 class CellMask(models.Model):
   # connections

@@ -119,12 +119,9 @@ class Channel(models.Model):
     # 5. create cells and cell instances from tracks
     cell_data_file = self.composite.data_files.get(id_token=unique, data_type='Cells')
     data = cell_data_file.load()
-    print('data')
-    print(data)
 
     # load masks and associate with grayscale id's
     for t in range(self.composite.series.ts):
-      print(t)
       mask_mask = mask_channel.masks.get(t=t)
       mask = mask_mask.load()
 
@@ -141,40 +138,47 @@ class Channel(models.Model):
                                                                             track_instance=marker.track_instance)
 
         # 3. create cell mask
-        cell_mask = cell_instance.masks.create(experiment=cell.experiment,
-                                               series=cell.series,
-                                               cell=cell,
-                                               mask=mask_mask,
-                                               marker=marker,
-                                               gray_value_id=mask[marker.r, marker.c])
+        gray_value_id = mask[marker.r, marker.c]
+        if gray_value_id!=0:
+          cell_mask = cell_instance.masks.create(experiment=cell.experiment,
+                                                 series=cell.series,
+                                                 cell=cell,
+                                                 mask=mask_mask,
+                                                 marker=marker,
+                                                 gray_value_id=gray_value_id)
 
-        print(t, marker, marker.r, marker.c, mask[marker.r, marker.c])
+          cell_mask_data = list(filter(lambda d: int(d['ObjectNumber'])==cell_mask.gray_value_id, t_data))[0]
 
-        cell_mask_data = list(filter(lambda d: int(d['ObjectNumber'])==cell_mask.gray_value_id, t_data))[0]
+          # 4. assign data
+          cell_mask.r = cell_mask.marker.r
+          cell_mask.c = cell_mask.marker.c
+          cell_mask.t = t
+          cell_mask.AreaShape_Area = float(cell_mask_data['AreaShape_Area'])
+          cell_mask.AreaShape_Compactness = float(cell_mask_data['AreaShape_Compactness'])
+          cell_mask.AreaShape_Eccentricity = float(cell_mask_data['AreaShape_Eccentricity'])
+          cell_mask.AreaShape_EulerNumber = float(cell_mask_data['AreaShape_EulerNumber'])
+          cell_mask.AreaShape_Extent = float(cell_mask_data['AreaShape_Extent'])
+          cell_mask.AreaShape_FormFactor = float(cell_mask_data['AreaShape_FormFactor'])
+          cell_mask.AreaShape_MajorAxisLength = float(cell_mask_data['AreaShape_MajorAxisLength'])
+          cell_mask.AreaShape_MaximumRadius = float(cell_mask_data['AreaShape_MaximumRadius'])
+          cell_mask.AreaShape_MeanRadius = float(cell_mask_data['AreaShape_MeanRadius'])
+          cell_mask.AreaShape_MedianRadius = float(cell_mask_data['AreaShape_MedianRadius'])
+          cell_mask.AreaShape_MinorAxisLength = float(cell_mask_data['AreaShape_MinorAxisLength'])
+          cell_mask.AreaShape_Orientation = float(cell_mask_data['AreaShape_Orientation'])
+          cell_mask.AreaShape_Perimeter = float(cell_mask_data['AreaShape_Perimeter'])
+          cell_mask.AreaShape_Solidity = float(cell_mask_data['AreaShape_Solidity'])
 
-        # 4. assign data
-        cell_mask.r = cell_mask.marker.r
-        cell_mask.c = cell_mask.marker.c
-        cell_mask.t = t
-        cell_mask.AreaShape_Area = float(cell_mask_data['AreaShape_Area'])
-        cell_mask.AreaShape_Compactness = float(cell_mask_data['AreaShape_Compactness'])
-        cell_mask.AreaShape_Eccentricity = float(cell_mask_data['AreaShape_Eccentricity'])
-        cell_mask.AreaShape_EulerNumber = float(cell_mask_data['AreaShape_EulerNumber'])
-        cell_mask.AreaShape_Extent = float(cell_mask_data['AreaShape_Extent'])
-        cell_mask.AreaShape_FormFactor = float(cell_mask_data['AreaShape_FormFactor'])
-        cell_mask.AreaShape_MajorAxisLength = float(cell_mask_data['AreaShape_MajorAxisLength'])
-        cell_mask.AreaShape_MaximumRadius = float(cell_mask_data['AreaShape_MaximumRadius'])
-        cell_mask.AreaShape_MeanRadius = float(cell_mask_data['AreaShape_MeanRadius'])
-        cell_mask.AreaShape_MedianRadius = float(cell_mask_data['AreaShape_MedianRadius'])
-        cell_mask.AreaShape_MinorAxisLength = float(cell_mask_data['AreaShape_MinorAxisLength'])
-        cell_mask.AreaShape_Orientation = float(cell_mask_data['AreaShape_Orientation'])
-        cell_mask.AreaShape_Perimeter = float(cell_mask_data['AreaShape_Perimeter'])
-        cell_mask.AreaShape_Solidity = float(cell_mask_data['AreaShape_Solidity'])
+          cell_mask.save()
 
-        cell_mask.save()
+          # for now
+          cell_instance.set_from_masks()
 
-        # for now
-        cell_instance.set_from_masks()
+        else:
+          # for now
+          cell_instance.set_from_markers()
+
+    # 6. calculate cell velocities
+
 
   def segment_regions(self, region_marker_channel_name):
     pass
