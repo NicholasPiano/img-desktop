@@ -132,7 +132,7 @@ class Command(BaseCommand):
       channel.segment(marker_channel_name)
 
       # 4. Export data to data directory
-      series.export_data()
+      # series.export_data()
 
     else:
       print('Please enter an experiment')
