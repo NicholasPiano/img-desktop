@@ -241,25 +241,28 @@ class CellInstance(models.Model):
                                                                                                   self.AreaShape_Perimeter,
                                                                                                   self.AreaShape_Solidity)
   def line(self):
-    return '{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}\n'.format(self.experiment.name,
-                                                                               self.series.name,
-                                                                               self.cell.pk,
-                                                                               self.R(),
-                                                                               self.C(),
-                                                                               self.Z(),
-                                                                               self.t,
-                                                                               self.T(),
-                                                                               self.VR(),
-                                                                               self.VC(),
-                                                                               self.VZ(),
-                                                                               self.region.index if self.region is not None else 0,
-                                                                               self.A(),
-                                                                               self.AreaShape_Compactness,
-                                                                               self.AreaShape_Eccentricity,
-                                                                               self.AreaShape_EulerNumber,
-                                                                               self.AreaShape_FormFactor,
-                                                                               self.AreaShape_Orientation,
-                                                                               self.AreaShape_Solidity)
+    return '{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}\n'.format(
+      self.experiment.name,
+      self.series.name,
+      self.cell.pk,
+      self.R(),
+      self.C(),
+      self.Z(),
+      self.t,
+      self.T(),
+      self.VR(),
+      self.VC(),
+      self.VZ(),
+      self.V(),
+      self.region.index if self.region is not None else 0,
+      self.A(),
+      self.AreaShape_Compactness,
+      self.AreaShape_Eccentricity,
+      self.AreaShape_EulerNumber,
+      self.AreaShape_FormFactor,
+      self.AreaShape_Orientation,
+      self.AreaShape_Solidity
+    )
 
   def set_from_masks(self):
     # some decision making can be made here, but what I will do for now is just take the only make it has
