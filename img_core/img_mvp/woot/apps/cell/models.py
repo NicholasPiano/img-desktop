@@ -266,7 +266,7 @@ class CellInstance(models.Model):
 
   def set_from_masks(self):
     # some decision making can be made here, but what I will do for now is just take the only make it has
-    mask = self.masks.get()
+    mask = self.masks.all()[0]
 
     self.r = mask.r
     self.c = mask.c
@@ -289,7 +289,7 @@ class CellInstance(models.Model):
 
   def set_from_markers(self):
     # some decision making can be made here, but what I will do for now is just take the only make it has
-    marker = self.track_instance.markers.get()
+    marker = self.track_instance.markers.all()[0]
 
     self.r = marker.r
     self.c = marker.c
