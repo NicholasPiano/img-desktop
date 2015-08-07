@@ -69,7 +69,7 @@ class Command(BaseCommand):
     # sh.copy2(db_path, join(now_path, 'img_db.sqlite3'))
     print('copying db file from {} to {}'.format(db_path, join(now_path, 'img_db.sqlite3')))
 
-    experiment_paths = [p for p in os.listdir(data_path) if 'img' in os.listdir(join(data_path, p))]
+    experiment_paths = [p for p in os.listdir(data_path) if (os.path.isdir(join(data_path, p)) and 'img' in os.listdir(join(data_path, p)))]
     for experiment_path in experiment_paths:
       # - track directory
       print('experiment {}, copying track directory from {} to {}'.format(experiment_path, join(data_path, experiment_path, 'track'), join(now_path, experiment_path, 'track')))
