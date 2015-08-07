@@ -178,7 +178,9 @@ class Channel(models.Model):
           cell_instance.set_from_markers()
 
     # 6. calculate cell velocities
-
+    print('calculating velocities...')
+    for cell in self.composite.experiment.cells.all():
+      cell.calculate_velocities()
 
   def segment_regions(self, region_marker_channel_name):
     pass

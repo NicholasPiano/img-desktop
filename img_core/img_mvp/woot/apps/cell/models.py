@@ -136,7 +136,7 @@ class Cell(models.Model):
   # methods
   def calculate_velocities(self):
     previous_cell_instance = None
-    for cell_instance in self.cell_instances.order_by('t'):
+    for cell_instance in self.instances.order_by('t'):
       if previous_cell_instance is None:
         cell_instance.vr = 0
         cell_instance.vc = 0
@@ -225,7 +225,7 @@ class CellInstance(models.Model):
                                                                                                   self.vr,
                                                                                                   self.vc,
                                                                                                   self.vz,
-                                                                                                  self.region.index,
+                                                                                                  self.region.index if self.region is not None else 0,
                                                                                                   self.AreaShape_Area,
                                                                                                   self.AreaShape_Compactness,
                                                                                                   self.AreaShape_Eccentricity,
@@ -252,7 +252,7 @@ class CellInstance(models.Model):
                                                                                                     self.VR(),
                                                                                                     self.VC(),
                                                                                                     self.VZ(),
-                                                                                                    self.region.index,
+                                                                                                    self.region.index if self.region is not None else 0,
                                                                                                     self.A(),
                                                                                                     self.AreaShape_Compactness,
                                                                                                     self.AreaShape_Eccentricity,
