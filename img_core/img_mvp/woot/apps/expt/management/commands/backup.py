@@ -85,7 +85,7 @@ class Command(BaseCommand):
       sh.copytree(join(data_path, experiment_path, 'data'), join(now_path, experiment_path, 'data'))
 
     # revert?
-    if options['revert']:
+    if options['revert'] and previous_path is not None:
       # recreate system from last backup
       print('Reverting...')
       print('Removing db {}'.format(db_path))
