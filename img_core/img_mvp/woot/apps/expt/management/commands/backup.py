@@ -56,6 +56,8 @@ class Command(BaseCommand):
       os.mkdir(backup_path)
 
     # store previous datetime
+    print(os.listdir(backup_path))
+    print(os.listdir(backup_path)==[])
     previous_path = None if os.listdir(backup_path)==[] else max([path for path in os.listdir(backup_path)], key=lambda p: datetime_from_path(p))
 
     # make new backup directory
