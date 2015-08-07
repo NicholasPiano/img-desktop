@@ -155,5 +155,5 @@ def mod_label(composite, mod_id, algorithm):
       plt.text(cell_instance.c+5, cell_instance.r+5, '{}'.format(cell_instance.cell.pk), fontsize=8, color='white')
 
     plt.text(-50, -50, 'expt={} series={} t={}'.format(composite.experiment.name, composite.series.name, t), fontsize=15, color='black')
-    plt.savefig(os.path.join(series.experiment.video_path, 'labels', 'labels_{}_s{}_t{}.png'.format(composite.experiment.name, composite.series.name, str_value(t, composite.series.ts))), dpi=100)
+    plt.savefig(os.path.join(composite.experiment.video_path, 'labels', 'labels_{}_s{}_t{}.png'.format(composite.experiment.name, composite.series.name, str_value(t, composite.series.ts))), dpi=100)
     plt.cla()
