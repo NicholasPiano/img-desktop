@@ -73,8 +73,5 @@ class Command(BaseCommand):
           path.url = new_url
           path.save()
 
-          # copy old image to new image
-          # sh.move(old_url, new_url)
-
     else:
       print('Please enter an experiment')
