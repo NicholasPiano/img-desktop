@@ -154,25 +154,26 @@ class Channel(models.Model):
           cell_mask.c = cell_mask.marker.c
           cell_mask.t = t
           cell_mask.AreaShape_Area = float(cell_mask_data['AreaShape_Area']) if cell_mask_data['AreaShape_Area'] != 'nan' else -1.0
-          cell_mask.AreaShape_Compactness = float(cell_mask_data['AreaShape_Compactness']) if cell_mask_data['AreaShape_Area'] != 'nan' else -1.0
+          cell_mask.AreaShape_Compactness = float(cell_mask_data['AreaShape_Compactness']) if str(cell_mask_data['AreaShape_Area']) != 'nan' else -1.0
           print(cell_mask_data['AreaShape_Compactness'])
+          print(cell_mask_data['AreaShape_Compactness']=='nan')
           print(type(cell_mask_data['AreaShape_Compactness']))
           print(str(cell_mask_data['AreaShape_Compactness']))
           print(str(cell_mask_data['AreaShape_Compactness'])=='nan')
           print(cell_mask.AreaShape_Compactness)
           print(str(cell_mask.AreaShape_Compactness))
-          cell_mask.AreaShape_Eccentricity = float(cell_mask_data['AreaShape_Eccentricity']) if cell_mask_data['AreaShape_Eccentricity'] != 'nan' else -1.0
-          cell_mask.AreaShape_EulerNumber = float(cell_mask_data['AreaShape_EulerNumber']) if cell_mask_data['AreaShape_EulerNumber'] != 'nan' else -1.0
-          cell_mask.AreaShape_Extent = float(cell_mask_data['AreaShape_Extent']) if cell_mask_data['AreaShape_Extent'] != 'nan' else -1.0
-          cell_mask.AreaShape_FormFactor = float(cell_mask_data['AreaShape_FormFactor']) if cell_mask_data['AreaShape_FormFactor'] != 'nan' else -1.0
-          cell_mask.AreaShape_MajorAxisLength = float(cell_mask_data['AreaShape_MajorAxisLength']) if cell_mask_data['AreaShape_MajorAxisLength'] != 'nan' else -1.0
-          cell_mask.AreaShape_MaximumRadius = float(cell_mask_data['AreaShape_MaximumRadius']) if cell_mask_data['AreaShape_MaximumRadius'] != 'nan' else -1.0
-          cell_mask.AreaShape_MeanRadius = float(cell_mask_data['AreaShape_MeanRadius']) if cell_mask_data['AreaShape_MeanRadius'] != 'nan' else -1.0
-          cell_mask.AreaShape_MedianRadius = float(cell_mask_data['AreaShape_MedianRadius']) if cell_mask_data['AreaShape_MedianRadius'] != 'nan' else -1.0
-          cell_mask.AreaShape_MinorAxisLength = float(cell_mask_data['AreaShape_MinorAxisLength']) if cell_mask_data['AreaShape_MinorAxisLength'] != 'nan' else -1.0
-          cell_mask.AreaShape_Orientation = float(cell_mask_data['AreaShape_Orientation']) if cell_mask_data['AreaShape_Orientation'] != 'nan' else -1.0
-          cell_mask.AreaShape_Perimeter = float(cell_mask_data['AreaShape_Perimeter']) if cell_mask_data['AreaShape_Perimeter'] != 'nan' else -1.0
-          cell_mask.AreaShape_Solidity = float(cell_mask_data['AreaShape_Solidity']) if cell_mask_data['AreaShape_Solidity'] != 'nan' else -1.0
+          cell_mask.AreaShape_Eccentricity = float(cell_mask_data['AreaShape_Eccentricity']) if str(cell_mask_data['AreaShape_Eccentricity']) != 'nan' else -1.0
+          cell_mask.AreaShape_EulerNumber = float(cell_mask_data['AreaShape_EulerNumber']) if str(cell_mask_data['AreaShape_EulerNumber']) != 'nan' else -1.0
+          cell_mask.AreaShape_Extent = float(cell_mask_data['AreaShape_Extent']) if str(cell_mask_data['AreaShape_Extent']) != 'nan' else -1.0
+          cell_mask.AreaShape_FormFactor = float(cell_mask_data['AreaShape_FormFactor']) if str(cell_mask_data['AreaShape_FormFactor']) != 'nan' else -1.0
+          cell_mask.AreaShape_MajorAxisLength = float(cell_mask_data['AreaShape_MajorAxisLength']) if str(cell_mask_data['AreaShape_MajorAxisLength']) != 'nan' else -1.0
+          cell_mask.AreaShape_MaximumRadius = float(cell_mask_data['AreaShape_MaximumRadius']) if str(cell_mask_data['AreaShape_MaximumRadius']) != 'nan' else -1.0
+          cell_mask.AreaShape_MeanRadius = float(cell_mask_data['AreaShape_MeanRadius']) if str(cell_mask_data['AreaShape_MeanRadius']) != 'nan' else -1.0
+          cell_mask.AreaShape_MedianRadius = float(cell_mask_data['AreaShape_MedianRadius']) if str(cell_mask_data['AreaShape_MedianRadius']) != 'nan' else -1.0
+          cell_mask.AreaShape_MinorAxisLength = float(cell_mask_data['AreaShape_MinorAxisLength']) if str(cell_mask_data['AreaShape_MinorAxisLength']) != 'nan' else -1.0
+          cell_mask.AreaShape_Orientation = float(cell_mask_data['AreaShape_Orientation']) if str(cell_mask_data['AreaShape_Orientation']) != 'nan' else -1.0
+          cell_mask.AreaShape_Perimeter = float(cell_mask_data['AreaShape_Perimeter']) if str(cell_mask_data['AreaShape_Perimeter']) != 'nan' else -1.0
+          cell_mask.AreaShape_Solidity = float(cell_mask_data['AreaShape_Solidity']) if str(cell_mask_data['AreaShape_Solidity']) != 'nan' else -1.0
 
           cell_mask.save()
 
