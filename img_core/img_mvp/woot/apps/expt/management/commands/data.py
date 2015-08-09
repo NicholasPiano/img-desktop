@@ -53,7 +53,7 @@ class Command(BaseCommand):
       # 1. Convert track files to csv
       def convert_track_file(path, name_with_index):
         # names
-        index_template = r'(?P<name>.+)_n[0-9]+\.xls'
+        index_template = r'(?P<name>.+)_n[0-9]+'
         print(index_template)
         print(name_with_index)
         print(re.match(index_template, name_with_index))
