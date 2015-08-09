@@ -86,7 +86,7 @@ class Command(BaseCommand):
       # for each track file in the track directory, if there is not a .csv file with the same name, then translate it into the new format
       for file_name in [f for f in os.listdir(experiment.track_path) if '.xls' in f]:
         name_with_index, ext = splitext(file_name)
-        convert_track_file(experiment.track_path, name)
+        convert_track_file(experiment.track_path, name_with_index)
 
       # 2. Import tracks
       # select composite
