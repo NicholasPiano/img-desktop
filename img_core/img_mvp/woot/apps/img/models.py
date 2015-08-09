@@ -155,6 +155,7 @@ class Channel(models.Model):
           cell_mask.t = t
           cell_mask.AreaShape_Area = float(cell_mask_data['AreaShape_Area'])
           cell_mask.AreaShape_Compactness = float(cell_mask_data['AreaShape_Compactness'])
+          print(cell_mask.AreaShape_Compactness)
           cell_mask.AreaShape_Eccentricity = float(cell_mask_data['AreaShape_Eccentricity'])
           cell_mask.AreaShape_EulerNumber = float(cell_mask_data['AreaShape_EulerNumber'])
           cell_mask.AreaShape_Extent = float(cell_mask_data['AreaShape_Extent'])
