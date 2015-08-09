@@ -56,6 +56,7 @@ class Command(BaseCommand):
         index_template = r'(?P<name>.+)_n[0-9]+\.xls'
         print(index_template)
         print(name_with_index)
+        print(re.match(index_template, name_with_index))
         name = re.match(index_template, name_with_index).group('name')
         csv_file_name = '{}_{}_markers.csv'.format(join(path, name), random_string())
         xls_file_name = '{}.xls'.format(join(path, name_with_index))
