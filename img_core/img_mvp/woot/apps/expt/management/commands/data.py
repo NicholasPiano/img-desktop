@@ -51,10 +51,12 @@ class Command(BaseCommand):
       series = experiment.series.get(name=series_name)
 
       # 1. Convert track files to csv
-      def convert_track_file(path, name):
+      def convert_track_file(path, name_with_index):
         # names
+        index_template = r'(?P<name>.+)_n[0-9]+\.xls'
+        name = re.match(index_template, name_with_index).group('name')
         csv_file_name = '{}_{}_markers.csv'.format(join(path, name), random_string())
-        xls_file_name = '{}.xls'.format(join(path, name))
+        xls_file_name = '{}.xls'.format(join(path, name_with_index))
 
         tracks = {} # stores list of tracks that can then be put into the database
 
@@ -83,7 +85,7 @@ class Command(BaseCommand):
 
       # for each track file in the track directory, if there is not a .csv file with the same name, then translate it into the new format
       for file_name in [f for f in os.listdir(experiment.track_path) if '.xls' in f]:
-        name, ext = splitext(file_name)
+        name_with_index, ext = splitext(file_name)
         convert_track_file(experiment.track_path, name)
 
       # 2. Import tracks
