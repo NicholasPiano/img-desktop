@@ -153,15 +153,8 @@ class Channel(models.Model):
           cell_mask.r = cell_mask.marker.r
           cell_mask.c = cell_mask.marker.c
           cell_mask.t = t
-          cell_mask.AreaShape_Area = float(cell_mask_data['AreaShape_Area']) if cell_mask_data['AreaShape_Area'] != 'nan' else -1.0
-          cell_mask.AreaShape_Compactness = float(cell_mask_data['AreaShape_Compactness']) if str(cell_mask_data['AreaShape_Area']) != 'nan' else -1.0
-          print(cell_mask_data['AreaShape_Compactness'])
-          print(cell_mask_data['AreaShape_Compactness']=='nan')
-          print(type(cell_mask_data['AreaShape_Compactness']))
-          print(str(cell_mask_data['AreaShape_Compactness']))
-          print(str(cell_mask_data['AreaShape_Compactness'])=='nan')
-          print(cell_mask.AreaShape_Compactness)
-          print(str(cell_mask.AreaShape_Compactness))
+          cell_mask.AreaShape_Area = float(cell_mask_data['AreaShape_Area']) if str(cell_mask_data['AreaShape_Area']) != 'nan' else -1.0
+          cell_mask.AreaShape_Compactness = float(cell_mask_data['AreaShape_Compactness']) if str(cell_mask_data['AreaShape_Compactness']) != 'nan' else -1.0
           cell_mask.AreaShape_Eccentricity = float(cell_mask_data['AreaShape_Eccentricity']) if str(cell_mask_data['AreaShape_Eccentricity']) != 'nan' else -1.0
           cell_mask.AreaShape_EulerNumber = float(cell_mask_data['AreaShape_EulerNumber']) if str(cell_mask_data['AreaShape_EulerNumber']) != 'nan' else -1.0
           cell_mask.AreaShape_Extent = float(cell_mask_data['AreaShape_Extent']) if str(cell_mask_data['AreaShape_Extent']) != 'nan' else -1.0
