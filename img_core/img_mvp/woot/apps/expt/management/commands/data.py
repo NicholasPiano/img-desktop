@@ -53,7 +53,7 @@ class Command(BaseCommand):
       # 1. Convert track files to csv
       def convert_track_file(path, name):
         # names
-        csv_file_name = '{}_5GT4R32F_markers.csv'.format(join(path, name))
+        csv_file_name = '{}_{}_markers.csv'.format(join(path, name), random_string())
         xls_file_name = '{}.xls'.format(join(path, name))
 
         tracks = {} # stores list of tracks that can then be put into the database

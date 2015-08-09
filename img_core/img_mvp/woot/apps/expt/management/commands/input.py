@@ -143,8 +143,8 @@ class Command(BaseCommand):
       else:
         print('step01 | zmod already exists...')
 
-      # 7. copy zmod (for tracking) to ij directory
-      for gon in composite.channels.get(name='-zmod').gons.all():
+      # 7. copy zcomp (for tracking) to ij directory
+      for gon in composite.channels.get(name='-zcomp').gons.all():
         sh.copy2(gon.paths.get().url, join(composite.experiment.ij_path, gon.paths.get().file_name))
 
     else:
