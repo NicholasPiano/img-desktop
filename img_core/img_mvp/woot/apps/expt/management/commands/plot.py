@@ -88,7 +88,7 @@ class Command(BaseCommand):
       experiment = Experiment.objects.get(name=experiment_name)
       series = experiment.series.get(name=series_name)
 
-      if len(properties) < 2 and len(properties) > 0:
+      if len(properties) <= 2 and len(properties) > 0:
         flag = True
         for p in properties:
           if p not in plot_headers.keys():
