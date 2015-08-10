@@ -158,7 +158,7 @@ class Command(BaseCommand):
 
                 ax2.plot(cell_x, cell_y, '-*')
 
-            plt.title('{} for cells {}'.format(properties, cells))
+            plt.title('{} for cells {}'.format(properties, cells), y=1.08, x=0)
             plt.legend()
             plt.show()
 
