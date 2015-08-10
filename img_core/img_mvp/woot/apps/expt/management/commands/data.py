@@ -54,7 +54,9 @@ class Command(BaseCommand):
       def convert_track_file(path, name_with_index):
         # names
         index_template = r'(?P<name>.+)_n[0-9]+'
-        name = re.match(index_template, name_with_index).group('name')
+        alt = r'(?P<name>.+)'
+        name_match = re.match(index_template, name_with_index) if re.match(index_template, name_with_index) is not None else re.match(alt, name_with_index)
+        name = name_match.group('name')
         csv_file_name = '{}_{}_markers.csv'.format(join(path, name), random_string())
         xls_file_name = '{}.xls'.format(join(path, name_with_index))
 
