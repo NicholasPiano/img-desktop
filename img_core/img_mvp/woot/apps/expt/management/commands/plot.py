@@ -136,7 +136,7 @@ class Command(BaseCommand):
 
               for i, cell_id in enumerate(cells):
                 cell = series.cells.get(pk=cell_id)
-                cell_x = [cell_instance.T() for cell_instance in cell.instances.order_by('t')]
+                cell_x = [cell_instance.t for cell_instance in cell.instances.order_by('t')]
 
                 property_dict = {
                   'r': [cell_instance.R() for cell_instance in cell.instances.order_by('t')],
@@ -154,11 +154,11 @@ class Command(BaseCommand):
                   'orientation': [cell_instance.AreaShape_Orientation for cell_instance in cell.instances.order_by('t')],
                   'solidity': [cell_instance.AreaShape_Solidity for cell_instance in cell.instances.order_by('t')],
                 }
-                cell_y = property_dict[properties[0]]
+                cell_y = property_dict[properties[1]]
 
                 ax2.plot(cell_x, cell_y, '-*')
 
-            plt.title('{} for cells {}'.format(properties, cells), y=1.08, x=0)
+            plt.title('{} for cells {}'.format(properties, cells), y=1.2, x=1.2)
             plt.legend()
             plt.show()
 
