@@ -147,5 +147,9 @@ class Command(BaseCommand):
       for gon in composite.channels.get(name='-zcomp').gons.all():
         sh.copy2(gon.paths.get().url, join(composite.experiment.ij_path, gon.paths.get().file_name))
 
+      # 8. copy zmean (for checking) to mean directory
+      for gon in composite.channels.get(name='-zmean').gons.all():
+        sh.copy2(gon.paths.get().url, join(composite.experiment.base_path, 'mean', gon.paths.get().file_name))
+
     else:
       print('Please enter an experiment')
