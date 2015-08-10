@@ -131,8 +131,10 @@ def mod_tile(composite, mod_id, algorithm):
 
     mask_outline = edge_image(mask>0)
 
-    zbf_mask = zbf.copy()
-    zbf_mask[mask_outline>0] = 255
+    zbf_mask_r = zbf.copy()
+    zbf_mask_g = zbf.copy()
+    zbf_mask_b = zbf.copy()
+    zbf_mask_r[mask_outline>0] = 255
 
     zcomp_mask = zcomp.copy()
     zcomp_mask[mask_outline>0] = 255
