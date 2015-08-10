@@ -19,7 +19,7 @@ spacer = ' ' *  20
 
 ### Command
 class Command(BaseCommand):
-  option_list = BaseCommand.option_liswt + (
+  option_list = BaseCommand.option_list + (
 
     make_option('--expt', # option that will appear in cmd
       action='store', # no idea
