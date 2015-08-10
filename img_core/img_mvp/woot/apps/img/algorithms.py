@@ -136,12 +136,14 @@ def mod_tile(composite, mod_id, algorithm):
     zbf_mask_b = zbf.copy()
     zbf_mask_r[mask_outline>0] = 255
 
-    zcomp_mask = zcomp.copy()
-    zcomp_mask[mask_outline>0] = 255
+    zcomp_mask_r = zcomp.copy()
+    zcomp_mask_g = zcomp.copy()
+    zcomp_mask_b = zcomp.copy()
+    zcomp_mask_r[mask_outline>0] = 255
 
     # tile zbf, zbf_mask, zcomp, zcomp_mask
-    top_half = np.concatenate((zbf, zbf_mask), axis=0)
-    bottom_half = np.concatenate((zcomp, zcomp_mask), axis=0)
+    top_half = np.concatenate((np.dstack([zbf, zbf, zbf]), np.dstack([zbf_mask_r, zbf_mask_g, zbf_mask_b])), axis=0)
+    bottom_half = np.concatenate((np.dstack([zcomp, zcomp, zcomp]), np.dstack([zcomp_mask_r, zcomp_mask_g, zcomp_mask_b])), axis=0)
 
     whole = np.concatenate((top_half, bottom_half), axis=1)
 
