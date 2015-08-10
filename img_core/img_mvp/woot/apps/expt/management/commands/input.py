@@ -145,13 +145,15 @@ class Command(BaseCommand):
 
       # 7. copy zcomp (for tracking) to ij directory
       for gon in composite.channels.get(name='-zcomp').gons.all():
-        sh.copy2(gon.paths.get().url, join(composite.experiment.ij_path, gon.paths.get().file_name))
+        if not exists(join(composite.experiment.ij_path, series.name)):
+          os.mkdir(join(composite.experiment.ij_path, series.name))
+        sh.copy2(gon.paths.get().url, join(composite.experiment.ij_path, series.name, gon.paths.get().file_name))
 
       # 8. copy zmean (for checking) to mean directory
       for gon in composite.channels.get(name='-zmean').gons.all():
-        if not exists(join(composite.experiment.base_path, 'mean')):
-          os.mkdir(join(composite.experiment.base_path, 'mean'))
-        sh.copy2(gon.paths.get().url, join(composite.experiment.base_path, 'mean', gon.paths.get().file_name))
+        if not exists(join(composite.experiment.base_path, 'mean', series.name)):
+          os.mkdir(join(composite.experiment.base_path, 'mean', series.name))
+        sh.copy2(gon.paths.get().url, join(composite.experiment.base_path, 'mean', series.name, gon.paths.get().file_name))
 
     else:
       print('Please enter an experiment')

@@ -6,6 +6,7 @@ from apps.expt.util import generate_id_token, str_value
 
 # util
 import os
+from os.path import exists, join
 from scipy.misc import imsave
 from scipy.ndimage.filters import gaussian_filter as gf
 from scipy.ndimage.measurements import center_of_mass as com
@@ -116,7 +117,7 @@ def mod_zmod(composite, mod_id, algorithm):
 
 def mod_tile(composite, mod_id, algorithm):
 
-  tile_path = os.path.join(composite.experiment.video_path, 'tile')
+  tile_path = os.path.join(composite.experiment.video_path, 'tile', composite.series.name)
   if not os.path.exists(tile_path):
     os.makedirs(tile_path)
 
@@ -147,11 +148,11 @@ def mod_tile(composite, mod_id, algorithm):
 
     whole = np.concatenate((top_half, bottom_half), axis=1)
 
-    imsave(os.path.join(tile_path, 'tile_{}_s{}_t{}.tiff'.format(composite.experiment.name, composite.series.name, str_value(t, composite.series.ts))), whole)
+    imsave(join(tile_path, 'tile_{}_s{}_t{}.tiff'.format(composite.experiment.name, composite.series.name, str_value(t, composite.series.ts))), whole)
 
 def mod_label(composite, mod_id, algorithm):
 
-  label_path = os.path.join(composite.experiment.video_path, 'labels')
+  label_path = os.path.join(composite.experiment.video_path, 'labels', composite.series.name)
   if not os.path.exists(label_path):
     os.makedirs(label_path)
 
@@ -167,5 +168,6 @@ def mod_label(composite, mod_id, algorithm):
       plt.text(cell_instance.c+5, cell_instance.r+5, '{}'.format(cell_instance.cell.pk), fontsize=8, color='white')
 
     plt.text(-50, -50, 'expt={} series={} t={}'.format(composite.experiment.name, composite.series.name, t), fontsize=15, color='black')
-    plt.savefig(os.path.join(label_path, 'labels_{}_s{}_t{}.png'.format(composite.experiment.name, composite.series.name, str_value(t, composite.series.ts))), dpi=100)
+
+    plt.savefig(join(label_path, 'labels_{}_s{}_t{}.png'.format(composite.experiment.name, composite.series.name, str_value(t, composite.series.ts))), dpi=100)
     plt.cla()
