@@ -127,7 +127,7 @@ class Command(BaseCommand):
               ax1.plot(cell_x, cell_y, '-', label='cell {}'.format(cell_id))
 
             if len(properties)>1:
-              ax2 = ax1.twiny()
+              ax2 = ax1.twinx()
 
               ax2.set_xlabel('Time (frames)')
               ax2.xaxis.set_label_position('top')
