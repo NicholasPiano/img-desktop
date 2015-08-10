@@ -158,7 +158,7 @@ class Command(BaseCommand):
                 }
                 cell_y = property_dict[properties[1]]
 
-                ax2.plot(cell_x, cell_y, '--')
+                ax2.plot(cell_x, cell_y, '--', label='cell {}'.format(cell_id))
 
             plt.title('{} for cells {}'.format(properties, cells), y=1.2, x=1.2)
             plt.legend()
