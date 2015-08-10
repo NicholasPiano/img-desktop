@@ -127,12 +127,14 @@ class Command(BaseCommand):
               ax1.plot(cell_x, cell_y, '-', label='cell {}'.format(cell_id))
 
             if len(properties)>1:
-              ax2 = ax1.twinx()
+              ax2 = fig.add_subplot(111, frameon=False)
 
               ax2.set_xlabel('Time (frames)')
               ax2.xaxis.set_label_position('top')
               ax2.xaxis.set_ticks_position('top')
               ax2.set_ylabel('"{}" ... {}'.format(properties[1], plot_headers[properties[1]]))
+              ax2.yaxis.set_label_position('right')
+              ax2.yaxis.set_ticks_position('right')
 
               for i, cell_id in enumerate(cells):
                 cell = series.cells.get(pk=cell_id)
