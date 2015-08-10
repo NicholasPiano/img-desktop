@@ -152,7 +152,7 @@ class Command(BaseCommand):
       # 8. copy zmean (for checking) to mean directory
       for gon in composite.channels.get(name='-zmean').gons.all():
         if not exists(join(composite.experiment.base_path, 'mean', series.name)):
-          os.mkdir(join(composite.experiment.base_path, 'mean', series.name))
+          os.makedirs(join(composite.experiment.base_path, 'mean', series.name))
         sh.copy2(gon.paths.get().url, join(composite.experiment.base_path, 'mean', series.name, gon.paths.get().file_name))
 
     else:
