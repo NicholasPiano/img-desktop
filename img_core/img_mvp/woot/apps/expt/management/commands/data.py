@@ -92,7 +92,7 @@ class Command(BaseCommand):
 
       # 2. Import tracks
       # select composite
-      composite = experiment.composites.get()
+      composite = series.composites.get()
 
       # add all track files to composite
       data_file_list = [f for f in os.listdir(composite.experiment.track_path) if (os.path.splitext(f)[1] in allowed_data_extensions and composite.experiment.path_matches_series(f, composite.series.name))]
