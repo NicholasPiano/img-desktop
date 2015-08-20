@@ -127,6 +127,10 @@ class Command(BaseCommand):
         else:
           print('step01 | no files found in {}'.format(root))
 
+      # 4a. correct series metadata if necessary
+      series.ts = max(series.paths.all(), key=lambda p: p.t).t + 1
+      series.save()
+
       # 5. composite
       print('step01 | creating composite for experiment {} series {}'.format(experiment_name, series_name))
       composite = series.compose()
