@@ -126,7 +126,7 @@ class Experiment(models.Model):
     unique_key = '{}{}-{}'.format(primary_channel_name, secondary_channel_name, unique)
 
     # 2. format and save file
-    pipeline_text = marker_pipeline('{}_s{}_{}_'.format(self.name, series_name, unique), unique_key, primary_channel_name, secondary_channel_name)
+    pipeline_text = marker_pipeline('{}_s{}_{}_'.format(self.name, series_name, unique), unique_key, 's{}_ch{}'.format(series_name, primary_channel_name), 's{}_ch{}'.format(series_name, secondary_channel_name))
     with open(os.path.join(self.pipeline_path, 'markers.cppipe'), 'w+') as open_pipeline_file:
       open_pipeline_file.write(pipeline_text)
 
