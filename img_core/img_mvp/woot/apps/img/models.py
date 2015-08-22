@@ -220,7 +220,7 @@ class Channel(models.Model):
           blank = np.zeros(self.composite.shape())
 
           for i, marker in enumerate(markers):
-            print('primary for composite {} {} {} channel {} | t{}/{}'.format(self.composite.experiment.name, self.composite.series.name, self.composite.id_token, self.name, t, self.composite.series.ts), end='\n' if t==self.composite.series.ts-1 else '\r')
+            print('primary for composite {} {} {} channel {} | t{}/{}'.format(self.composite.experiment.name, self.composite.series.name, self.composite.id_token, self.name, t, self.composite.series.ts), end='\n' if i==len(markers)-1 else '\r')
             blank[marker.r-3:marker.r+2, marker.c-3:marker.c+2] = 255
 
           marker_channel, marker_channel_created = self.composite.channels.get_or_create(name='{}-primary'.format(self.name))
