@@ -64,7 +64,6 @@ class Command(BaseCommand):
     series_name = options['series']
     cells = [int(c) for c in options['cells'].split(',')]
     properties = [p for p in options['properties'].split(',')]
-    print(properties)
 
     plot_headers = {
       'r': '(units um) row value',
