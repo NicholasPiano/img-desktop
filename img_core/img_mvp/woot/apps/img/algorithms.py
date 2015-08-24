@@ -36,7 +36,7 @@ def mod_zmod(composite, mod_id, algorithm):
   zmod_channel, zmod_channel_created = composite.channels.get_or_create(name='-zmod')
   zmean_channel, zmean_channel_created = composite.channels.get_or_create(name='-zmean')
   zbf_channel, zbf_channel_created = composite.channels.get_or_create(name='-zbf')
-  zcomp_channel, zbf_channel_created = composite.channels.get_or_create(name='-zcomp')
+  zcomp_channel, zcomp_channel_created = composite.channels.get_or_create(name='-zcomp')
 
   # constants
   delta_z = -8
@@ -171,3 +171,38 @@ def mod_label(composite, mod_id, algorithm):
 
     plt.savefig(join(label_path, 'labels_{}_s{}_t{}.png'.format(composite.experiment.name, composite.series.name, str_value(t, composite.series.ts))), dpi=100)
     plt.cla()
+
+def mod_zdiff(composite, mod_id, algorithm):
+
+  zdiff_channel, zdiff_channel_created = composite.channels.get_or_create(name='-zdiff')
+
+  for t in range(composite.series.ts):
+    # get zmod
+    zmod_gon = composite.gons.get(channel__name='-zmod', t=t)
+    zmod = (exposure.rescale_intensity(zmod_gon.load() * 1.0) * composite.series.zs).astype(int)
+
+    zbf = exposure.rescale_intensity(composite.gons.get(channel__name='-zbf', t=t).load() * 1.0)
+    zmean = exposure.rescale_intensity(composite.gons.get(channel__name='-zmean', t=t).load() * 1.0)
+
+    # get markers
+    markers = composite.markers.filter(track_instance__t=t)
+
+    zdiff = np.zeros(zmod.shape)
+
+    for marker in markers:
+      marker_z = zmod[marker.r, marker.c]
+
+      diff = np.abs(zmod - marker_z)
+      diff_thresh = diff.copy()
+      diff_thresh = gf(diff_thresh, sigma=5)
+      diff_thresh[diff>1] = diff.max()
+      marker_diff = 1.0 - exposure.rescale_intensity(diff_thresh * 1.0)
+      zdiff = np.max(np.dstack([zdiff, marker_diff]), axis=2)
+
+    zdiff_gon, zdiff_gon_created = composite.gons.get_or_create(experiment=composite.experiment, series=composite.series, channel=zdiff_channel, t=t)
+    zdiff_gon.set_origin(0,0,0,t)
+    zdiff_gon.set_extent(composite.series.rs, composite.series.cs, 1)
+
+    zdiff_gon.array = (zdiff.copy() + zmean.copy()) * zmean.copy()
+    zdiff_gon.save_array(composite.series.experiment.composite_path, composite.templates.get(name='source'))
+    zdiff_gon.save()

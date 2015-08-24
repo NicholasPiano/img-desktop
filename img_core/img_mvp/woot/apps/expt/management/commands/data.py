@@ -129,7 +129,7 @@ class Command(BaseCommand):
           print('step02 | processing marker ({}/{})... {} tracks, {} instances, {} markers'.format(i+1,len(data),composite.tracks.count(), composite.track_instances.count(), composite.markers.count()), end='\n' if i==len(data)-1 else '\r')
 
       # 3. Segment ZCOMP channel
-      channel = composite.channels.get(name='-zcomp')
+      channel = composite.channels.get(name='-zbf')
       marker_channel_name = '-zbf'
 
       channel.segment(marker_channel_name)

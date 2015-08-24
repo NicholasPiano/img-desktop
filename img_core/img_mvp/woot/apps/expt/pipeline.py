@@ -115,7 +115,7 @@ IdentifySecondaryObjects:[module_num:3|svn_version:\'Unknown\'|variable_revision
     Name the new primary object outlines:FilteredNucleiOutlines\n\
     Fill holes in identified objects?:Yes\n\
     Threshold setting version:1\n\
-    Threshold strategy:Automatic\n\
+    Threshold strategy:Adaptive\n\
     Thresholding method:Otsu\n\
     Select the smoothing method for thresholding:No smoothing\n\
     Threshold smoothing scale:1.0\n\

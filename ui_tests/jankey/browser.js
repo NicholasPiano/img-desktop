@@ -112,7 +112,7 @@ window.onload = function() {
   }, false);
 
   newTab.addEventListener("click", function() {
-    openNewTab("http://www.google.com");
+    openNewTab("http://localhost:8080/hello-django");
   }, false);
 
   navBackward.addEventListener("click", function() {
@@ -123,5 +123,5 @@ window.onload = function() {
     activeWV.forward();
   });
 
-  openNewTab("http://www.google.com");
+  openNewTab("http://localhost:8080/hello-django");
 };
