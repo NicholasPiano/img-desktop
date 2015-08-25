@@ -17,6 +17,9 @@ import matplotlib.pyplot as plt
 from scipy.ndimage.morphology import binary_erosion as erode
 from scipy.ndimage.morphology import binary_dilation as dilate
 from scipy.ndimage import distance_transform_edt
+from PIL import Image
+from PIL import ImageDraw
+from PIL import ImageFont
 
 # methods
 def scan_point(img, rs, cs, r, c, size=0):
@@ -138,12 +141,24 @@ def mod_tile(composite, mod_id, algorithm):
     zbf_mask_r = zbf.copy()
     zbf_mask_g = zbf.copy()
     zbf_mask_b = zbf.copy()
-    zbf_mask_r[mask_outline>0] = 255
 
     zcomp_mask_r = zcomp.copy()
     zcomp_mask_g = zcomp.copy()
     zcomp_mask_b = zcomp.copy()
+
+    # drawing
+    # 1. draw outlines in red channel
+    zbf_mask_r[mask_outline>0] = 255
     zcomp_mask_r[mask_outline>0] = 255
+
+    # 2. draw markers in blue channel
+    markers = composite.markers.filter(track_instance__t=t)
+    for marker in markers:
+      zbf_mask_b[marker.r-2:marker.r+3,marker.c-2:marker.c+3] = 255
+      zcomp_mask_b[marker.r-2:marker.r+3,marker.c-2:marker.c+3] = 255
+
+    # 3. draw text in green channel
+    
 
     # tile zbf, zbf_mask, zcomp, zcomp_mask
     top_half = np.concatenate((np.dstack([zbf, zbf, zbf]), np.dstack([zbf_mask_r, zbf_mask_g, zbf_mask_b])), axis=0)
@@ -219,27 +234,33 @@ def mod_zedge(composite, mod_id, algorithm):
   for t in range(composite.series.ts):
     print('step02 | processing mod_zedge t{}/{}...'.format(t+1, composite.series.ts), end='\r')
 
-    zdiff_masks = composite.mask_channels.get(name__contains='-zdiff').cell_masks.filter(t=t)
+    # zdiff_masks = composite.mask_channels.get(name__contains='-zdiff').cell_masks.filter(t=t)
+    zdiff_mask = composite.masks.get(channel__name__contains='-zdiff', t=t).load()
     zbf = exposure.rescale_intensity(composite.gons.get(channel__name='-zbf', t=t).load() * 1.0)
     zedge = zbf.copy()
 
-    for mask in zdiff_masks:
-      # draw edge on zbf image
-      # 1. load zdiff mask and cut to black
-      mask_mask, (r0, c0, rs, cs) = cut_to_black(dilate(erode(mask.load()))
-      # 2. using coordinates, cut zbf image
-      cut_zedge = zedge[r0:r0+rs,c0:c0+cs]
-      # 3. draw edge
-      outside_edge = distance_transform_edt(dilate(binary_edge(outside), iterations=3))
-      outside_edge = 1.0 - exposure.rescale_intensity(outside_edge * 1.0)
-      cut_zedge *= outside_edge * outside_edge
+    # for mask in zdiff_masks:
+    #   # draw edge on zbf image
+    #   # 1. load zdiff mask and cut to black
+    #   mask_mask, (r0, c0, rs, cs) = cut_to_black(dilate(erode(mask.load())))
+    #   # 2. using coordinates, cut zbf image
+    #   cut_zedge = zedge[r0:r0+rs,c0:c0+cs]
+    #   # 3. draw edge
+    #   outside_edge = distance_transform_edt(dilate(edge_image(mask_mask), iterations=4))
+    #   outside_edge = 1.0 - exposure.rescale_intensity(outside_edge * 1.0)
+    #   cut_zedge *= outside_edge * outside_edge
+    #
+    #   zedge[r0:r0+rs,c0:c0+cs] = cut_zedge.copy()
 
-      zedge[r0:r0+rs,c0:c0+cs] = cut_zedge.copy()
+    binary_mask = zdiff_mask>0
+    outside_edge = distance_transform_edt(dilate(edge_image(binary_mask), iterations=4))
+    outside_edge = 1.0 - exposure.rescale_intensity(outside_edge * 1.0)
+    zedge *= outside_edge * outside_edge
 
     zedge_gon, zedge_gon_created = composite.gons.get_or_create(experiment=composite.experiment, series=composite.series, channel=zedge_channel, t=t)
     zedge_gon.set_origin(0,0,0,t)
     zedge_gon.set_extent(composite.series.rs, composite.series.cs, 1)
 
-    zedge_gon.array = zedge.zopy()
+    zedge_gon.array = zedge.copy()
     zedge_gon.save_array(composite.series.experiment.composite_path, composite.templates.get(name='source'))
     zedge_gon.save()

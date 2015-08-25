@@ -182,7 +182,7 @@ class Series(models.Model):
 
   # methods
   def __str__(self):
-    return '{} > {}'%(self.experiment.name, self.name)
+    return '{} > {}'.format(self.experiment.name, self.name)
 
   def prototype(self):
     return filter(lambda x: x.name==self.name and x.experiment==self.experiment.name, series)[0]

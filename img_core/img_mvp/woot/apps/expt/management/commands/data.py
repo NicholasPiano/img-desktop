@@ -140,7 +140,7 @@ class Command(BaseCommand):
       zdiff_channel = composite.channels.get(name='-zdiff')
       zdiff_channel.segment(marker_channel_name='-zcomp')
 
-      5. Generate zEdge channel
+      # 5. Generate zEdge channel
       zedge_mod = composite.mods.create(id_token=generate_id_token('img', 'Mod'), algorithm='mod_zedge')
 
       # Run mod
@@ -153,7 +153,7 @@ class Command(BaseCommand):
       zedge_channel.segment(marker_channel_name='-zcomp', threshold_correction_factor=1.2)
 
       # 7. Export data to data directory
-      # series.export_data()
+      series.export_data()
 
       # 8. Tile mod
       # tile_mod = composite.mods.create(id_token=generate_id_token('img', 'Mod'), algorithm='mod_tile')
@@ -162,14 +162,6 @@ class Command(BaseCommand):
       # print('step02 | processing mod_tile...', end='\r')
       # tile_mod.run()
       # print('step02 | processing mod_tile... done.{}'.format(spacer))
-      #
-      # # 9. Label mod
-      # label_mod = composite.mods.create(id_token=generate_id_token('img', 'Mod'), algorithm='mod_label')
-      #
-      # # Run mod
-      # print('step02 | processing mod_label...', end='\r')
-      # label_mod.run()
-      # print('step02 | processing mod_label... done.{}'.format(spacer))
 
     else:
       print('Please enter an experiment')

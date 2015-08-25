@@ -277,26 +277,28 @@ class CellInstance(models.Model):
 
   def set_from_masks(self):
     # some decision making can be made here, but what I will do for now is just take the only make it has
-    mask = self.masks.all()[0]
+    masks = self.masks.filter(channel__nam__contains='zedge')
 
-    self.r = mask.r
-    self.c = mask.c
-    self.t = mask.t
-    self.AreaShape_Area = mask.AreaShape_Area
-    self.AreaShape_Compactness = mask.AreaShape_Compactness
-    self.AreaShape_Eccentricity = mask.AreaShape_Eccentricity
-    self.AreaShape_EulerNumber = mask.AreaShape_EulerNumber
-    self.AreaShape_Extent = mask.AreaShape_Extent
-    self.AreaShape_FormFactor = mask.AreaShape_FormFactor
-    self.AreaShape_MajorAxisLength = mask.AreaShape_MajorAxisLength
-    self.AreaShape_MaximumRadius = mask.AreaShape_MaximumRadius
-    self.AreaShape_MeanRadius = mask.AreaShape_MeanRadius
-    self.AreaShape_MedianRadius = mask.AreaShape_MedianRadius
-    self.AreaShape_MinorAxisLength = mask.AreaShape_MinorAxisLength
-    self.AreaShape_Orientation = mask.AreaShape_Orientation
-    self.AreaShape_Perimeter = mask.AreaShape_Perimeter
-    self.AreaShape_Solidity = mask.AreaShape_Solidity
-    self.save()
+    if masks:
+      mask = masks[0]
+      self.r = mask.r
+      self.c = mask.c
+      self.t = mask.t
+      self.AreaShape_Area = mask.AreaShape_Area
+      self.AreaShape_Compactness = mask.AreaShape_Compactness
+      self.AreaShape_Eccentricity = mask.AreaShape_Eccentricity
+      self.AreaShape_EulerNumber = mask.AreaShape_EulerNumber
+      self.AreaShape_Extent = mask.AreaShape_Extent
+      self.AreaShape_FormFactor = mask.AreaShape_FormFactor
+      self.AreaShape_MajorAxisLength = mask.AreaShape_MajorAxisLength
+      self.AreaShape_MaximumRadius = mask.AreaShape_MaximumRadius
+      self.AreaShape_MeanRadius = mask.AreaShape_MeanRadius
+      self.AreaShape_MedianRadius = mask.AreaShape_MedianRadius
+      self.AreaShape_MinorAxisLength = mask.AreaShape_MinorAxisLength
+      self.AreaShape_Orientation = mask.AreaShape_Orientation
+      self.AreaShape_Perimeter = mask.AreaShape_Perimeter
+      self.AreaShape_Solidity = mask.AreaShape_Solidity
+      self.save()
 
   def set_from_markers(self):
     # some decision making can be made here, but what I will do for now is just take the only make it has
