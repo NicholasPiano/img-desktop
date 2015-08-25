@@ -149,16 +149,36 @@ def mod_tile(composite, mod_id, algorithm):
     # drawing
     # 1. draw outlines in red channel
     zbf_mask_r[mask_outline>0] = 255
+    zbf_mask_g[mask_outline>0] = 0
+    zbf_mask_b[mask_outline>0] = 0
     zcomp_mask_r[mask_outline>0] = 255
+    zcomp_mask_g[mask_outline>0] = 0
+    zcomp_mask_b[mask_outline>0] = 0
 
-    # 2. draw markers in blue channel
     markers = composite.markers.filter(track_instance__t=t)
     for marker in markers:
+
+      # 2. draw markers in blue channel
+      zbf_mask_r[marker.r-2:marker.r+3,marker.c-2:marker.c+3] = 0
+      zbf_mask_g[marker.r-2:marker.r+3,marker.c-2:marker.c+3] = 0
       zbf_mask_b[marker.r-2:marker.r+3,marker.c-2:marker.c+3] = 255
+      zcomp_mask_r[marker.r-2:marker.r+3,marker.c-2:marker.c+3] = 0
+      zcomp_mask_g[marker.r-2:marker.r+3,marker.c-2:marker.c+3] = 0
       zcomp_mask_b[marker.r-2:marker.r+3,marker.c-2:marker.c+3] = 255
 
-    # 3. draw text in green channel
-    
+      # 3. draw text in green channel
+      blank_slate = np.zeros(zbf.shape)
+      blank_slate_img = Image.fromarray(blank_slate)
+      draw = ImageDraw.Draw(blank_slate_img)
+      draw.text((marker.c+5, marker.r+5), '{}'.format(marker.track.cell.pk), font=ImageFont.load_default(), fill='rgb(0,0,255)')
+      blank_slate = np.array(blank_slate_img)
+
+      zbf_mask_r[blank_slate>0] = 0
+      zbf_mask_g[blank_slate>0] = 255
+      zbf_mask_b[blank_slate>0] = 0
+      zcomp_mask_r[blank_slate>0] = 0
+      zcomp_mask_g[blank_slate>0] = 255
+      zcomp_mask_b[blank_slate>0] = 0
 
     # tile zbf, zbf_mask, zcomp, zcomp_mask
     top_half = np.concatenate((np.dstack([zbf, zbf, zbf]), np.dstack([zbf_mask_r, zbf_mask_g, zbf_mask_b])), axis=0)
