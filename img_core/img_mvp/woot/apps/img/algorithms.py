@@ -130,10 +130,12 @@ def mod_tile(composite, mod_id, algorithm):
   for t in range(composite.series.ts):
     zbf_gon = composite.gons.get(t=t, channel__name='-zbf')
     zcomp_gon = composite.gons.get(t=t, channel__name='-zcomp')
-    mask_mask = composite.masks.get(t=t, channel__name='-zcomp')
+    zmean_gon = composite.gons.get(t=t, channel__name='-zmean')
+    mask_mask = composite.masks.get(t=t, channel__name__contains='-zedge')
 
     zbf = zbf_gon.load()
     zcomp = zcomp_gon.load()
+    zmean = zmean_gon.load()
     mask = mask_mask.load()
 
     mask_outline = edge_image(mask>0)
@@ -182,7 +184,7 @@ def mod_tile(composite, mod_id, algorithm):
 
     # tile zbf, zbf_mask, zcomp, zcomp_mask
     top_half = np.concatenate((np.dstack([zbf, zbf, zbf]), np.dstack([zbf_mask_r, zbf_mask_g, zbf_mask_b])), axis=0)
-    bottom_half = np.concatenate((np.dstack([zcomp, zcomp, zcomp]), np.dstack([zcomp_mask_r, zcomp_mask_g, zcomp_mask_b])), axis=0)
+    bottom_half = np.concatenate((np.dstack([zmean, zmean, zmean]), np.dstack([zcomp_mask_r, zcomp_mask_g, zcomp_mask_b])), axis=0)
 
     whole = np.concatenate((top_half, bottom_half), axis=1)
 
