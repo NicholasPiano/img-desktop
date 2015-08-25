@@ -277,7 +277,7 @@ class CellInstance(models.Model):
 
   def set_from_masks(self):
     # some decision making can be made here, but what I will do for now is just take the only make it has
-    masks = self.masks.filter(channel__nam__contains='zedge')
+    masks = self.masks.filter(channel__name__contains='zedge')
 
     if masks:
       mask = masks[0]
