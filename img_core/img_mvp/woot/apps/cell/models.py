@@ -133,6 +133,9 @@ class Cell(models.Model):
   series = models.ForeignKey(Series, related_name='cells')
   track = models.OneToOneField(Track, related_name='cell')
 
+  # properties
+  confidence = models.FloatField(default=0.0)
+
   # methods
   def calculate_velocities(self):
     previous_cell_instance = None
@@ -149,6 +152,9 @@ class Cell(models.Model):
       cell_instance.save()
       previous_cell_instance = cell_instance
 
+  def calculate_confidences(self):
+    pass
+
 class CellInstance(models.Model):
   # connections
   experiment = models.ForeignKey(Experiment, related_name='cell_instances')
@@ -159,6 +165,8 @@ class CellInstance(models.Model):
   track_instance = models.OneToOneField(TrackInstance, related_name='cell_instance')
 
   # properties
+  confidence = models.FloatField(default=0.0)
+
   r = models.IntegerField(default=0)
   c = models.IntegerField(default=0)
   z = models.IntegerField(default=0)
@@ -215,31 +223,34 @@ class CellInstance(models.Model):
     return self.AreaShape_Area*self.series.rmop*self.series.cmop
 
   def raw_line(self):
-    return '{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{} \n'.format(self.experiment.name,
-                                                                                                  self.series.name,
-                                                                                                  self.cell.pk,
-                                                                                                  self.r,
-                                                                                                  self.c,
-                                                                                                  self.z,
-                                                                                                  self.t,
-                                                                                                  self.vr,
-                                                                                                  self.vc,
-                                                                                                  self.vz,
-                                                                                                  self.region.index if self.region is not None else 0,
-                                                                                                  self.AreaShape_Area,
-                                                                                                  self.AreaShape_Compactness,
-                                                                                                  self.AreaShape_Eccentricity,
-                                                                                                  self.AreaShape_EulerNumber,
-                                                                                                  self.AreaShape_Extent,
-                                                                                                  self.AreaShape_FormFactor,
-                                                                                                  self.AreaShape_MajorAxisLength,
-                                                                                                  self.AreaShape_MaximumRadius,
-                                                                                                  self.AreaShape_MeanRadius,
-                                                                                                  self.AreaShape_MedianRadius,
-                                                                                                  self.AreaShape_MinorAxisLength,
-                                                                                                  self.AreaShape_Orientation,
-                                                                                                  self.AreaShape_Perimeter,
-                                                                                                  self.AreaShape_Solidity)
+    return '{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{} \n'.format(
+      self.experiment.name,
+      self.series.name,
+      self.cell.pk,
+      self.r,
+      self.c,
+      self.z,
+      self.t,
+      self.vr,
+      self.vc,
+      self.vz,
+      self.region.index if self.region is not None else 0,
+      self.AreaShape_Area,
+      self.AreaShape_Compactness,
+      self.AreaShape_Eccentricity,
+      self.AreaShape_EulerNumber,
+      self.AreaShape_Extent,
+      self.AreaShape_FormFactor,
+      self.AreaShape_MajorAxisLength,
+      self.AreaShape_MaximumRadius,
+      self.AreaShape_MeanRadius,
+      self.AreaShape_MedianRadius,
+      self.AreaShape_MinorAxisLength,
+      self.AreaShape_Orientation,
+      self.AreaShape_Perimeter,
+      self.AreaShape_Solidity
+    )
+    
   def line(self):
     return '{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}\n'.format(
       self.experiment.name,
@@ -307,6 +318,7 @@ class CellMask(models.Model):
 
   # properties
   gray_value_id = models.IntegerField(default=0)
+  confidence = models.FloatField(default=0.0)
 
   r = models.IntegerField(default=0)
   c = models.IntegerField(default=0)
