@@ -52,7 +52,7 @@ class Command(BaseCommand):
 
       # 2. Import tracks
       # select composite
-      composite = experiment.composites.get()
+      composite = series.composites.get()
 
       # 5. Tile mod
       ### RED OUTLINES
