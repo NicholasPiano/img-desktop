@@ -210,3 +210,4 @@ def mod_zdiff(composite, mod_id, algorithm):
     zdiff_gon.save()
 
 def mod_zedge(composite, mod_id, algorithm):
+  pass
