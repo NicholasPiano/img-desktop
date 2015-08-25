@@ -14,6 +14,9 @@ from skimage import exposure
 import numpy as np
 from scipy.ndimage.measurements import label
 import matplotlib.pyplot as plt
+from scipy.ndimage.morphology import binary_erosion as erode
+from scipy.ndimage.morphology import binary_dilation as dilate
+from scipy.ndimage import distance_transform_edt
 
 # methods
 def scan_point(img, rs, cs, r, c, size=0):
@@ -210,4 +213,33 @@ def mod_zdiff(composite, mod_id, algorithm):
     zdiff_gon.save()
 
 def mod_zedge(composite, mod_id, algorithm):
-  pass
+
+  zedge_channel, zedge_channel_created = composite.channels.get_or_create(name='-zedge')
+
+  for t in range(composite.series.ts):
+    print('step02 | processing mod_zedge t{}/{}...'.format(t+1, composite.series.ts), end='\r')
+
+    zdiff_masks = composite.mask_channels.get(name__contains='-zdiff').cell_masks.filter(t=t)
+    zbf = exposure.rescale_intensity(composite.gons.get(channel__name='-zbf', t=t).load() * 1.0)
+    zedge = zbf.copy()
+
+    for mask in zdiff_masks:
+      # draw edge on zbf image
+      # 1. load zdiff mask and cut to black
+      mask_mask, (r0, c0, rs, cs) = cut_to_black(dilate(erode(mask.load()))
+      # 2. using coordinates, cut zbf image
+      cut_zedge = zedge[r0:r0+rs,c0:c0+cs]
+      # 3. draw edge
+      outside_edge = distance_transform_edt(dilate(binary_edge(outside), iterations=3))
+      outside_edge = 1.0 - exposure.rescale_intensity(outside_edge * 1.0)
+      cut_zedge *= outside_edge * outside_edge
+
+      zedge[r0:r0+rs,c0:c0+cs] = cut_zedge.copy()
+
+    zedge_gon, zedge_gon_created = composite.gons.get_or_create(experiment=composite.experiment, series=composite.series, channel=zedge_channel, t=t)
+    zedge_gon.set_origin(0,0,0,t)
+    zedge_gon.set_extent(composite.series.rs, composite.series.cs, 1)
+
+    zedge_gon.array = zedge.zopy()
+    zedge_gon.save_array(composite.series.experiment.composite_path, composite.templates.get(name='source'))
+    zedge_gon.save()

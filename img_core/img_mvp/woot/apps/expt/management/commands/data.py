@@ -140,19 +140,17 @@ class Command(BaseCommand):
       zdiff_channel = composite.channels.get(name='-zdiff')
       zdiff_channel.segment(marker_channel_name='-zcomp')
 
-      channel.segment(marker_channel_name)
+      5. Generate zEdge channel
+      zedge_mod = composite.mods.create(id_token=generate_id_token('img', 'Mod'), algorithm='mod_zedge')
 
-      # 5. Generate zEdge channel
-      # zedge_mod = composite.mods.create(id_token=generate_id_token('img', 'Mod'), algorithm='mod_zedge')
-      #
-      # # Run mod
-      # print('step02 | processing mod_zedge...', end='\r')
-      # zedge_mod.run()
-      # print('step02 | processing mod_zedge... done.{}'.format(spacer))
-      #
-      # # 6. Segment zEdge channel
-      # zedge_channel = composite.channels.get(name='-zedge')
-      # zedge_channel.segment(marker_channel_name='-zcomp')
+      # Run mod
+      print('step02 | processing mod_zedge...', end='\r')
+      zedge_mod.run()
+      print('step02 | processing mod_zedge... done.{}'.format(spacer))
+
+      # 6. Segment zEdge channel
+      zedge_channel = composite.channels.get(name='-zedge')
+      zedge_channel.segment(marker_channel_name='-zcomp', threshold_correction_factor=1.2)
 
       # 7. Export data to data directory
       # series.export_data()
