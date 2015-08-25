@@ -82,7 +82,7 @@ class Channel(models.Model):
   def __str__(self):
     return '{} > {}'.format(self.composite.id_token, self.name)
 
-  def segment(self, marker_channel_name):
+  def segment(self, marker_channel_name='-zcomp'):
 
     # setup
     print('getting marker channel')
@@ -95,7 +95,7 @@ class Channel(models.Model):
     # 2. create pipeline and run
     print('run pipeline')
     unique, suffix_id = self.composite.experiment.save_marker_pipeline(series_name=self.composite.series.name, primary_channel_name=marker_channel_primary_name, secondary_channel_name=self.name)
-    self.composite.experiment.run_pipeline()
+    self.composite.experiment.run_pipeline(series_ts=self.composite.series.ts)
 
     print('import masks')
     # 3. import masks and create new mask channel
@@ -143,6 +143,7 @@ class Channel(models.Model):
           cell_mask = cell_instance.masks.create(experiment=cell.experiment,
                                                  series=cell.series,
                                                  cell=cell,
+                                                 channel=mask_channel,
                                                  mask=mask_mask,
                                                  marker=marker,
                                                  gray_value_id=gray_value_id)

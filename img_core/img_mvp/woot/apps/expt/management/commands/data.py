@@ -83,7 +83,7 @@ class Command(BaseCommand):
           out_file.write('expt,series,channel,id,t,r,c\n')
           for track_id, track in tracks.items():
             for frame in list(sorted(track, key=lambda t: t[2])):
-              out_file.write('{},{},{},{},{},{},{}\n'.format(experiment_name,series_name,'-zbf',track_id,frame[2],frame[0],frame[1]))
+              out_file.write('{},{},{},{},{},{},{}\n'.format(experiment_name,series_name,'-zcomp',track_id,frame[2],frame[0],frame[1]))
 
       # for each track file in the track directory, if there is not a .csv file with the same name, then translate it into the new format
       for file_name in [f for f in os.listdir(experiment.track_path) if '.xls' in f]:
@@ -128,31 +128,50 @@ class Command(BaseCommand):
 
           print('step02 | processing marker ({}/{})... {} tracks, {} instances, {} markers'.format(i+1,len(data),composite.tracks.count(), composite.track_instances.count(), composite.markers.count()), end='\n' if i==len(data)-1 else '\r')
 
-      # 3. Segment ZCOMP channel
-      channel = composite.channels.get(name='-zbf')
-      marker_channel_name = '-zbf'
+      # 3. Generate zDiff channel
+      zdiff_mod = composite.mods.create(id_token=generate_id_token('img', 'Mod'), algorithm='mod_zdiff')
+
+      # Run mod
+      print('step02 | processing mod_zdiff...', end='\r')
+      zdiff_mod.run()
+      print('step02 | processing mod_zdiff... done.{}'.format(spacer))
+
+      # 4. Segment zdiff channel
+      zdiff_channel = composite.channels.get(name='-zdiff')
+      zdiff_channel.segment(marker_channel_name='-zcomp')
 
       channel.segment(marker_channel_name)
 
-      # 4. Export data to data directory
-      series.export_data()
-
-      # 5. Tile mod
-      ### RED OUTLINES
-      tile_mod = composite.mods.create(id_token=generate_id_token('img', 'Mod'), algorithm='mod_tile')
+      # 5. Generate zEdge channel
+      zedge_mod = composite.mods.create(id_token=generate_id_token('img', 'Mod'), algorithm='mod_zedge')
 
       # Run mod
-      print('step02 | processing mod_tile...', end='\r')
-      tile_mod.run()
-      print('step02 | processing mod_tile... done.{}'.format(spacer))
+      print('step02 | processing mod_zedge...', end='\r')
+      zedge_mod.run()
+      print('step02 | processing mod_zedge... done.{}'.format(spacer))
 
-      # 6. Label mod
-      label_mod = composite.mods.create(id_token=generate_id_token('img', 'Mod'), algorithm='mod_label')
+      # 6. Segment zEdge channel
+      zedge_channel = composite.channels.get(name='-zedge')
+      zedge_channel.segment(marker_channel_name='-zcomp')
 
-      # Run mod
-      print('step02 | processing mod_label...', end='\r')
-      label_mod.run()
-      print('step02 | processing mod_label... done.{}'.format(spacer))
+      # 7. Export data to data directory
+      # series.export_data()
+
+      # 8. Tile mod
+      # tile_mod = composite.mods.create(id_token=generate_id_token('img', 'Mod'), algorithm='mod_tile')
+      #
+      # # Run mod
+      # print('step02 | processing mod_tile...', end='\r')
+      # tile_mod.run()
+      # print('step02 | processing mod_tile... done.{}'.format(spacer))
+      #
+      # # 9. Label mod
+      # label_mod = composite.mods.create(id_token=generate_id_token('img', 'Mod'), algorithm='mod_label')
+      #
+      # # Run mod
+      # print('step02 | processing mod_label...', end='\r')
+      # label_mod.run()
+      # print('step02 | processing mod_label... done.{}'.format(spacer))
 
     else:
       print('Please enter an experiment')

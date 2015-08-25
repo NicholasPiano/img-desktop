@@ -143,12 +143,23 @@ class Experiment(models.Model):
 
     return unique_key
 
-  def run_pipeline(self, key='marker'):
+  def run_pipeline(self, series_ts=0, key='marker'):
     pipeline = os.path.join(self.pipeline_path, 'markers.cppipe')
     if key!='marker':
       pipeline = os.path.join(self.pipeline_path, 'regions.cppipe')
     cmd = '/Applications/CellProfiler.app/Contents/MacOS/CellProfiler -c -r -i {} -o {} -p {}'.format(self.composite_path, self.cp_path, pipeline)
-    subprocess.call(cmd, shell=True)
+    print('segmenting...')
+    # process = subprocess.Popen(cmd, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    with subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, bufsize=1, universal_newlines=True) as process:
+      for line in process.stderr:
+        if 'Version:' in line:
+          print('setting up...')
+        elif 'LoadImages' in line:
+          line_template = r'.+Image \# (?P<index>[0-9]+), module LoadImages.+'
+          line_match = re.match(line_template, line)
+          index = int(line_match.group('index'))
+          print('segmenting... {}/{} cycles completed.'.format(index, series_ts), end='\r' if index<series_ts else '\n')
+    print('segmentation complete.')
 
 class Series(models.Model):
   # connections

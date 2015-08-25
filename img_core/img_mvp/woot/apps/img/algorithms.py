@@ -124,7 +124,7 @@ def mod_tile(composite, mod_id, algorithm):
   for t in range(composite.series.ts):
     zbf_gon = composite.gons.get(t=t, channel__name='-zbf')
     zcomp_gon = composite.gons.get(t=t, channel__name='-zcomp')
-    mask_mask = composite.masks.get(t=t)
+    mask_mask = composite.masks.get(t=t, channel__name='-zcomp')
 
     zbf = zbf_gon.load()
     zcomp = zcomp_gon.load()
@@ -177,6 +177,8 @@ def mod_zdiff(composite, mod_id, algorithm):
   zdiff_channel, zdiff_channel_created = composite.channels.get_or_create(name='-zdiff')
 
   for t in range(composite.series.ts):
+    print('step02 | processing mod_zdiff t{}/{}...'.format(t+1, composite.series.ts), end='\r')
+
     # get zmod
     zmod_gon = composite.gons.get(channel__name='-zmod', t=t)
     zmod = (exposure.rescale_intensity(zmod_gon.load() * 1.0) * composite.series.zs).astype(int)
@@ -206,3 +208,5 @@ def mod_zdiff(composite, mod_id, algorithm):
     zdiff_gon.array = (zdiff.copy() + zmean.copy()) * zmean.copy()
     zdiff_gon.save_array(composite.series.experiment.composite_path, composite.templates.get(name='source'))
     zdiff_gon.save()
+
+def mod_zedge(composite, mod_id, algorithm):

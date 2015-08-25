@@ -5,7 +5,7 @@ from django.db import models
 
 # local
 from apps.expt.models import Experiment, Series
-from apps.img.models import Composite, Channel, Gon, Mask
+from apps.img.models import Composite, Channel, Gon, Mask, MaskChannel
 from apps.img.util import *
 
 # util
@@ -250,7 +250,7 @@ class CellInstance(models.Model):
       self.AreaShape_Perimeter,
       self.AreaShape_Solidity
     )
-    
+
   def line(self):
     return '{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}\n'.format(
       self.experiment.name,
@@ -313,6 +313,7 @@ class CellMask(models.Model):
   series = models.ForeignKey(Series, related_name='cell_masks')
   cell = models.ForeignKey(Cell, related_name='masks')
   cell_instance = models.ForeignKey(CellInstance, related_name='masks')
+  channel = models.ForeignKey(MaskChannel, related_name='cell_masks')
   mask = models.ForeignKey(Mask, related_name='cell_masks')
   marker = models.ForeignKey(Marker, related_name='cell_masks')
 
