@@ -82,7 +82,7 @@ class Channel(models.Model):
   def __str__(self):
     return '{} > {}'.format(self.composite.id_token, self.name)
 
-  def segment(self, marker_channel_name):
+  def segment(self, marker_channel_name='-zcomp', threshold_correction_factor=1.2, background=True):
 
     # setup
     print('getting marker channel')
@@ -94,8 +94,8 @@ class Channel(models.Model):
 
     # 2. create pipeline and run
     print('run pipeline')
-    unique, suffix_id = self.composite.experiment.save_marker_pipeline(series_name=self.composite.series.name, primary_channel_name=marker_channel_primary_name, secondary_channel_name=self.name)
-    self.composite.experiment.run_pipeline()
+    unique, suffix_id = self.composite.experiment.save_marker_pipeline(series_name=self.composite.series.name, primary_channel_name=marker_channel_primary_name, secondary_channel_name=self.name, threshold_correction_factor=threshold_correction_factor, background=background)
+    self.composite.experiment.run_pipeline(series_ts=self.composite.series.ts)
 
     print('import masks')
     # 3. import masks and create new mask channel
@@ -143,6 +143,7 @@ class Channel(models.Model):
           cell_mask = cell_instance.masks.create(experiment=cell.experiment,
                                                  series=cell.series,
                                                  cell=cell,
+                                                 channel=mask_channel,
                                                  mask=mask_mask,
                                                  marker=marker,
                                                  gray_value_id=gray_value_id)
@@ -248,8 +249,7 @@ class Channel(models.Model):
     #
     # else:
 
-
-  def label(self, label_channel=None):
+  def tile_labels_and_outlines(self, label_channel=None):
     pass
 
 class Gon(models.Model):
@@ -392,7 +392,7 @@ class MaskChannel(models.Model):
   def __str__(self):
     return 'mask {} > {}'.format(self.composite.id_token, self.name)
 
-  def get_or_create_mask(self, array, t, r=0, c=0, rs=None, cs=None, path=None):
+  def get_or_create_mask(self, array, t, r=0, c=0, z=0, rs=None, cs=None, path=None):
     # self.defaults
     rs = self.composite.series.rs if rs is None else rs
     cs = self.composite.series.cs if cs is None else cs
@@ -400,7 +400,7 @@ class MaskChannel(models.Model):
 
     # build
     mask, mask_created = self.masks.get_or_create(experiment=self.composite.experiment, series=self.composite.series, composite=self.composite, t=t)
-    mask.set_origin(r,c,t)
+    mask.set_origin(r,c,z,t)
     mask.set_extent(rs,cs)
 
     mask.array = array
@@ -425,6 +425,7 @@ class Mask(models.Model):
   # 1. origin
   r = models.IntegerField(default=0)
   c = models.IntegerField(default=0)
+  z = models.IntegerField(default=0)
   t = models.IntegerField(default=-1)
 
   # 2. extent
@@ -435,9 +436,10 @@ class Mask(models.Model):
   array = None
 
   # methods
-  def set_origin(self, r, c, t):
+  def set_origin(self, r, c, z, t):
     self.r = r
     self.c = c
+    self.z = z
     self.t = t
     self.save()
 
@@ -465,7 +467,7 @@ class Mask(models.Model):
     if not os.path.exists(root):
       os.makedirs(root)
 
-    self.file_name = template.rv.format(self.experiment.name, self.series.name, self.channel.name, str_value(self.t, self.series.ts))
+    self.file_name = template.rv.format(self.experiment.name, self.series.name, self.channel.name, str_value(self.t, self.series.ts), str_value(self.z, self.series.zs))
     self.url = os.path.join(root, self.file_name)
 
     imsave(self.url, self.array)

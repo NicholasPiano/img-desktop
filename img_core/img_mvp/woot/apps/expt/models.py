@@ -120,13 +120,13 @@ class Experiment(models.Model):
     else:
       return None, False, 'does not match template.'
 
-  def save_marker_pipeline(self, series_name=None, primary_channel_name=None, secondary_channel_name=None):
+  def save_marker_pipeline(self, series_name=None, primary_channel_name=None, secondary_channel_name=None, threshold_correction_factor=1.2, background=True):
     # 1. make unique key
     unique = random_string()
     unique_key = '{}{}-{}'.format(primary_channel_name, secondary_channel_name, unique)
 
     # 2. format and save file
-    pipeline_text = marker_pipeline('{}_s{}_{}_'.format(self.name, series_name, unique), unique_key, 's{}_ch{}'.format(series_name, primary_channel_name), 's{}_ch{}'.format(series_name, secondary_channel_name))
+    pipeline_text = marker_pipeline('{}_s{}_{}_'.format(self.name, series_name, unique), unique_key, 's{}_ch{}'.format(series_name, primary_channel_name), 's{}_ch{}'.format(series_name, secondary_channel_name),  threshold_correction_factor=threshold_correction_factor, background=background)
     with open(os.path.join(self.pipeline_path, 'markers.cppipe'), 'w+') as open_pipeline_file:
       open_pipeline_file.write(pipeline_text)
 
@@ -143,12 +143,23 @@ class Experiment(models.Model):
 
     return unique_key
 
-  def run_pipeline(self, key='marker'):
+  def run_pipeline(self, series_ts=0, key='marker'):
     pipeline = os.path.join(self.pipeline_path, 'markers.cppipe')
     if key!='marker':
       pipeline = os.path.join(self.pipeline_path, 'regions.cppipe')
     cmd = '/Applications/CellProfiler.app/Contents/MacOS/CellProfiler -c -r -i {} -o {} -p {}'.format(self.composite_path, self.cp_path, pipeline)
-    subprocess.call(cmd, shell=True)
+    print('segmenting...')
+    # process = subprocess.Popen(cmd, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    with subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, bufsize=1, universal_newlines=True) as process:
+      for line in process.stderr:
+        if 'Version:' in line:
+          print('setting up...')
+        elif 'LoadImages' in line:
+          line_template = r'.+Image \# (?P<index>[0-9]+), module LoadImages.+'
+          line_match = re.match(line_template, line)
+          index = int(line_match.group('index'))
+          print('segmenting... {}/{} cycles completed.'.format(index, series_ts), end='\r' if index<series_ts else '\n')
+    print('segmentation complete.')
 
 class Series(models.Model):
   # connections
@@ -171,7 +182,7 @@ class Series(models.Model):
 
   # methods
   def __str__(self):
-    return '{} > {}'%(self.experiment.name, self.name)
+    return '{} > {}'.format(self.experiment.name, self.name)
 
   def prototype(self):
     return filter(lambda x: x.name==self.name and x.experiment==self.experiment.name, series)[0]

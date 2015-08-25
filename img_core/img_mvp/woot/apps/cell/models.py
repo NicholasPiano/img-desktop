@@ -5,7 +5,7 @@ from django.db import models
 
 # local
 from apps.expt.models import Experiment, Series
-from apps.img.models import Composite, Channel, Gon, Mask
+from apps.img.models import Composite, Channel, Gon, Mask, MaskChannel
 from apps.img.util import *
 
 # util
@@ -133,6 +133,9 @@ class Cell(models.Model):
   series = models.ForeignKey(Series, related_name='cells')
   track = models.OneToOneField(Track, related_name='cell')
 
+  # properties
+  confidence = models.FloatField(default=0.0)
+
   # methods
   def calculate_velocities(self):
     previous_cell_instance = None
@@ -149,6 +152,9 @@ class Cell(models.Model):
       cell_instance.save()
       previous_cell_instance = cell_instance
 
+  def calculate_confidences(self):
+    pass
+
 class CellInstance(models.Model):
   # connections
   experiment = models.ForeignKey(Experiment, related_name='cell_instances')
@@ -159,6 +165,8 @@ class CellInstance(models.Model):
   track_instance = models.OneToOneField(TrackInstance, related_name='cell_instance')
 
   # properties
+  confidence = models.FloatField(default=0.0)
+
   r = models.IntegerField(default=0)
   c = models.IntegerField(default=0)
   z = models.IntegerField(default=0)
@@ -215,31 +223,34 @@ class CellInstance(models.Model):
     return self.AreaShape_Area*self.series.rmop*self.series.cmop
 
   def raw_line(self):
-    return '{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{} \n'.format(self.experiment.name,
-                                                                                                  self.series.name,
-                                                                                                  self.cell.pk,
-                                                                                                  self.r,
-                                                                                                  self.c,
-                                                                                                  self.z,
-                                                                                                  self.t,
-                                                                                                  self.vr,
-                                                                                                  self.vc,
-                                                                                                  self.vz,
-                                                                                                  self.region.index if self.region is not None else 0,
-                                                                                                  self.AreaShape_Area,
-                                                                                                  self.AreaShape_Compactness,
-                                                                                                  self.AreaShape_Eccentricity,
-                                                                                                  self.AreaShape_EulerNumber,
-                                                                                                  self.AreaShape_Extent,
-                                                                                                  self.AreaShape_FormFactor,
-                                                                                                  self.AreaShape_MajorAxisLength,
-                                                                                                  self.AreaShape_MaximumRadius,
-                                                                                                  self.AreaShape_MeanRadius,
-                                                                                                  self.AreaShape_MedianRadius,
-                                                                                                  self.AreaShape_MinorAxisLength,
-                                                                                                  self.AreaShape_Orientation,
-                                                                                                  self.AreaShape_Perimeter,
-                                                                                                  self.AreaShape_Solidity)
+    return '{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{} \n'.format(
+      self.experiment.name,
+      self.series.name,
+      self.cell.pk,
+      self.r,
+      self.c,
+      self.z,
+      self.t,
+      self.vr,
+      self.vc,
+      self.vz,
+      self.region.index if self.region is not None else 0,
+      self.AreaShape_Area,
+      self.AreaShape_Compactness,
+      self.AreaShape_Eccentricity,
+      self.AreaShape_EulerNumber,
+      self.AreaShape_Extent,
+      self.AreaShape_FormFactor,
+      self.AreaShape_MajorAxisLength,
+      self.AreaShape_MaximumRadius,
+      self.AreaShape_MeanRadius,
+      self.AreaShape_MedianRadius,
+      self.AreaShape_MinorAxisLength,
+      self.AreaShape_Orientation,
+      self.AreaShape_Perimeter,
+      self.AreaShape_Solidity
+    )
+
   def line(self):
     return '{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}\n'.format(
       self.experiment.name,
@@ -266,26 +277,28 @@ class CellInstance(models.Model):
 
   def set_from_masks(self):
     # some decision making can be made here, but what I will do for now is just take the only make it has
-    mask = self.masks.all()[0]
+    masks = self.masks.filter(channel__name__contains='zedge')
 
-    self.r = mask.r
-    self.c = mask.c
-    self.t = mask.t
-    self.AreaShape_Area = mask.AreaShape_Area
-    self.AreaShape_Compactness = mask.AreaShape_Compactness
-    self.AreaShape_Eccentricity = mask.AreaShape_Eccentricity
-    self.AreaShape_EulerNumber = mask.AreaShape_EulerNumber
-    self.AreaShape_Extent = mask.AreaShape_Extent
-    self.AreaShape_FormFactor = mask.AreaShape_FormFactor
-    self.AreaShape_MajorAxisLength = mask.AreaShape_MajorAxisLength
-    self.AreaShape_MaximumRadius = mask.AreaShape_MaximumRadius
-    self.AreaShape_MeanRadius = mask.AreaShape_MeanRadius
-    self.AreaShape_MedianRadius = mask.AreaShape_MedianRadius
-    self.AreaShape_MinorAxisLength = mask.AreaShape_MinorAxisLength
-    self.AreaShape_Orientation = mask.AreaShape_Orientation
-    self.AreaShape_Perimeter = mask.AreaShape_Perimeter
-    self.AreaShape_Solidity = mask.AreaShape_Solidity
-    self.save()
+    if masks:
+      mask = masks[0]
+      self.r = mask.r
+      self.c = mask.c
+      self.t = mask.t
+      self.AreaShape_Area = mask.AreaShape_Area
+      self.AreaShape_Compactness = mask.AreaShape_Compactness
+      self.AreaShape_Eccentricity = mask.AreaShape_Eccentricity
+      self.AreaShape_EulerNumber = mask.AreaShape_EulerNumber
+      self.AreaShape_Extent = mask.AreaShape_Extent
+      self.AreaShape_FormFactor = mask.AreaShape_FormFactor
+      self.AreaShape_MajorAxisLength = mask.AreaShape_MajorAxisLength
+      self.AreaShape_MaximumRadius = mask.AreaShape_MaximumRadius
+      self.AreaShape_MeanRadius = mask.AreaShape_MeanRadius
+      self.AreaShape_MedianRadius = mask.AreaShape_MedianRadius
+      self.AreaShape_MinorAxisLength = mask.AreaShape_MinorAxisLength
+      self.AreaShape_Orientation = mask.AreaShape_Orientation
+      self.AreaShape_Perimeter = mask.AreaShape_Perimeter
+      self.AreaShape_Solidity = mask.AreaShape_Solidity
+      self.save()
 
   def set_from_markers(self):
     # some decision making can be made here, but what I will do for now is just take the only make it has
@@ -302,11 +315,13 @@ class CellMask(models.Model):
   series = models.ForeignKey(Series, related_name='cell_masks')
   cell = models.ForeignKey(Cell, related_name='masks')
   cell_instance = models.ForeignKey(CellInstance, related_name='masks')
+  channel = models.ForeignKey(MaskChannel, related_name='cell_masks')
   mask = models.ForeignKey(Mask, related_name='cell_masks')
   marker = models.ForeignKey(Marker, related_name='cell_masks')
 
   # properties
   gray_value_id = models.IntegerField(default=0)
+  confidence = models.FloatField(default=0.0)
 
   r = models.IntegerField(default=0)
   c = models.IntegerField(default=0)
