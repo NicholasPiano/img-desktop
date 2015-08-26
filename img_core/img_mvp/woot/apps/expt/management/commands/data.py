@@ -95,7 +95,7 @@ class Command(BaseCommand):
       composite = series.composites.get()
 
       # add all track files to composite
-      data_file_list = [f for f in os.listdir(composite.experiment.track_path) if (os.path.splitext(f)[1] in allowed_data_extensions and composite.experiment.path_matches_series(f, composite.series.name))]
+      data_file_list = [f for f in os.listdir(composite.experiment.track_path) if (os.path.splitext(f)[1] in allowed_data_extensions and composite.experiment.path_matches_series(f, composite.series.name) and 'regions' not in f)]
 
       for df_name in data_file_list:
         print('step02 | data file {}... '.format(df_name), end='\r')

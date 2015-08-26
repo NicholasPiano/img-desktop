@@ -51,31 +51,33 @@ class Command(BaseCommand):
       series = experiment.series.get(name=series_name)
 
       # 1. Convert track files to csv
-      def load_track_file(path, name):
+      def load_track_file(path):
         track = [] # stores list of tracks that can then be put into the database
 
-        with open(name, 'rb') as track_file:
+        with open(path, 'rb') as track_file:
 
           lines = track_file.read().decode('mac-roman').split('\n')[1:-1]
           for i, line in enumerate(lines): # omit title line and final blank line
             line = line.split('\t')
 
             # details
-            track_id = int(float(line[1]))
             r = int(float(line[4]))
             c = int(float(line[3]))
-            t = int(float(line[2])) - 1
 
-            if track_id in tracks:
-              tracks[track_id].append((r,c,t))
-            else:
-              tracks[track_id] = [(r,c,t)]
+            track.append((index, r, c))
+
+        return track
 
       # for each track file in the track directory, if there is not a .csv file with the same name, then translate it into the new format
+      tracks = []
       for file_name in [f for f in os.listdir(experiment.track_path) if ('.xls' in f and 'region' in f)]:
-        name_with_index, ext = splitext(file_name)
-        convert_track_file(experiment.track_path, name_with_index)
+        # 1. parse name for region name
+        # 2. load track file
+        name, ext = splitext(file_name)
+        load_track_file(join(experiment.track_path, file_name), )
 
+      # dump tracks into a template compliant csv file
+      csv_file_name = '{}_{}_{}_regions.csv'.format(experiment_name, series_name, random_string())
       with open(csv_file_name, 'w+') as out_file:
         out_file.write('expt,series,channel,id,t,r,c\n')
         for track_id, track in tracks.items():
@@ -87,7 +89,7 @@ class Command(BaseCommand):
       composite = series.composites.get()
 
       # add all track files to composite
-      data_file_list = [f for f in os.listdir(composite.experiment.track_path) if (os.path.splitext(f)[1] in allowed_data_extensions and composite.experiment.path_matches_series(f, composite.series.name))]
+      data_file_list = [f for f in os.listdir(composite.experiment.track_path) if (os.path.splitext(f)[1] in allowed_data_extensions and composite.experiment.path_matches_series(f, composite.series.name) and 'regions' in f)]
 
       for df_name in data_file_list:
         print('step02 | data file {}... '.format(df_name), end='\r')
