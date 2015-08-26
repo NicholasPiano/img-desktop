@@ -185,6 +185,10 @@ class Channel(models.Model):
 
   def segment_regions(self, region_marker_channel_name):
     pass
+    # 1. create region primary
+    # 2. create pipeline and run
+    # 3. import masks
+    # 4. create regions and tracks
 
   # methods
   def region_labels(self):

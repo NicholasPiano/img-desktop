@@ -86,7 +86,7 @@ class Command(BaseCommand):
               out_file.write('{},{},{},{},{},{},{}\n'.format(experiment_name,series_name,'-zcomp',track_id,frame[2],frame[0],frame[1]))
 
       # for each track file in the track directory, if there is not a .csv file with the same name, then translate it into the new format
-      for file_name in [f for f in os.listdir(experiment.track_path) if '.xls' in f]:
+      for file_name in [f for f in os.listdir(experiment.track_path) if ('.xls' in f and 'region' not in f)]:
         name_with_index, ext = splitext(file_name)
         convert_track_file(experiment.track_path, name_with_index)
 

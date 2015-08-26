@@ -51,18 +51,10 @@ class Command(BaseCommand):
       series = experiment.series.get(name=series_name)
 
       # 1. Convert track files to csv
-      def convert_track_file(path, name_with_index):
-        # names
-        index_template = r'(?P<name>.+)_n[0-9]+'
-        alt = r'(?P<name>.+)'
-        name_match = re.match(index_template, name_with_index) if re.match(index_template, name_with_index) is not None else re.match(alt, name_with_index)
-        name = name_match.group('name')
-        csv_file_name = '{}_{}_markers.csv'.format(join(path, name), random_string())
-        xls_file_name = '{}.xls'.format(join(path, name_with_index))
+      def load_track_file(path, name):
+        track = [] # stores list of tracks that can then be put into the database
 
-        tracks = {} # stores list of tracks that can then be put into the database
-
-        with open(xls_file_name, 'rb') as track_file:
+        with open(name, 'rb') as track_file:
 
           lines = track_file.read().decode('mac-roman').split('\n')[1:-1]
           for i, line in enumerate(lines): # omit title line and final blank line
@@ -79,16 +71,16 @@ class Command(BaseCommand):
             else:
               tracks[track_id] = [(r,c,t)]
 
-        with open(csv_file_name, 'w+') as out_file:
-          out_file.write('expt,series,channel,id,t,r,c\n')
-          for track_id, track in tracks.items():
-            for frame in list(sorted(track, key=lambda t: t[2])):
-              out_file.write('{},{},{},{},{},{},{}\n'.format(experiment_name,series_name,'-zcomp',track_id,frame[2],frame[0],frame[1]))
-
       # for each track file in the track directory, if there is not a .csv file with the same name, then translate it into the new format
-      for file_name in [f for f in os.listdir(experiment.track_path) if '.xls' in f]:
+      for file_name in [f for f in os.listdir(experiment.track_path) if ('.xls' in f and 'region' in f)]:
         name_with_index, ext = splitext(file_name)
         convert_track_file(experiment.track_path, name_with_index)
+
+      with open(csv_file_name, 'w+') as out_file:
+        out_file.write('expt,series,channel,id,t,r,c\n')
+        for track_id, track in tracks.items():
+          for frame in list(sorted(track, key=lambda t: t[2])):
+            out_file.write('{},{},{},{},{},{},{}\n'.format(experiment_name,series_name,'-zcomp',track_id,frame[2],frame[0],frame[1]))
 
       # 2. Import tracks
       # select composite

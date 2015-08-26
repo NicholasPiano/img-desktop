@@ -154,6 +154,7 @@ class Cell(models.Model):
 
   def calculate_confidences(self):
     pass
+    # 1. 
 
 class CellInstance(models.Model):
   # connections
