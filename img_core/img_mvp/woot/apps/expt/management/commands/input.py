@@ -162,7 +162,7 @@ class Command(BaseCommand):
       # 9. copy single zbf image from middle of time series to regions path for tracking
       middle_t = int(float(series.ts) / 2.0)
       region_tracking_gon = composite.channels.get(name='-zbf').gons.get(t=middle_t)
-      sh.copy2(region_tracking_gon.paths.get().url, join(composite.experiment.regions_path, gon.paths.get().file_name))
+      sh.copy2(region_tracking_gon.paths.get().url, join(composite.experiment.regions_path, '{}_s{}_region_tracking.tiff'.format(experiment.name, series.name)))
 
     else:
       print('Please enter an experiment')
