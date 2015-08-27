@@ -122,6 +122,7 @@ class Command(BaseCommand):
                                                                                                composite=composite,
                                                                                                channel=composite.channels.get(name=region_marker_prototype['channel']),
                                                                                                region_track=region_track,
+                                                                                               region_track_index=int(region_marker_prototype['index']),
                                                                                                r=int(region_marker_prototype['r']),
                                                                                                c=int(region_marker_prototype['c']))
 
@@ -129,7 +130,7 @@ class Command(BaseCommand):
 
       # 4. Segment zdiff channel
       zbf_channel = composite.channels.get(name='-zbf')
-      zbf_channel.segment_regions(marker_channel_name='-zbf')
+      zbf_channel.segment_regions(region_marker_channel_name='-zbf')
 
     else:
       print('Please enter an experiment')

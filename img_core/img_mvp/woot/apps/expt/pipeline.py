@@ -187,4 +187,132 @@ ExportToSpreadsheet:[module_num:6|svn_version:\'Unknown\'|variable_revision_numb
   return text
 
 def region_pipeline():
-  pass
+  text = 'CellProfiler Pipeline: http://www.cellprofiler.org\n\
+Version:3\n\
+DateRevision:20140723173957\n\
+GitHash:6c2d896\n\
+ModuleCount:6\n\
+HasImagePlaneDetails:False\n\
+\n\
+LoadImages:[module_num:1|svn_version:\'Unknown\'|variable_revision_number:11|show_window:True|notes:\x5B\x5D|batch_state:array(\x5B\x5D, dtype=uint8)|enabled:True|wants_pause:False]\n\
+    File type to be loaded:individual images\n\
+    File selection method:Text-Regular expressions\n\
+    Number of images in each group?:3\n\
+    Type the text that the excluded images have in common:Do not use\n\
+    Analyze all subfolders within the selected folder?:None\n\
+    Input image file location:Default Input Folder\x7C\n\
+    Check image sets for unmatched or duplicate files?:Yes\n\
+    Group images by metadata?:No\n\
+    Exclude certain files?:No\n\
+    Specify metadata fields to group by:\n\
+    Select subfolders to analyze:\n\
+    Image count:2\n\
+    Text that these images have in common (case-sensitive):{secondary_channel_name}_\n\
+    Position of this image in each group:1\n\
+    Extract metadata from where?:None\n\
+    Regular expression that finds metadata in the file name:\n\
+    Type the regular expression that finds metadata in the subfolder path:\n\
+    Channel count:1\n\
+    Group the movie frames?:No\n\
+    Grouping method:Interleaved\n\
+    Number of channels per group:3\n\
+    Load the input as images or objects?:Images\n\
+    Name this loaded image:Secondary\n\
+    Name this loaded object:Objects\n\
+    Retain outlines of loaded objects?:No\n\
+    Name the outline image:LoadedImageOutlines\n\
+    Channel number:1\n\
+    Rescale intensities?:Yes\n\
+    Text that these images have in common (case-sensitive):{primary_channel_name}_\n\
+    Position of this image in each group:2\n\
+    Extract metadata from where?:None\n\
+    Regular expression that finds metadata in the file name:\n\
+    Type the regular expression that finds metadata in the subfolder path:\n\
+    Channel count:1\n\
+    Group the movie frames?:No\n\
+    Grouping method:Interleaved\n\
+    Number of channels per group:3\n\
+    Load the input as images or objects?:Objects\n\
+    Name this loaded image:Primary\n\
+    Name this loaded object:RegionMarkers\n\
+    Retain outlines of loaded objects?:No\n\
+    Name the outline image:LoadedImageOutlines\n\
+    Channel number:1\n\
+    Rescale intensities?:Yes\n\
+\n\
+Smooth:[module_num:2|svn_version:\'Unknown\'|variable_revision_number:2|show_window:True|notes:\x5B\x5D|batch_state:array(\x5B\x5D, dtype=uint8)|enabled:True|wants_pause:False]\n\
+    Select the input image:Secondary\n\
+    Name the output image:SmoothSecondary\n\
+    Select smoothing method:Smooth Keeping Edges\n\
+    Calculate artifact diameter automatically?:Yes\n\
+    Typical artifact diameter:16.0\n\
+    Edge intensity difference:0.1\n\
+    Clip intensities to 0 and 1?:Yes\n\
+\n\
+IdentifySecondaryObjects:[module_num:3|svn_version:\'Unknown\'|variable_revision_number:9|show_window:True|notes:\x5B\x5D|batch_state:array(\x5B\x5D, dtype=uint8)|enabled:True|wants_pause:False]\n\
+    Select the input objects:RegionMarkers\n\
+    Name the objects to be identified:RegionMasks\n\
+    Select the method to identify the secondary objects:Propagation\n\
+    Select the input image:SmoothSecondary\n\
+    Number of pixels by which to expand the primary objects:10\n\
+    Regularization factor:0.05\n\
+    Name the outline image:SecondaryOutlines\n\
+    Retain outlines of the identified secondary objects?:No\n\
+    Discard secondary objects touching the border of the image?:No\n\
+    Discard the associated primary objects?:No\n\
+    Name the new primary objects:FilteredNuclei\n\
+    Retain outlines of the new primary objects?:No\n\
+    Name the new primary object outlines:FilteredNucleiOutlines\n\
+    Fill holes in identified objects?:Yes\n\
+    Threshold setting version:1\n\
+    Threshold strategy:Adaptive\n\
+    Thresholding method:Otsu\n\
+    Select the smoothing method for thresholding:Automatic\n\
+    Threshold smoothing scale:1.0\n\
+    Threshold correction factor:{threshold_correction_factor}\n\
+    Lower and upper bounds on threshold:0.0,1.0\n\
+    Approximate fraction of image covered by objects?:0.01\n\
+    Manual threshold:0.0\n\
+    Select the measurement to threshold with:None\n\
+    Select binary image:None\n\
+    Masking objects:None\n\
+    Two-class or three-class thresholding?:Two classes\n\
+    Minimize the weighted variance or the entropy?:Weighted variance\n\
+    Assign pixels in the middle intensity class to the foreground or the background?:{background}\n\
+    Method to calculate adaptive window size:Image size\n\
+    Size of adaptive window:10\n\
+\n\
+ExpandOrShrinkObjects:[module_num:4|svn_version:\'Unknown\'|variable_revision_number:1|show_window:True|notes:\x5B\x5D|batch_state:array(\x5B\x5D, dtype=uint8)|enabled:True|wants_pause:False]\n\
+    Select the input objects:RegionMasks\n\
+    Name the output objects:DilatedRegionMasks\n\
+    Select the operation:Expand objects until touching\n\
+    Number of pixels by which to expand or shrink:1\n\
+    Fill holes in objects so that all objects shrink to a single point?:No\n\
+    Retain the outlines of the identified objects?:No\n\
+    Name the outline image:ShrunkenNucleiOutlines\n\
+\n\
+SaveImages:[module_num:5|svn_version:\'Unknown\'|variable_revision_number:11|show_window:True|notes:\x5B\x5D|batch_state:array(\x5B\x5D, dtype=uint8)|enabled:True|wants_pause:False]\n\
+    Select the type of image to save:Objects\n\
+    Select the image to save:None\n\
+    Select the objects to save:DilatedRegionMasks\n\
+    Select the module display window to save:None\n\
+    Select method for constructing file names:From image filename\n\
+    Select image name for file prefix:Secondary\n\
+    Enter single file name:OrigBlue\n\
+    Number of digits:4\n\
+    Append a suffix to the image file name?:Yes\n\
+    Text to append to the image name:_cp{unique_key}\n\
+    Saved file format:tiff\n\
+    Output file location:Default Output Folder\x7C\n\
+    Image bit depth:8\n\
+    Overwrite existing files without warning?:Yes\n\
+    When to save:Every cycle\n\
+    Rescale the images? :No\n\
+    Save as grayscale or color image?:Grayscale\n\
+    Select colormap:gray\n\
+    Record the file and path information to the saved image?:No\n\
+    Create subfolders in the output folder?:No\n\
+    Base image folder:Elsewhere...\x7C\n\
+    Saved movie format:avi'.format(experiment_prefix=experiment_prefix, unique_key=unique_key, primary_channel_name=primary_channel_name, secondary_channel_name=secondary_channel_name, threshold_correction_factor=threshold_correction_factor, background='Background' if background else 'Foreground')
+
+  return text

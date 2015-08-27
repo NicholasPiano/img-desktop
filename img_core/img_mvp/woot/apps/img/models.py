@@ -13,6 +13,7 @@ from apps.img import algorithms
 import os
 import re
 from scipy.misc import imread, imsave, toimage
+from scipy.ndimage import label
 from skimage import exposure
 import numpy as np
 from PIL import Image, ImageDraw
@@ -184,16 +185,21 @@ class Channel(models.Model):
     for cell in self.composite.experiment.cells.all():
       cell.calculate_velocities()
 
-  def segment_regions(self, region_marker_channel_name):
+  def segment_regions(self, region_marker_channel_name='-zbf', threshold_correction_factor=1.2, background=True):
     # setup
-    marker_channel = self.composite.channels.get(name=marker_channel_name)
+    region_marker_channel = self.composite.channels.get(name=region_marker_channel_name)
 
     # 1. create region primary
     print('running primary')
-    marker_channel_primary_name = marker_channel.region_primary()
+    region_marker_channel_primary_name = region_marker_channel.region_primary()
 
     # 2. create pipeline and run
+    unique, suffix_id = self.composite.experiment.save_region_pipeline(series_name=self.composite.series.name, primary_channel_name=region_marker_channel_primary_name, secondary_channel_name=self.name, threshold_correction_factor=threshold_correction_factor, background=background)
+    self.composite.experiment.run_pipeline(series_ts=self.composite.series.ts)
+
     # 3. import masks
+    
+
     # 4. create regions and tracks
 
   # methods
@@ -254,11 +260,11 @@ class Channel(models.Model):
         # 1. loop through time series
         for t in range(self.composite.series.ts):
           # blank image
-          blank = np.zeros(self.composite.shape())
+          blank = np.ones(self.composite.shape())
 
-          for region_track_name in set([rm.region_track.name for rm in self.region_markers.all()])
+          for region_track_name in set([rm.region_track.name for rm in self.region_markers.all()]):
 
-            region_markers = self.markers.filter(region_track_instance__t=t, region_track__name=region_track__name)
+            region_markers = self.region_markers.filter(region_track_instance__t=t, region_track__name=region_track_name)
 
             previous_region_marker = None
             first_region_marker = None
@@ -267,15 +273,23 @@ class Channel(models.Model):
               img = Image.fromarray(blank)
               draw = ImageDraw.Draw(img)
 
-              draw.line([(previous_region_marker.c, previous_region_marker.r), (region_marker.c, region_marker.r)], fill=255, width=5)
-              blank = np.array(img)
+              if previous_region_marker is not None:
+                draw.line([(previous_region_marker.c, previous_region_marker.r), (region_marker.c, region_marker.r)], fill=0, width=5)
 
               previous_region_marker = region_marker
-              first_region_marker = region_marker if region_marker.region_track_index==1 else None
+              if first_region_marker is None:
+                first_region_marker = region_marker if region_marker.region_track_index==1 else None
 
               if i==len(region_markers)-1:
-                draw.line([(region_marker.c, region_marker.r), (first_region_marker.c, first_region_marker.r)], fill=255, width=5)
+                draw.line([(region_marker.c, region_marker.r), (first_region_marker.c, first_region_marker.r)], fill=0, width=5)
 
+              blank = np.array(img)
+
+          # fill in holes in blank
+          blank, n = label(blank)
+          blank[blank==blank[0,0]] = 0
+
+          # create gon
           marker_channel, marker_channel_created = self.composite.channels.get_or_create(name='{}-regionprimary'.format(self.name))
           blank_gon, blank_gon_created = marker_channel.get_or_create_gon(blank, t)
 

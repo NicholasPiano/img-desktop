@@ -74,12 +74,6 @@ class RegionTrackInstance(models.Model):
   # properties
   t = models.IntegerField(default=0)
 
-  # methods
-  def primary(self, region_marker_channel=None): # make image using markers as waypoints for outer shell and fill with white
-    pass
-    # 1. draw lines between each marker in sequence to form a loop
-    # 2. fill interior with white
-
 class RegionMarker(models.Model):
   # connections
   experiment = models.ForeignKey(Experiment, related_name='region_markers')
