@@ -28,6 +28,7 @@ class Experiment(models.Model):
   composite_path = models.CharField(max_length=255)
   cp_path = models.CharField(max_length=255)
   ij_path = models.CharField(max_length=255)
+  regions_path = models.CharField(max_length=255)
 
   plot_path = models.CharField(max_length=255)
   track_path = models.CharField(max_length=255)
@@ -46,6 +47,7 @@ class Experiment(models.Model):
     self.composite_path = os.path.join(self.base_path, default_paths['composite'])
     self.cp_path = os.path.join(self.base_path, default_paths['cp'])
     self.ij_path = os.path.join(self.base_path, default_paths['ij'])
+    self.regions_path = os.path.join(self.base_path, default_paths['regions'])
 
     self.plot_path = os.path.join(self.base_path, default_paths['plot'])
     self.track_path = os.path.join(self.base_path, default_paths['track'])
@@ -56,7 +58,7 @@ class Experiment(models.Model):
 
     self.save()
 
-    for path in [self.storage_path, self.composite_path, self.cp_path, self.ij_path, self.plot_path, self.track_path, self.data_path, self.pipeline_path, self.video_path, self.inf_path]:
+    for path in [self.storage_path, self.composite_path, self.cp_path, self.ij_path, self.regions_path, self.plot_path, self.track_path, self.data_path, self.pipeline_path, self.video_path, self.inf_path]:
       if not os.path.exists(path):
         os.makedirs(path)
 
