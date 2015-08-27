@@ -11,6 +11,7 @@ from apps.expt.util import *
 
 # util
 import os
+import re
 from os.path import join, exists, splitext
 from optparse import make_option
 from subprocess import call
@@ -51,7 +52,7 @@ class Command(BaseCommand):
       series = experiment.series.get(name=series_name)
 
       # 1. Convert track files to csv
-      def load_track_file(path):
+      def load_track_file(path, region_name):
         track = [] # stores list of tracks that can then be put into the database
 
         with open(path, 'rb') as track_file:
@@ -61,10 +62,11 @@ class Command(BaseCommand):
             line = line.split('\t')
 
             # details
-            r = int(float(line[4]))
-            c = int(float(line[3]))
+            index = int(float(line[0]))
+            r = int(float(line[6]))
+            c = int(float(line[5]))
 
-            track.append((index, r, c))
+            track.append((region_name, index, r, c))
 
         return track
 
@@ -72,17 +74,19 @@ class Command(BaseCommand):
       tracks = []
       for file_name in [f for f in os.listdir(experiment.track_path) if ('.xls' in f and 'region' in f)]:
         # 1. parse name for region name
+        xls_region_file_template = r'(?P<expt>.+)_s(?P<series>.+)_region-(?P<region_name>.+)\.xls'
         # 2. load track file
-        name, ext = splitext(file_name)
-        load_track_file(join(experiment.track_path, file_name), )
+        if re.match(xls_region_file_template, file_name).group('series') == series_name:
+          region_name = re.match(xls_region_file_template, file_name).group('region_name')
+          tracks.append(load_track_file(join(experiment.track_path, file_name), region_name))
 
       # dump tracks into a template compliant csv file
-      csv_file_name = '{}_{}_{}_regions.csv'.format(experiment_name, series_name, random_string())
-      with open(csv_file_name, 'w+') as out_file:
-        out_file.write('expt,series,channel,id,t,r,c\n')
-        for track_id, track in tracks.items():
-          for frame in list(sorted(track, key=lambda t: t[2])):
-            out_file.write('{},{},{},{},{},{},{}\n'.format(experiment_name,series_name,'-zcomp',track_id,frame[2],frame[0],frame[1]))
+      csv_file_name = '{}_s{}_{}_regions.csv'.format(experiment_name, series_name, random_string())
+      with open(join(experiment.track_path, csv_file_name), 'w+') as out_file:
+        out_file.write('expt,series,channel,region,index,r,c\n')
+        for track in tracks:
+          for marker in track:
+            out_file.write('{},{},{},{},{},{},{}\n'.format(experiment_name, series_name,'-zbf', marker[0], marker[1],marker[2], marker[3]))
 
       # 2. Import tracks
       # select composite
@@ -97,34 +101,35 @@ class Command(BaseCommand):
         print('step02 | data file {}... {}'.format(df_name, status))
 
       ### MARKERS
-      for data_file in composite.data_files.filter(data_type='markers'):
+      for data_file in composite.data_files.filter(data_type='regions'):
         data = data_file.load()
-        for i, marker_prototype in enumerate(data):
-          track, track_created = composite.tracks.get_or_create(experiment=composite.experiment,
-                                                                series=composite.series,
-                                                                composite=composite,
-                                                                channel=composite.channels.get(name=marker_prototype['channel']),
-                                                                track_id=marker_prototype['id'])
+        for t in range(series.ts):
+          for i, region_marker_prototype in enumerate(data):
+            region_track, region_track_created = composite.region_tracks.get_or_create(experiment=composite.experiment,
+                                                                                       series=composite.series,
+                                                                                       composite=composite,
+                                                                                       channel=composite.channels.get(name=region_marker_prototype['channel']),
+                                                                                       name=region_marker_prototype['region'])
 
-          track_instance, track_instance_created = track.instances.get_or_create(experiment=composite.experiment,
-                                                                                 series=composite.series,
-                                                                                 composite=composite,
-                                                                                 channel=composite.channels.get(name=marker_prototype['channel']),
-                                                                                 t=int(marker_prototype['t']))
+            region_track_instance, region_track_instance_created = region_track.instances.get_or_create(experiment=composite.experiment,
+                                                                                                        series=composite.series,
+                                                                                                        composite=composite,
+                                                                                                        channel=composite.channels.get(name=region_marker_prototype['channel']),
+                                                                                                        t=t)
 
-          marker, marker_created = track_instance.markers.get_or_create(experiment=composite.experiment,
-                                                                        series=composite.series,
-                                                                        composite=composite,
-                                                                        channel=composite.channels.get(name=marker_prototype['channel']),
-                                                                        track=track,
-                                                                        r=int(marker_prototype['r']),
-                                                                        c=int(marker_prototype['c']))
+            region_marker, region_marker_created = region_track_instance.markers.get_or_create(experiment=composite.experiment,
+                                                                                               series=composite.series,
+                                                                                               composite=composite,
+                                                                                               channel=composite.channels.get(name=region_marker_prototype['channel']),
+                                                                                               region_track=region_track,
+                                                                                               r=int(region_marker_prototype['r']),
+                                                                                               c=int(region_marker_prototype['c']))
 
-          print('step02 | processing marker ({}/{})... {} tracks, {} instances, {} markers'.format(i+1,len(data),composite.tracks.count(), composite.track_instances.count(), composite.markers.count()), end='\n' if i==len(data)-1 else '\r')
+            print('step02 | processing t={}/{} marker ({}/{})... {} tracks, {} instances, {} markers'.format(t+1,series.ts,i+1,len(data),composite.tracks.count(), composite.track_instances.count(), composite.markers.count()), end='\n' if t==series.ts-1 else '\r')
 
       # 4. Segment zdiff channel
-      zdiff_channel = composite.channels.get(name='-zdiff')
-      zdiff_channel.segment(marker_channel_name='-zcomp')
+      # zbf_channel = composite.channels.get(name='-zbf')
+      # zbf_channel.segment_regions(marker_channel_name='-zbf')
 
     else:
       print('Please enter an experiment')

@@ -58,6 +58,7 @@ class RegionTrack(models.Model):
   experiment = models.ForeignKey(Experiment, related_name='region_tracks')
   series = models.ForeignKey(Series, related_name='region_tracks')
   composite = models.ForeignKey(Composite, related_name='region_tracks')
+  channel = models.ForeignKey(Channel, related_name='region_tracks')
 
   # properties
   name = models.CharField(max_length=255)
@@ -67,6 +68,7 @@ class RegionTrackInstance(models.Model):
   experiment = models.ForeignKey(Experiment, related_name='region_track_instances')
   series = models.ForeignKey(Series, related_name='region_track_instances')
   composite = models.ForeignKey(Composite, related_name='region_track_instances')
+  channel = models.ForeignKey(Channel, related_name='region_track_instances')
   region_track = models.ForeignKey(RegionTrack, related_name='instances')
 
   # properties
@@ -83,7 +85,7 @@ class RegionMarker(models.Model):
   experiment = models.ForeignKey(Experiment, related_name='region_markers')
   series = models.ForeignKey(Series, related_name='region_markers')
   composite = models.ForeignKey(Composite, related_name='region_markers')
-  channel = models.ForeignKey(Channel, related_name='region_markers', null=True)
+  channel = models.ForeignKey(Channel, related_name='region_markers')
   gon = models.ForeignKey(Gon, related_name='region_markers', null=True)
   region_track = models.ForeignKey(RegionTrack, related_name='markers')
   region_track_instance = models.ForeignKey(RegionTrackInstance, related_name='markers')
@@ -154,7 +156,7 @@ class Cell(models.Model):
 
   def calculate_confidences(self):
     pass
-    # 1. 
+    # 1.
 
 class CellInstance(models.Model):
   # connections
