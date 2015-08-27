@@ -106,6 +106,9 @@ class RegionInstance(models.Model):
   series = models.ForeignKey(Series, related_name='region_instances')
   region = models.ForeignKey(Region, related_name='instances')
 
+  # properties
+  mean_gray_value_id = models.IntegerField(default=0)
+
 class RegionMask(models.Model):
   # connections
   experiment = models.ForeignKey(Experiment, related_name='region_masks')
@@ -157,8 +160,8 @@ class CellInstance(models.Model):
   experiment = models.ForeignKey(Experiment, related_name='cell_instances')
   series = models.ForeignKey(Series, related_name='cell_instances')
   cell = models.ForeignKey(Cell, related_name='instances')
-  region = models.ForeignKey(Region, related_name='cell_instances', null=True)
-  region_instance = models.ForeignKey(RegionInstance, related_name='cell_instances', null=True)
+  region = models.ForeignKey(Region, related_name='cell_instances')
+  region_instance = models.ForeignKey(RegionInstance, related_name='cell_instances')
   track_instance = models.OneToOneField(TrackInstance, related_name='cell_instance')
 
   # properties
@@ -231,7 +234,7 @@ class CellInstance(models.Model):
       self.vr,
       self.vc,
       self.vz,
-      self.region.index if self.region is not None else 0,
+      self.region.index,
       self.AreaShape_Area,
       self.AreaShape_Compactness,
       self.AreaShape_Eccentricity,
@@ -262,7 +265,7 @@ class CellInstance(models.Model):
       self.VC(),
       self.VZ(),
       self.V(),
-      self.region.index if self.region is not None else 0,
+      self.region.index,
       self.A(),
       self.AreaShape_Compactness,
       self.AreaShape_Eccentricity,
@@ -295,6 +298,9 @@ class CellInstance(models.Model):
       self.AreaShape_Orientation = mask.AreaShape_Orientation
       self.AreaShape_Perimeter = mask.AreaShape_Perimeter
       self.AreaShape_Solidity = mask.AreaShape_Solidity
+      self.region = mask.region
+      self.region_instance = mask.region_instance
+      self.confidence = mask.confidence
       self.save()
 
   def set_from_markers(self):
@@ -312,6 +318,8 @@ class CellMask(models.Model):
   series = models.ForeignKey(Series, related_name='cell_masks')
   cell = models.ForeignKey(Cell, related_name='masks')
   cell_instance = models.ForeignKey(CellInstance, related_name='masks')
+  region = models.ForeignKey(Region, related_name='cell_masks')
+  region_instance = models.ForeignKey(RegionInstance, related_name='cell_masks')
   channel = models.ForeignKey(MaskChannel, related_name='cell_masks')
   mask = models.ForeignKey(Mask, related_name='cell_masks')
   marker = models.ForeignKey(Marker, related_name='cell_masks')

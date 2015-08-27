@@ -186,7 +186,7 @@ ExportToSpreadsheet:[module_num:6|svn_version:\'Unknown\'|variable_revision_numb
 
   return text
 
-def region_pipeline():
+def region_pipeline(experiment_prefix, unique_key, primary_channel_name, secondary_channel_name, threshold_correction_factor=1.2, background=True):
   text = 'CellProfiler Pipeline: http://www.cellprofiler.org\n\
 Version:3\n\
 DateRevision:20140723173957\n\
@@ -265,7 +265,7 @@ IdentifySecondaryObjects:[module_num:3|svn_version:\'Unknown\'|variable_revision
     Name the new primary object outlines:FilteredNucleiOutlines\n\
     Fill holes in identified objects?:Yes\n\
     Threshold setting version:1\n\
-    Threshold strategy:Adaptive\n\
+    Threshold strategy:Automatic\n\
     Thresholding method:Otsu\n\
     Select the smoothing method for thresholding:Automatic\n\
     Threshold smoothing scale:1.0\n\
