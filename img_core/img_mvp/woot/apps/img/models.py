@@ -229,7 +229,7 @@ class Channel(models.Model):
       region_markers = region_marker_channel.region_markers.filter(region_track_instance__t=t)
       for region_marker in region_markers:
         # 1. create cell
-        region, region_created = self.composite.experiment.regions.get_or_create(series=self.composite.series, region_track=region_marker.region_track)
+        region, region_created = self.composite.experiment.regions.get_or_create(series=self.composite.series, region_track=region_marker.region_track, name=region_marker.region_track.name)
 
         # 2. create cell instance
         region_instance, region_instance_created = region.instances.get_or_create(experiment=region.experiment,
