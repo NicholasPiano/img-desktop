@@ -161,8 +161,8 @@ class CellInstance(models.Model):
   experiment = models.ForeignKey(Experiment, related_name='cell_instances')
   series = models.ForeignKey(Series, related_name='cell_instances')
   cell = models.ForeignKey(Cell, related_name='instances')
-  region = models.ForeignKey(Region, related_name='cell_instances')
-  region_instance = models.ForeignKey(RegionInstance, related_name='cell_instances')
+  region = models.ForeignKey(Region, related_name='cell_instances', null=True)
+  region_instance = models.ForeignKey(RegionInstance, related_name='cell_instances', null=True)
   track_instance = models.OneToOneField(TrackInstance, related_name='cell_instance')
 
   # properties
@@ -235,7 +235,7 @@ class CellInstance(models.Model):
       self.vr,
       self.vc,
       self.vz,
-      self.region.index,
+      self.region.name if self.region is not None else 'No Mask',
       self.AreaShape_Area,
       self.AreaShape_Compactness,
       self.AreaShape_Eccentricity,
@@ -266,7 +266,7 @@ class CellInstance(models.Model):
       self.VC(),
       self.VZ(),
       self.V(),
-      self.region.index,
+      self.region.name if self.region is not None else 'No Mask',
       self.A(),
       self.AreaShape_Compactness,
       self.AreaShape_Eccentricity,
