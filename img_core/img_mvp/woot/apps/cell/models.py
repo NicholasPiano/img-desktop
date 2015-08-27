@@ -105,6 +105,7 @@ class RegionInstance(models.Model):
   experiment = models.ForeignKey(Experiment, related_name='region_instances')
   series = models.ForeignKey(Series, related_name='region_instances')
   region = models.ForeignKey(Region, related_name='instances')
+  region_track_instance = models.OneToOneField(RegionTrackInstance, related_name='region_instance')
 
   # properties
   mean_gray_value_id = models.IntegerField(default=0)

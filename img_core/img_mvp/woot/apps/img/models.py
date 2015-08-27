@@ -106,7 +106,7 @@ class Channel(models.Model):
     cp_template = self.composite.templates.get(name='cp')
     mask_template = self.composite.templates.get(name='mask')
     mask_channel = self.composite.mask_channels.create(name=suffix_id)
-    region_mask_channel = self.composite.mask_channels.get(name='-zbf')
+    region_mask_channel = self.composite.mask_channels.get(name__contains='-zbf-region')
 
     for cp_out_file in cp_out_file_list:
       array = imread(os.path.join(self.composite.experiment.cp_path, cp_out_file))
@@ -147,7 +147,7 @@ class Channel(models.Model):
         # 3. create cell mask
         gray_value_id = mask[marker.r, marker.c]
         region_gray_value_id = region_mask[marker.r, marker.c]
-        region_instance = self.composite.experiment.series.region_instances.get(t=t, mean_gray_value_id=region_gray_value_id)
+        region_instance = self.composite.experiment.series.region_instances.get(region_track_instance__t=t, mean_gray_value_id=region_gray_value_id)
         if gray_value_id!=0:
           cell_mask = cell_instance.masks.create(experiment=cell.experiment,
                                                  series=cell.series,
@@ -179,9 +179,6 @@ class Channel(models.Model):
           cell_mask.AreaShape_Orientation = float(cell_mask_data['AreaShape_Orientation']) if str(cell_mask_data['AreaShape_Orientation']) != 'nan' else -1.0
           cell_mask.AreaShape_Perimeter = float(cell_mask_data['AreaShape_Perimeter']) if str(cell_mask_data['AreaShape_Perimeter']) != 'nan' else -1.0
           cell_mask.AreaShape_Solidity = float(cell_mask_data['AreaShape_Solidity']) if str(cell_mask_data['AreaShape_Solidity']) != 'nan' else -1.0
-
-          # region
-
 
           cell_mask.save()
 
@@ -224,38 +221,38 @@ class Channel(models.Model):
       mask_channel.get_or_create_mask(array, int(metadata['t']))
 
     # 4. create regions and tracks
+    print('create regions and tracks...')
     for t in range(self.composite.series.ts):
       mask_mask = mask_channel.masks.get(t=t)
       mask = mask_mask.load()
 
-      region_markers = marker_channel.region_markers.filter(region_track_instance__t=t)
+      region_markers = region_marker_channel.region_markers.filter(region_track_instance__t=t)
       for region_marker in region_markers:
         # 1. create cell
-        region, region_created = self.composite.experiment.regions.get_or_create(series=self.composite.series, track=region_marker.region_track)
+        region, region_created = self.composite.experiment.regions.get_or_create(series=self.composite.series, region_track=region_marker.region_track)
 
         # 2. create cell instance
-        region_instance, region_instance_created = region.instances.get_or_create(experiment=cell.experiment,
-                                                                                  series=cell.series,
+        region_instance, region_instance_created = region.instances.get_or_create(experiment=region.experiment,
+                                                                                  series=region.series,
                                                                                   region_track_instance=region_marker.region_track_instance)
 
         # 3. create cell mask
         gray_value_id = mask[region_marker.r, region_marker.c]
         region_mask, region_mask_created = region_instance.masks.get_or_create(experiment=region.experiment,
                                                                                series=region.series,
-                                                                               cell=region,
-                                                                               channel=mask_channel,
+                                                                               region=region,
                                                                                mask=mask_mask,
                                                                                gray_value_id=gray_value_id)
 
-      for region_track_instance in marker_channel.region_track_instances.filter(t=t):
+      for region_track_instance in region_marker_channel.region_track_instances.filter(t=t):
         mean_gray_value_id = 0
         count = 0
-        for region_mask in region_track_instance.region_masks.all():
+        for region_mask in region_track_instance.region_instance.masks.all():
           mean_gray_value_id += region_mask.gray_value_id
           count += 1
 
-        region_track_instance.mean_gray_value_id = int(float(mean_gray_value_id) / float(count))
-        region_track_instance.save()
+        region_track_instance.region_instance.mean_gray_value_id = int(float(mean_gray_value_id) / float(count))
+        region_track_instance.region_instance.save()
 
   # methods
   def region_labels(self):
