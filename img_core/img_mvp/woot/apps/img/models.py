@@ -147,13 +147,17 @@ class Channel(models.Model):
         # 3. create cell mask
         gray_value_id = mask[marker.r, marker.c]
         region_gray_value_id = region_mask[marker.r, marker.c]
-        region_instance = self.composite.series.region_instances.get(region_track_instance__t=t, mean_gray_value_id=region_gray_value_id)
+        region_instance = self.composite.series.region_instances.filter(region_track_instance__t=t, mean_gray_value_id=region_gray_value_id)
+        if region_instance:
+          region_instance = region_instance[0]
+        else:
+          region_instance = None
         if gray_value_id!=0:
           cell_mask = cell_instance.masks.create(experiment=cell.experiment,
                                                  series=cell.series,
                                                  cell=cell,
-                                                 region=region_instance.region,
-                                                 region_instance=region_instance,
+                                                 region=region_instance.region if region_instance is not None else None,
+                                                 region_instance=region_instance if region_instance is not None else None,
                                                  channel=mask_channel,
                                                  mask=mask_mask,
                                                  marker=marker,
