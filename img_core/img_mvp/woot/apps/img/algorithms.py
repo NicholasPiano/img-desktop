@@ -33,6 +33,13 @@ def scan_point(img, rs, cs, r, c, size=0):
 
   return column_1D
 
+def mask_edge_image(mask_img):
+  full_edge_img = np.zeros(mask_img.shape)
+  for unique in [u for u in np.unique(mask_img) if u>0]:
+    full_edge_img += edge_image(mask_img==unique)
+
+  return full_edge_img>0
+
 # algorithms
 def mod_zmod(composite, mod_id, algorithm):
   # template
@@ -138,7 +145,7 @@ def mod_tile(composite, mod_id, algorithm):
     zmean = zmean_gon.load()
     mask = mask_mask.load()
 
-    mask_outline = edge_image(mask>0)
+    mask_outline = mask_edge_image(mask)
 
     zbf_mask_r = zbf.copy()
     zbf_mask_g = zbf.copy()
@@ -190,27 +197,45 @@ def mod_tile(composite, mod_id, algorithm):
 
     imsave(join(tile_path, 'tile_{}_s{}_t{}.tiff'.format(composite.experiment.name, composite.series.name, str_value(t, composite.series.ts))), whole)
 
-def mod_label(composite, mod_id, algorithm):
+def mod_region_test(composite, mod_id, algorithm):
 
-  label_path = os.path.join(composite.experiment.video_path, 'labels', composite.series.name)
-  if not os.path.exists(label_path):
-    os.makedirs(label_path)
+  region_test_path = os.path.join(composite.experiment.video_path, 'regions', composite.series.name)
+  if not os.path.exists(region_test_path):
+    os.makedirs(region_test_path)
 
   for t in range(composite.series.ts):
-    zbf_gon = composite.gons.get(t=t, channel__name='-zbf')
-    zbf = zbf_gon.load()
+    zbf = composite.gons.get(t=t, channel__name='-zbf').load()
+    region_mask = composite.masks.get(t=t, channel__name__contains='-regionprimary-zbf').load()
 
-    cell_instances = composite.series.cell_instances.filter(t=t)
+    mask_edges = mask_edge_image(region_mask)
 
-    plt.imshow(zbf, cmap='Greys_r')
-    for cell_instance in cell_instances:
-      plt.scatter(cell_instance.c, cell_instance.r, color='red', s=5)
-      plt.text(cell_instance.c+5, cell_instance.r+5, '{}'.format(cell_instance.cell.pk), fontsize=8, color='white')
+    zbf_mask_r = zbf.copy()
+    zbf_mask_g = zbf.copy()
+    zbf_mask_b = zbf.copy()
 
-    plt.text(-50, -50, 'expt={} series={} t={}'.format(composite.experiment.name, composite.series.name, t), fontsize=15, color='black')
+    # edges
+    zbf_mask_r[mask_edges>0] = 255
+    zbf_mask_g[mask_edges>0] = 255
+    zbf_mask_b[mask_edges>0] = 255
 
-    plt.savefig(join(label_path, 'labels_{}_s{}_t{}.png'.format(composite.experiment.name, composite.series.name, str_value(t, composite.series.ts))), dpi=100)
-    plt.cla()
+    # region labels
+    # prepare drawing
+    blank_slate = np.zeros(zbf.shape)
+    blank_slate_img = Image.fromarray(blank_slate)
+    draw = ImageDraw.Draw(blank_slate_img)
+    for unique in [u for u in np.unique(mask_img) if u>0]:
+      # get coords (isolate mask, cut to black, use r/c)
+      isolated_mask = region_mask==unique
+      cut, (r0,c0,rs,cs) = cut_to_black(isolated_mask)
+
+      draw.text((c0+30, r0+30), '{}'.format(marker.track.cell.pk), font=ImageFont.load_default(), fill='rgb(0,0,255)')
+
+    blank_slate = np.array(blank_slate_img)
+    zbf_mask_b[blank_slate>0] = 255
+
+    whole = np.dstack([zbf_mask_r, zbf_mask_g, zbf_mask_b])
+
+    imsave(join(region_test_path, 'regions_{}_s{}_t{}.tiff'.format(composite.experiment.name, composite.series.name, str_value(t, composite.series.ts))), whole)
 
 def mod_zdiff(composite, mod_id, algorithm):
 

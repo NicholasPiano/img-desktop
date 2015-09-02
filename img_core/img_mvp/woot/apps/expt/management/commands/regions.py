@@ -128,9 +128,17 @@ class Command(BaseCommand):
 
             print('step02 | processing t={}/{} marker ({}/{})... {} tracks, {} instances, {} markers'.format(t+1,series.ts,i+1,len(data),composite.region_tracks.count(), composite.region_track_instances.count(), composite.region_markers.count()), end='\n' if t==series.ts-1 and i==len(data)-1 else '\r')
 
-      # 4. Segment zdiff channel
+      # 4. Segment zbf channel
       zbf_channel = composite.channels.get(name='-zbf')
       zbf_channel.segment_regions(region_marker_channel_name='-zbf')
+
+      # 5. Region test mod
+      tile_mod = composite.mods.create(id_token=generate_id_token('img', 'Mod'), algorithm='mod_region_test')
+
+      # Run mod
+      print('step02 | processing mod_region_test...', end='\r')
+      tile_mod.run()
+      print('step02 | processing mod_region_test... done.{}'.format(spacer))
 
     else:
       print('Please enter an experiment')
