@@ -189,6 +189,43 @@ def mod_tile(composite, mod_id, algorithm):
       zcomp_mask_g[blank_slate>0] = 255
       zcomp_mask_b[blank_slate>0] = 0
 
+    # regions
+    region_mask = composite.masks.get(t=t, channel__name__contains='-regionprimary-zbf').load()
+    region_mask_edges = mask_edge_image(region_mask)
+
+    zbf_mask_r[region_mask_edges>0] = 100
+    zbf_mask_g[region_mask_edges>0] = 100
+    zbf_mask_b[region_mask_edges>0] = 100
+
+    zcomp_mask_r[region_mask_edges>0] = 100
+    zcomp_mask_g[region_mask_edges>0] = 100
+    zcomp_mask_b[region_mask_edges>0] = 100
+
+    # region labels
+    # prepare drawing
+    blank_slate = np.zeros(zbf.shape)
+    blank_slate_img = Image.fromarray(blank_slate)
+    draw = ImageDraw.Draw(blank_slate_img)
+    for unique in [u for u in np.unique(region_mask) if u>0]:
+      if composite.series.region_instances.filter(region_track_instance__t=t, mean_gray_value_id=unique).count()>0:
+        region = composite.series.region_instances.get(region_track_instance__t=t, mean_gray_value_id=unique).region
+
+        # get coords (isolate mask, cut to black, use r/c)
+        isolated_mask = region_mask==unique
+        cut, (r0,c0,rs,cs) = cut_to_black(isolated_mask)
+
+        draw.text((c0+30, r0+30), '{}'.format(region.name), font=ImageFont.load_default(), fill='rgb(0,0,255)')
+
+    blank_slate = np.array(blank_slate_img)
+
+    zbf_mask_r[blank_slate>0] = 0
+    zbf_mask_g[blank_slate>0] = 0
+    zbf_mask_b[blank_slate>0] = 255
+
+    zcomp_mask_r[blank_slate>0] = 0
+    zcomp_mask_g[blank_slate>0] = 0
+    zcomp_mask_b[blank_slate>0] = 255
+
     # tile zbf, zbf_mask, zcomp, zcomp_mask
     top_half = np.concatenate((np.dstack([zbf, zbf, zbf]), np.dstack([zbf_mask_r, zbf_mask_g, zbf_mask_b])), axis=0)
     bottom_half = np.concatenate((np.dstack([zmean, zmean, zmean]), np.dstack([zcomp_mask_r, zcomp_mask_g, zcomp_mask_b])), axis=0)
@@ -214,23 +251,28 @@ def mod_region_test(composite, mod_id, algorithm):
     zbf_mask_b = zbf.copy()
 
     # edges
-    zbf_mask_r[mask_edges>0] = 255
-    zbf_mask_g[mask_edges>0] = 255
-    zbf_mask_b[mask_edges>0] = 255
+    zbf_mask_r[mask_edges>0] = 100
+    zbf_mask_g[mask_edges>0] = 100
+    zbf_mask_b[mask_edges>0] = 100
 
     # region labels
     # prepare drawing
     blank_slate = np.zeros(zbf.shape)
     blank_slate_img = Image.fromarray(blank_slate)
     draw = ImageDraw.Draw(blank_slate_img)
-    for unique in [u for u in np.unique(mask_img) if u>0]:
-      # get coords (isolate mask, cut to black, use r/c)
-      isolated_mask = region_mask==unique
-      cut, (r0,c0,rs,cs) = cut_to_black(isolated_mask)
+    for unique in [u for u in np.unique(region_mask) if u>0]:
+      if composite.series.region_instances.filter(region_track_instance__t=t, mean_gray_value_id=unique).count()>0:
+        region = composite.series.region_instances.get(region_track_instance__t=t, mean_gray_value_id=unique).region
 
-      draw.text((c0+30, r0+30), '{}'.format(marker.track.cell.pk), font=ImageFont.load_default(), fill='rgb(0,0,255)')
+        # get coords (isolate mask, cut to black, use r/c)
+        isolated_mask = region_mask==unique
+        cut, (r0,c0,rs,cs) = cut_to_black(isolated_mask)
+
+        draw.text((c0+30, r0+30), '{}'.format(region.name), font=ImageFont.load_default(), fill='rgb(0,0,255)')
 
     blank_slate = np.array(blank_slate_img)
+    zbf_mask_r[blank_slate>0] = 0
+    zbf_mask_g[blank_slate>0] = 0
     zbf_mask_b[blank_slate>0] = 255
 
     whole = np.dstack([zbf_mask_r, zbf_mask_g, zbf_mask_b])
