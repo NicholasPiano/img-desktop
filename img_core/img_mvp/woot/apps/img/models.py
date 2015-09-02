@@ -17,6 +17,7 @@ from scipy.ndimage import label
 from skimage import exposure
 import numpy as np
 from PIL import Image, ImageDraw
+from scipy.stats.mstats import mode
 
 ### Models
 # http://stackoverflow.com/questions/19695249/load-just-part-of-an-image-in-python
@@ -249,13 +250,8 @@ class Channel(models.Model):
                                                                                gray_value_id=gray_value_id)
 
       for region_track_instance in region_marker_channel.region_track_instances.filter(t=t):
-        mean_gray_value_id = 0
-        count = 0
-        for region_mask in region_track_instance.region_instance.masks.all():
-          mean_gray_value_id += region_mask.gray_value_id
-          count += 1
-
-        region_track_instance.region_instance.mean_gray_value_id = int(float(mean_gray_value_id) / float(count))
+        gray_value_ids = [region_mask.gray_value_id for region_mask in region_track_instance.region_instance.masks.all()]
+        region_track_instance.region_instance.mode_gray_value_id = mode(gray_value_ids)
         region_track_instance.region_instance.save()
 
   # methods
@@ -315,6 +311,7 @@ class Channel(models.Model):
 
         # 1. loop through time series
         for t in range(self.composite.series.ts):
+          print('primary for composite {} {} {} channel {} | t{}/{}'.format(self.composite.experiment.name, self.composite.series.name, self.composite.id_token, self.name, t, self.composite.series.ts), end='\n' if t==self.composite.series.ts-1 else '\r')
           # blank image
           blank = np.ones(self.composite.shape())
 

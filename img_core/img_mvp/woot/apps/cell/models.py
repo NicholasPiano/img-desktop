@@ -108,7 +108,7 @@ class RegionInstance(models.Model):
   region_track_instance = models.OneToOneField(RegionTrackInstance, related_name='region_instance')
 
   # properties
-  mean_gray_value_id = models.IntegerField(default=0)
+  mode_gray_value_id = models.IntegerField(default=0)
 
 class RegionMask(models.Model):
   # connections
