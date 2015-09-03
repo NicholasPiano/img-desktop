@@ -29,6 +29,7 @@ class Composite(models.Model):
   # properties
   id_token = models.CharField(max_length=8)
   current_region_unique = models.CharField(max_length=8)
+  current_zedge_unique = models.CharField(max_length=8)
 
   # methods
   def __str__(self):

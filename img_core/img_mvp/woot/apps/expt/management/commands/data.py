@@ -156,6 +156,8 @@ class Command(BaseCommand):
       series.export_data()
 
       # 8. Tile mod
+      composite.current_zedge_unique = zedge_unique
+      composite.save()
       tile_mod = composite.mods.create(id_token=generate_id_token('img', 'Mod'), algorithm='mod_tile')
 
       # Run mod

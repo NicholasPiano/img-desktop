@@ -35,16 +35,9 @@ class Command(BaseCommand):
       help='Name of the series' # who cares
     ),
 
-    make_option('--cell', # option that will appear in cmd
+    make_option('--cells', # option that will appear in cmd
       action='store', # no idea
-      dest='series', # refer to this in options variable
-      default='', # some default
-      help='Name of the series' # who cares
-    ),
-
-    make_option('--t', # option that will appear in cmd
-      action='store', # no idea
-      dest='series', # refer to this in options variable
+      dest='cells', # refer to this in options variable
       default='', # some default
       help='Name of the series' # who cares
     ),
@@ -59,8 +52,7 @@ class Command(BaseCommand):
     # vars
     experiment_name = options['expt']
     series_name = options['series']
-    cell_pks = options['cell'].split(',')
-    t_index = int(options['t'])
+    cell_pks = options['cells'].split(',')
 
     if experiment_name!='' and series_name!='':
       experiment = Experiment.objects.get(name=experiment_name)
@@ -113,7 +105,12 @@ class Command(BaseCommand):
           series.export_data()
 
           # redo video
+          tile_mod = composite.mods.create(id_token=generate_id_token('img', 'Mod'), algorithm='mod_tile')
 
+          # Run mod
+          print('step02 | processing mod_tile...', end='\r')
+          tile_mod.run(channel_unique_override=composite.current_zedge_unique)
+          print('step02 | processing mod_tile... done.{}'.format(spacer))
 
       else:
         print('Please enter at least one cell to delete')

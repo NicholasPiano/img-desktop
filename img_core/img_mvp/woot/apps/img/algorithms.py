@@ -164,7 +164,7 @@ def mod_tile(composite, mod_id, algorithm, **kwargs):
     zcomp_mask_g[mask_outline>0] = 0
     zcomp_mask_b[mask_outline>0] = 0
 
-    markers = composite.markers.filter(track_instance__t=t)
+    markers = composite.markers.filter(track_instance__t=t, track__cell__isnull=False)
     for marker in markers:
 
       # 2. draw markers in blue channel
