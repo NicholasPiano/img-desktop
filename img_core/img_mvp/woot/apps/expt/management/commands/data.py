@@ -138,19 +138,19 @@ class Command(BaseCommand):
 
       # 4. Segment zdiff channel
       zdiff_channel = composite.channels.get(name='-zdiff')
-      unique = zdiff_channel.segment(marker_channel_name='-zcomp')
+      zdiff_unique = zdiff_channel.segment(marker_channel_name='-zcomp')
 
       # 5. Generate zEdge channel
       zedge_mod = composite.mods.create(id_token=generate_id_token('img', 'Mod'), algorithm='mod_zedge')
 
       # Run mod
       print('step02 | processing mod_zedge...', end='\r')
-      zedge_mod.run(channel_unique_override=unique)
+      zedge_mod.run(channel_unique_override=zdiff_unique)
       print('step02 | processing mod_zedge... done.{}'.format(spacer))
 
       # 6. Segment zEdge channel
       zedge_channel = composite.channels.get(name='-zedge')
-      zedge_channel.segment(marker_channel_name='-zcomp', threshold_correction_factor=1.2)
+      zedge_unique = zedge_channel.segment(marker_channel_name='-zcomp', threshold_correction_factor=1.2)
 
       # 7. Export data to data directory
       series.export_data()
@@ -160,7 +160,7 @@ class Command(BaseCommand):
 
       # Run mod
       print('step02 | processing mod_tile...', end='\r')
-      tile_mod.run(channel_unique_override=unique)
+      tile_mod.run(channel_unique_override=zedge_unique)
       print('step02 | processing mod_tile... done.{}'.format(spacer))
 
     else:
