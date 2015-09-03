@@ -87,26 +87,29 @@ class Channel(models.Model):
 
   def segment(self, marker_channel_name='-zcomp', threshold_correction_factor=1.2, background=True):
 
+    unique = random_string() # defines a single identifier for this run
+    unique_key = '{}{}-{}'.format(primary_channel_name, secondary_channel_name, unique)
+
     # setup
     print('getting marker channel')
     marker_channel = self.composite.channels.get(name=marker_channel_name)
 
     # 1. create primary from markers with marker_channel
     print('running primary')
-    marker_channel_primary_name = marker_channel.primary()
+    marker_channel_primary_name, unique = marker_channel.primary(unique=unique)
 
     # 2. create pipeline and run
     print('run pipeline')
-    unique, suffix_id = self.composite.experiment.save_marker_pipeline(series_name=self.composite.series.name, primary_channel_name=marker_channel_primary_name, secondary_channel_name=self.name, threshold_correction_factor=threshold_correction_factor, background=background)
+    self.composite.experiment.save_marker_pipeline(series_name=self.composite.series.name, primary_channel_name=marker_channel_primary_name, secondary_channel_name=self.name, threshold_correction_factor=threshold_correction_factor, background=background, unique=unique, unique_key=unique_key)
     self.composite.experiment.run_pipeline(series_ts=self.composite.series.ts)
 
     print('import masks')
     # 3. import masks and create new mask channel
-    cp_out_file_list = [f for f in os.listdir(self.composite.experiment.cp_path) if (suffix_id in f and '.tiff' in f)]
+    cp_out_file_list = [f for f in os.listdir(self.composite.experiment.cp_path) if (unique_key in f and '.tiff' in f)]
     # make new channel that gets put in mask path
     cp_template = self.composite.templates.get(name='cp')
     mask_template = self.composite.templates.get(name='mask')
-    mask_channel = self.composite.mask_channels.create(name=suffix_id)
+    mask_channel = self.composite.mask_channels.create(name=unique_key)
     region_mask_channel = self.composite.mask_channels.get(name__contains='-zbf-region')
 
     for cp_out_file in cp_out_file_list:
@@ -201,24 +204,28 @@ class Channel(models.Model):
       cell.calculate_confidences()
 
   def segment_regions(self, region_marker_channel_name='-zbf', threshold_correction_factor=1.2, background=True):
+
+    unique = random_string() # defines a single identifier for this run
+    unique_key = '{}{}-{}'.format(primary_channel_name, secondary_channel_name, unique)
+
     # setup
     region_marker_channel = self.composite.channels.get(name=region_marker_channel_name)
 
     # 1. create region primary
     print('running primary')
-    region_marker_channel_primary_name = region_marker_channel.region_primary()
+    region_marker_channel_primary_name = region_marker_channel.region_primary(unique=unique)
 
     # 2. create pipeline and run
-    unique, suffix_id = self.composite.experiment.save_region_pipeline(series_name=self.composite.series.name, primary_channel_name=region_marker_channel_primary_name, secondary_channel_name=self.name, threshold_correction_factor=threshold_correction_factor, background=background)
+    self.composite.experiment.save_region_pipeline(series_name=self.composite.series.name, primary_channel_name=region_marker_channel_primary_name, secondary_channel_name=self.name, threshold_correction_factor=threshold_correction_factor, background=background, unique=unique, unique_key=unique_key)
     self.composite.experiment.run_pipeline(series_ts=self.composite.series.ts, key='regions')
 
     # 3. import masks
     print('import masks')
-    cp_out_file_list = [f for f in os.listdir(self.composite.experiment.cp_path) if (suffix_id in f and '.tiff' in f)]
+    cp_out_file_list = [f for f in os.listdir(self.composite.experiment.cp_path) if (unique_key in f and '.tiff' in f)]
     # make new channel that gets put in mask path
     cp_template = self.composite.templates.get(name='cp')
     mask_template = self.composite.templates.get(name='mask')
-    mask_channel = self.composite.mask_channels.create(name=suffix_id)
+    mask_channel = self.composite.mask_channels.create(name=v)
 
     for cp_out_file in cp_out_file_list:
       array = imread(os.path.join(self.composite.experiment.cp_path, cp_out_file))
@@ -275,85 +282,75 @@ class Channel(models.Model):
 
     return gon, gon_created
 
-  def primary(self):
-    if self.composite.channels.filter(name='{}-primary'.format(self.name)).count()==0:
-      if self.markers.count()!=0:
-        channel_name = ''
+  def primary(self, unique=''):
+    if self.markers.count()!=0:
+      channel_name = ''
 
-        # 1. loop through time series
-        for t in range(self.composite.series.ts):
-          # load all markers for this frame
-          markers = self.markers.filter(track_instance__t=t)
+      # 1. loop through time series
+      for t in range(self.composite.series.ts):
+        # load all markers for this frame
+        markers = self.markers.filter(track_instance__t=t)
 
-          # blank image
-          blank = np.zeros(self.composite.shape())
+        # blank image
+        blank = np.zeros(self.composite.shape())
 
-          for i, marker in enumerate(markers):
-            print('primary for composite {} {} {} channel {} | t{}/{}'.format(self.composite.experiment.name, self.composite.series.name, self.composite.id_token, self.name, t, self.composite.series.ts), end='\n' if i==len(markers)-1 else '\r')
-            blank[marker.r-3:marker.r+2, marker.c-3:marker.c+2] = 255
+        for i, marker in enumerate(markers):
+          print('primary for composite {} {} {} channel {} | t{}/{}'.format(self.composite.experiment.name, self.composite.series.name, self.composite.id_token, self.name, t, self.composite.series.ts), end='\n' if i==len(markers)-1 else '\r')
+          blank[marker.r-3:marker.r+2, marker.c-3:marker.c+2] = 255
 
-          marker_channel, marker_channel_created = self.composite.channels.get_or_create(name='{}-primary'.format(self.name))
-          channel_name = marker_channel.name
-          blank_gon, blank_gon_created = marker_channel.get_or_create_gon(blank, t)
+        marker_channel, marker_channel_created = self.composite.channels.get_or_create(name='{}-primary-{}'.format(self.name, unique))
+        channel_name = marker_channel.name
+        blank_gon, blank_gon_created = marker_channel.get_or_create_gon(blank, t)
 
-        return channel_name
-
-      else:
-        print('primary for composite {} {} {} channel {} | no markers have been defined.'.format(self.composite.experiment.name, self.composite.series.name, self.composite.id_token, self.name))
+      return channel_name
 
     else:
-      print('primary for composite {} {} {} channel {} has already been created.'.format(self.composite.experiment.name, self.composite.series.name, self.composite.id_token, self.name))
-      return '{}-primary'.format(self.name)
+      print('primary for composite {} {} {} channel {} | no markers have been defined.'.format(self.composite.experiment.name, self.composite.series.name, self.composite.id_token, self.name))
 
-  def region_primary(self):
-    if self.composite.channels.filter(name='{}-regionprimary'.format(self.name)).count()==0:
-      if self.region_markers.count()!=0:
+  def region_primary(self, unique=''):
+    if self.region_markers.count()!=0:
 
-        # 1. loop through time series
-        for t in range(self.composite.series.ts):
-          print('primary for composite {} {} {} channel {} | t{}/{}'.format(self.composite.experiment.name, self.composite.series.name, self.composite.id_token, self.name, t, self.composite.series.ts), end='\n' if t==self.composite.series.ts-1 else '\r')
-          # blank image
-          blank = np.ones(self.composite.shape())
+      # 1. loop through time series
+      for t in range(self.composite.series.ts):
+        print('primary for composite {} {} {} channel {} | t{}/{}'.format(self.composite.experiment.name, self.composite.series.name, self.composite.id_token, self.name, t, self.composite.series.ts), end='\n' if t==self.composite.series.ts-1 else '\r')
+        # blank image
+        blank = np.ones(self.composite.shape())
 
-          for region_track_name in set([rm.region_track.name for rm in self.region_markers.all()]):
+        for region_track_name in set([rm.region_track.name for rm in self.region_markers.all()]):
 
-            region_markers = self.region_markers.filter(region_track_instance__t=t, region_track__name=region_track_name)
+          region_markers = self.region_markers.filter(region_track_instance__t=t, region_track__name=region_track_name)
 
-            previous_region_marker = None
-            first_region_marker = None
-            for i, region_marker in enumerate(list(sorted(region_markers, key=lambda rm: rm.region_track_index))):
+          previous_region_marker = None
+          first_region_marker = None
+          for i, region_marker in enumerate(list(sorted(region_markers, key=lambda rm: rm.region_track_index))):
 
-              img = Image.fromarray(blank)
-              draw = ImageDraw.Draw(img)
+            img = Image.fromarray(blank)
+            draw = ImageDraw.Draw(img)
 
-              if previous_region_marker is not None:
-                draw.line([(previous_region_marker.c, previous_region_marker.r), (region_marker.c, region_marker.r)], fill=0, width=5)
+            if previous_region_marker is not None:
+              draw.line([(previous_region_marker.c, previous_region_marker.r), (region_marker.c, region_marker.r)], fill=0, width=5)
 
-              previous_region_marker = region_marker
-              if first_region_marker is None:
-                first_region_marker = region_marker if region_marker.region_track_index==1 else None
+            previous_region_marker = region_marker
+            if first_region_marker is None:
+              first_region_marker = region_marker if region_marker.region_track_index==1 else None
 
-              if i==len(region_markers)-1:
-                draw.line([(region_marker.c, region_marker.r), (first_region_marker.c, first_region_marker.r)], fill=0, width=5)
+            if i==len(region_markers)-1:
+              draw.line([(region_marker.c, region_marker.r), (first_region_marker.c, first_region_marker.r)], fill=0, width=5)
 
-              blank = np.array(img)
+            blank = np.array(img)
 
-          # fill in holes in blank
-          blank, n = label(blank)
-          blank[blank==blank[0,0]] = 0
+        # fill in holes in blank
+        blank, n = label(blank)
+        blank[blank==blank[0,0]] = 0
 
-          # create gon
-          marker_channel, marker_channel_created = self.composite.channels.get_or_create(name='{}-regionprimary'.format(self.name))
-          blank_gon, blank_gon_created = marker_channel.get_or_create_gon(blank, t)
+        # create gon
+        marker_channel, marker_channel_created = self.composite.channels.get_or_create(name='{}-regionprimary-{}'.format(self.name, unique))
+        blank_gon, blank_gon_created = marker_channel.get_or_create_gon(blank, t)
 
-        return marker_channel.name
-
-      else:
-        print('region primary for composite {} {} {} channel {} | no region markers have been defined.'.format(self.composite.experiment.name, self.composite.series.name, self.composite.id_token, self.name))
+      return marker_channel.name
 
     else:
-      print('region primary for composite {} {} {} channel {} has already been created.'.format(self.composite.experiment.name, self.composite.series.name, self.composite.id_token, self.name))
-      return '{}-regionprimary'.format(self.name)
+      print('region primary for composite {} {} {} channel {} | no region markers have been defined.'.format(self.composite.experiment.name, self.composite.series.name, self.composite.id_token, self.name))
 
   def outline(self, outline_channel=None):
     '''
