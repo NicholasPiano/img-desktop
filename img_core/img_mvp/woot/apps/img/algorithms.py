@@ -261,8 +261,8 @@ def mod_region_test(composite, mod_id, algorithm, **kwargs):
     blank_slate_img = Image.fromarray(blank_slate)
     draw = ImageDraw.Draw(blank_slate_img)
     for unique in [u for u in np.unique(region_mask) if u>0]:
-      if composite.series.region_instances.filter(region_track_instance__t=t, mean_gray_value_id=unique).count()>0:
-        region = composite.series.region_instances.get(region_track_instance__t=t, mean_gray_value_id=unique).region
+      if composite.series.region_instances.filter(region_track_instance__t=t, mode_gray_value_id=unique).count()>0:
+        region = composite.series.region_instances.get(region_track_instance__t=t, mode_gray_value_id=unique).region
 
         # get coords (isolate mask, cut to black, use r/c)
         isolated_mask = region_mask==unique
