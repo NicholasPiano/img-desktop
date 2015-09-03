@@ -28,6 +28,7 @@ class Composite(models.Model):
 
   # properties
   id_token = models.CharField(max_length=8)
+  current_region_unique = models.CharField(max_length=8)
 
   # methods
   def __str__(self):
@@ -96,7 +97,7 @@ class Channel(models.Model):
 
     # 1. create primary from markers with marker_channel
     print('running primary')
-    marker_channel_primary_name, unique = marker_channel.primary(unique=unique)
+    marker_channel_primary_name = marker_channel.primary(unique=unique)
 
     # 2. create pipeline and run
     print('run pipeline')
@@ -110,7 +111,7 @@ class Channel(models.Model):
     cp_template = self.composite.templates.get(name='cp')
     mask_template = self.composite.templates.get(name='mask')
     mask_channel = self.composite.mask_channels.create(name=unique_key)
-    region_mask_channel = self.composite.mask_channels.get(name__contains='-zbf-region')
+    region_mask_channel = self.composite.mask_channels.get(name__contains=self.composite.current_region_unique)
 
     for cp_out_file in cp_out_file_list:
       array = imread(os.path.join(self.composite.experiment.cp_path, cp_out_file))
@@ -151,7 +152,7 @@ class Channel(models.Model):
         # 3. create cell mask
         gray_value_id = mask[marker.r, marker.c]
         region_gray_value_id = region_mask[marker.r, marker.c]
-        region_instance = self.composite.series.region_instances.filter(region_track_instance__t=t, mean_gray_value_id=region_gray_value_id)
+        region_instance = self.composite.series.region_instances.filter(region_track_instance__t=t, mode_gray_value_id=region_gray_value_id)
         if region_instance:
           region_instance = region_instance[0]
         else:
@@ -263,6 +264,9 @@ class Channel(models.Model):
         region_track_instance.region_instance.mode_gray_value_id = int(mode(gray_value_ids)[0][0])
         region_track_instance.region_instance.save()
 
+    self.composite.current_region_unique = unique
+    self.composite.save()
+
     return unique
 
   # methods
@@ -294,6 +298,8 @@ class Channel(models.Model):
       marker_channel, marker_channel_created = self.composite.channels.get_or_create(name='{}-primary-{}'.format(self.name, unique))
 
       for t in range(self.composite.series.ts):
+        print('primary for composite {} {} {} channel {} | t{}/{}'.format(self.composite.experiment.name, self.composite.series.name, self.composite.id_token, self.name, t+1, self.composite.series.ts), end='\n' if t==self.composite.series.ts-1 else '\r')
+
         # load all markers for this frame
         markers = self.markers.filter(track_instance__t=t)
 
@@ -301,7 +307,7 @@ class Channel(models.Model):
         blank = np.zeros(self.composite.shape())
 
         for i, marker in enumerate(markers):
-          print('primary for composite {} {} {} channel {} | t{}/{}'.format(self.composite.experiment.name, self.composite.series.name, self.composite.id_token, self.name, t+1, self.composite.series.ts), end='\n' if i==len(markers)-1 else '\r')
+
           blank[marker.r-3:marker.r+2, marker.c-3:marker.c+2] = 255
 
         blank_gon, blank_gon_created = marker_channel.get_or_create_gon(blank, t)

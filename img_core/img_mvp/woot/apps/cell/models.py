@@ -167,6 +167,7 @@ class CellInstance(models.Model):
 
   # properties
   confidence = models.FloatField(default=0.0)
+  region_condition = models.CharField(max_length=255)
 
   r = models.IntegerField(default=0)
   c = models.IntegerField(default=0)
@@ -328,6 +329,7 @@ class CellMask(models.Model):
   # properties
   gray_value_id = models.IntegerField(default=0)
   confidence = models.FloatField(default=0.0)
+  region_condition = models.CharField(max_length=255)
 
   r = models.IntegerField(default=0)
   c = models.IntegerField(default=0)
