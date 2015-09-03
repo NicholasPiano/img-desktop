@@ -138,7 +138,7 @@ def mod_tile(composite, mod_id, algorithm, **kwargs):
     zbf_gon = composite.gons.get(t=t, channel__name='-zbf')
     zcomp_gon = composite.gons.get(t=t, channel__name='-zcomp')
     zmean_gon = composite.gons.get(t=t, channel__name='-zmean')
-    mask_mask = composite.masks.get(t=t, channel__name__contains='-zedge')
+    mask_mask = composite.masks.get(t=t, channel__name__contains=kwargs['channel_unique_override'])
 
     zbf = zbf_gon.load()
     zcomp = zcomp_gon.load()
@@ -190,7 +190,7 @@ def mod_tile(composite, mod_id, algorithm, **kwargs):
       zcomp_mask_b[blank_slate>0] = 0
 
     # regions
-    region_mask = composite.masks.get(t=t, channel__name__contains='-regionprimary-zbf').load()
+    region_mask = composite.masks.get(t=t, channel__name__contains=composite.current_region_unique).load()
     region_mask_edges = mask_edge_image(region_mask)
 
     zbf_mask_r[region_mask_edges>0] = 100
