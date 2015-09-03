@@ -86,7 +86,7 @@ class Command(BaseCommand):
               out_file.write('{},{},{},{},{},{},{}\n'.format(experiment_name,series_name,'-zcomp',track_id,frame[2],frame[0],frame[1]))
 
       # for each track file in the track directory, if there is not a .csv file with the same name, then translate it into the new format
-      for file_name in [f for f in os.listdir(experiment.track_path) if ('.xls' in f and 'region' not in f)]:
+      for file_name in [f for f in os.listdir(experiment.track_path) if ('.xls' in f and 'region' not in f and series_name in f)]:
         name_with_index, ext = splitext(file_name)
         convert_track_file(experiment.track_path, name_with_index)
 
@@ -138,14 +138,14 @@ class Command(BaseCommand):
 
       # 4. Segment zdiff channel
       zdiff_channel = composite.channels.get(name='-zdiff')
-      zdiff_channel.segment(marker_channel_name='-zcomp')
+      unique = zdiff_channel.segment(marker_channel_name='-zcomp')
 
       # 5. Generate zEdge channel
       zedge_mod = composite.mods.create(id_token=generate_id_token('img', 'Mod'), algorithm='mod_zedge')
 
       # Run mod
       print('step02 | processing mod_zedge...', end='\r')
-      zedge_mod.run()
+      zedge_mod.run(channel_unique_override=unique)
       print('step02 | processing mod_zedge... done.{}'.format(spacer))
 
       # 6. Segment zEdge channel
@@ -160,7 +160,7 @@ class Command(BaseCommand):
 
       # Run mod
       print('step02 | processing mod_tile...', end='\r')
-      tile_mod.run()
+      tile_mod.run(channel_unique_override=unique)
       print('step02 | processing mod_tile... done.{}'.format(spacer))
 
     else:

@@ -5,7 +5,7 @@ from django.db import models
 
 # local
 from apps.expt.models import Experiment, Series
-from apps.expt.util import generate_id_token, str_value
+from apps.expt.util import generate_id_token, str_value, random_string
 from apps.expt.data import *
 from apps.img import algorithms
 
@@ -88,7 +88,7 @@ class Channel(models.Model):
   def segment(self, marker_channel_name='-zcomp', threshold_correction_factor=1.2, background=True):
 
     unique = random_string() # defines a single identifier for this run
-    unique_key = '{}{}-{}'.format(primary_channel_name, secondary_channel_name, unique)
+    unique_key = '{}{}-{}'.format(marker_channel_name, self.name, unique)
 
     # setup
     print('getting marker channel')
@@ -191,7 +191,7 @@ class Channel(models.Model):
           cell_mask.save()
 
           # for now
-          cell_instance.set_from_masks()
+          cell_instance.set_from_masks(unique)
 
         else:
           # for now
@@ -203,10 +203,12 @@ class Channel(models.Model):
       cell.calculate_velocities()
       cell.calculate_confidences()
 
+    return unique
+
   def segment_regions(self, region_marker_channel_name='-zbf', threshold_correction_factor=1.2, background=True):
 
     unique = random_string() # defines a single identifier for this run
-    unique_key = '{}{}-{}'.format(primary_channel_name, secondary_channel_name, unique)
+    unique_key = '{}{}-{}'.format(region_marker_channel_name, self.name, unique)
 
     # setup
     region_marker_channel = self.composite.channels.get(name=region_marker_channel_name)
@@ -225,7 +227,7 @@ class Channel(models.Model):
     # make new channel that gets put in mask path
     cp_template = self.composite.templates.get(name='cp')
     mask_template = self.composite.templates.get(name='mask')
-    mask_channel = self.composite.mask_channels.create(name=v)
+    mask_channel = self.composite.mask_channels.create(name=unique_key)
 
     for cp_out_file in cp_out_file_list:
       array = imread(os.path.join(self.composite.experiment.cp_path, cp_out_file))
@@ -258,8 +260,10 @@ class Channel(models.Model):
 
       for region_track_instance in region_marker_channel.region_track_instances.filter(t=t):
         gray_value_ids = [region_mask.gray_value_id for region_mask in region_track_instance.region_instance.masks.all()]
-        region_track_instance.region_instance.mode_gray_value_id = mode(gray_value_ids)
+        region_track_instance.region_instance.mode_gray_value_id = int(mode(gray_value_ids)[0][0])
         region_track_instance.region_instance.save()
+
+    return unique
 
   # methods
   def region_labels(self):
@@ -287,6 +291,8 @@ class Channel(models.Model):
       channel_name = ''
 
       # 1. loop through time series
+      marker_channel, marker_channel_created = self.composite.channels.get_or_create(name='{}-primary-{}'.format(self.name, unique))
+
       for t in range(self.composite.series.ts):
         # load all markers for this frame
         markers = self.markers.filter(track_instance__t=t)
@@ -298,11 +304,9 @@ class Channel(models.Model):
           print('primary for composite {} {} {} channel {} | t{}/{}'.format(self.composite.experiment.name, self.composite.series.name, self.composite.id_token, self.name, t, self.composite.series.ts), end='\n' if i==len(markers)-1 else '\r')
           blank[marker.r-3:marker.r+2, marker.c-3:marker.c+2] = 255
 
-        marker_channel, marker_channel_created = self.composite.channels.get_or_create(name='{}-primary-{}'.format(self.name, unique))
-        channel_name = marker_channel.name
         blank_gon, blank_gon_created = marker_channel.get_or_create_gon(blank, t)
 
-      return channel_name
+      return marker_channel.name
 
     else:
       print('primary for composite {} {} {} channel {} | no markers have been defined.'.format(self.composite.experiment.name, self.composite.series.name, self.composite.id_token, self.name))
@@ -311,6 +315,8 @@ class Channel(models.Model):
     if self.region_markers.count()!=0:
 
       # 1. loop through time series
+      marker_channel, marker_channel_created = self.composite.channels.get_or_create(name='{}-regionprimary-{}'.format(self.name, unique))
+
       for t in range(self.composite.series.ts):
         print('primary for composite {} {} {} channel {} | t{}/{}'.format(self.composite.experiment.name, self.composite.series.name, self.composite.id_token, self.name, t, self.composite.series.ts), end='\n' if t==self.composite.series.ts-1 else '\r')
         # blank image
@@ -344,7 +350,6 @@ class Channel(models.Model):
         blank[blank==blank[0,0]] = 0
 
         # create gon
-        marker_channel, marker_channel_created = self.composite.channels.get_or_create(name='{}-regionprimary-{}'.format(self.name, unique))
         blank_gon, blank_gon_created = marker_channel.get_or_create_gon(blank, t)
 
       return marker_channel.name
@@ -490,10 +495,10 @@ class Mod(models.Model):
   date_created = models.DateTimeField(auto_now_add=True)
 
   # methods
-  def run(self):
+  def run(self, **kwargs):
     ''' Runs associated algorithm to produce a new channel. '''
     algorithm = getattr(algorithms, self.algorithm)
-    algorithm(self.composite, self.id_token, self.algorithm)
+    algorithm(self.composite, self.id_token, self.algorithm, kwargs)
 
 ### MASKS
 class MaskChannel(models.Model):

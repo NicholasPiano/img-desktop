@@ -130,14 +130,14 @@ class Command(BaseCommand):
 
       # 4. Segment zbf channel
       zbf_channel = composite.channels.get(name='-zbf')
-      zbf_channel.segment_regions(region_marker_channel_name='-zbf')
+      unique = zbf_channel.segment_regions(region_marker_channel_name='-zbf')
 
       # 5. Region test mod
-      tile_mod = composite.mods.create(id_token=generate_id_token('img', 'Mod'), algorithm='mod_region_test')
+      region_mod = composite.mods.create(id_token=generate_id_token('img', 'Mod'), algorithm='mod_region_test')
 
       # Run mod
       print('step02 | processing mod_region_test...', end='\r')
-      tile_mod.run()
+      region_mod.run(channel_unique_override=unique)
       print('step02 | processing mod_region_test... done.{}'.format(spacer))
 
     else:

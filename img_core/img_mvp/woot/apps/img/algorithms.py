@@ -41,7 +41,7 @@ def mask_edge_image(mask_img):
   return full_edge_img>0
 
 # algorithms
-def mod_zmod(composite, mod_id, algorithm):
+def mod_zmod(composite, mod_id, algorithm, **kwargs):
   # template
   template = composite.templates.get(name='source') # SOURCE TEMPLATE
 
@@ -128,7 +128,7 @@ def mod_zmod(composite, mod_id, algorithm):
     zcomp_gon.save_array(composite.series.experiment.composite_path, template)
     zcomp_gon.save()
 
-def mod_tile(composite, mod_id, algorithm):
+def mod_tile(composite, mod_id, algorithm, **kwargs):
 
   tile_path = os.path.join(composite.experiment.video_path, 'tile', composite.series.name)
   if not os.path.exists(tile_path):
@@ -234,7 +234,7 @@ def mod_tile(composite, mod_id, algorithm):
 
     imsave(join(tile_path, 'tile_{}_s{}_t{}.tiff'.format(composite.experiment.name, composite.series.name, str_value(t, composite.series.ts))), whole)
 
-def mod_region_test(composite, mod_id, algorithm):
+def mod_region_test(composite, mod_id, algorithm, **kwargs):
 
   region_test_path = os.path.join(composite.experiment.video_path, 'regions', composite.series.name)
   if not os.path.exists(region_test_path):
@@ -242,7 +242,7 @@ def mod_region_test(composite, mod_id, algorithm):
 
   for t in range(composite.series.ts):
     zbf = composite.gons.get(t=t, channel__name='-zbf').load()
-    region_mask = composite.masks.get(t=t, channel__name__contains='-regionprimary-zbf').load()
+    region_mask = composite.masks.get(t=t, channel__name__contains=kwargs['channel_unique_override']).load()
 
     mask_edges = mask_edge_image(region_mask)
 
@@ -279,7 +279,7 @@ def mod_region_test(composite, mod_id, algorithm):
 
     imsave(join(region_test_path, 'regions_{}_s{}_t{}.tiff'.format(composite.experiment.name, composite.series.name, str_value(t, composite.series.ts))), whole)
 
-def mod_zdiff(composite, mod_id, algorithm):
+def mod_zdiff(composite, mod_id, algorithm, **kwargs):
 
   zdiff_channel, zdiff_channel_created = composite.channels.get_or_create(name='-zdiff')
 
@@ -316,30 +316,16 @@ def mod_zdiff(composite, mod_id, algorithm):
     zdiff_gon.save_array(composite.series.experiment.composite_path, composite.templates.get(name='source'))
     zdiff_gon.save()
 
-def mod_zedge(composite, mod_id, algorithm):
+def mod_zedge(composite, mod_id, algorithm, **kwargs):
 
   zedge_channel, zedge_channel_created = composite.channels.get_or_create(name='-zedge')
 
   for t in range(composite.series.ts):
     print('step02 | processing mod_zedge t{}/{}...'.format(t+1, composite.series.ts), end='\r')
 
-    # zdiff_masks = composite.mask_channels.get(name__contains='-zdiff').cell_masks.filter(t=t)
-    zdiff_mask = composite.masks.get(channel__name__contains='-zdiff', t=t).load()
+    zdiff_mask = composite.masks.get(channel__name__contains=kwargs['channel_unique_override'], t=t).load()
     zbf = exposure.rescale_intensity(composite.gons.get(channel__name='-zbf', t=t).load() * 1.0)
     zedge = zbf.copy()
-
-    # for mask in zdiff_masks:
-    #   # draw edge on zbf image
-    #   # 1. load zdiff mask and cut to black
-    #   mask_mask, (r0, c0, rs, cs) = cut_to_black(dilate(erode(mask.load())))
-    #   # 2. using coordinates, cut zbf image
-    #   cut_zedge = zedge[r0:r0+rs,c0:c0+cs]
-    #   # 3. draw edge
-    #   outside_edge = distance_transform_edt(dilate(edge_image(mask_mask), iterations=4))
-    #   outside_edge = 1.0 - exposure.rescale_intensity(outside_edge * 1.0)
-    #   cut_zedge *= outside_edge * outside_edge
-    #
-    #   zedge[r0:r0+rs,c0:c0+cs] = cut_zedge.copy()
 
     binary_mask = zdiff_mask>0
     outside_edge = distance_transform_edt(dilate(edge_image(binary_mask), iterations=4))

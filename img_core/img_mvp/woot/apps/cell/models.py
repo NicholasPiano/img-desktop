@@ -276,9 +276,9 @@ class CellInstance(models.Model):
       self.AreaShape_Solidity
     )
 
-  def set_from_masks(self):
+  def set_from_masks(self, unique):
     # some decision making can be made here, but what I will do for now is just take the only make it has
-    masks = self.masks.filter(channel__name__contains='zedge')
+    masks = self.masks.filter(channel__name__contains=unique)
 
     if masks:
       mask = masks[0]
