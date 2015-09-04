@@ -158,6 +158,11 @@ class Channel(models.Model):
           region_instance = region_instance[0]
         else:
           region_instance = None
+          for ri in self.composite.series.region_instances.filter(region_track_instance__t=t):
+            gray_value_ids = [ri_mask.gray_value_id for ri_mask in ri.masks.all()]
+            if region_instance is None and region_gray_value_id in gray_value_ids:
+              region_instance = ri
+
         if gray_value_id!=0:
           cell_mask = cell_instance.masks.create(experiment=cell.experiment,
                                                  series=cell.series,
@@ -257,8 +262,9 @@ class Channel(models.Model):
         region_mask, region_mask_created = region_instance.masks.get_or_create(experiment=region.experiment,
                                                                                series=region.series,
                                                                                region=region,
-                                                                               mask=mask_mask,
-                                                                               gray_value_id=gray_value_id)
+                                                                               mask=mask_mask)
+        region_mask.gray_value_id = gray_value_id
+        region_mask.save()
 
       for region_track_instance in region_marker_channel.region_track_instances.filter(t=t):
         gray_value_ids = [region_mask.gray_value_id for region_mask in region_track_instance.region_instance.masks.filter(mask=mask_mask)]
