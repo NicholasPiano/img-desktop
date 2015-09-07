@@ -95,7 +95,10 @@ def mod_zmod(composite, mod_id, algorithm, **kwargs):
         Zbf[r,c] = bfz
         Zcomp[r,c] = bfz * mean
 
-    Zbf = bf[:,:,int(bf.shape[2]/2.0)].copy()
+
+    max_gfp_z = np.argmax(np.sum(np.sum(gfp, axis=0), axis=0))
+
+    Zbf = bf[:,:,max_gfp_z].copy()
 
     # images to channel gons
     zmod_gon, zmod_gon_created = composite.gons.get_or_create(experiment=composite.experiment, series=composite.series, channel=zmod_channel, t=t)
