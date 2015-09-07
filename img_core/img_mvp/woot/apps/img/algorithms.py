@@ -95,6 +95,8 @@ def mod_zmod(composite, mod_id, algorithm, **kwargs):
         Zbf[r,c] = bfz
         Zcomp[r,c] = bfz * mean
 
+    Zbf = bf[:,:,int(bf.shape[2]/2.0)].copy()
+
     # images to channel gons
     zmod_gon, zmod_gon_created = composite.gons.get_or_create(experiment=composite.experiment, series=composite.series, channel=zmod_channel, t=t)
     zmod_gon.set_origin(0,0,0,t)
