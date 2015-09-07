@@ -149,7 +149,7 @@ class Command(BaseCommand):
       print('step02 | processing mod_zedge... done.{}'.format(spacer))
 
       # 6. Segment zEdge channel
-      zedge_channel = composite.channels.get(name='-zedge')
+      zedge_channel = composite.channels.get(name='-zbf')
       zedge_unique = zedge_channel.segment(marker_channel_name='-zcomp', threshold_correction_factor=1.2)
 
       # 7. Export data to data directory
