@@ -265,11 +265,11 @@ def mod_zdiff(composite, mod_id, algorithm, **kwargs):
 
 def mod_zedge(composite, mod_id, algorithm, **kwargs):
 
-  zedge_channel, zedge_channel_created = composite.channels.get_or_create(name='-zedge-8-{}-{}'.format(R, sigma))
-
   # constants
   R = kwargs['R']
   sigma = kwargs['sigma']
+
+  zedge_channel, zedge_channel_created = composite.channels.get_or_create(name='-zedge-8-{}-{}'.format(R, sigma))
 
   for t in range(composite.series.ts):
     print('processing mod_zedge sigma={} R={} t{}/{}...'.format(sigma, R, t+1, composite.series.ts), end='\r')
@@ -297,7 +297,7 @@ def mod_zedge(composite, mod_id, algorithm, **kwargs):
       zdiff = np.max(np.dstack([zdiff, marker_diff]), axis=2)
 
     # threshold zdiff
-    binary_mask = zdiff_mask>zdiff_mask.mean()
+    binary_mask = zdiff>zdiff.mean()
 
     # create zedge
     zedge = zbf.copy()
@@ -310,7 +310,7 @@ def mod_zedge(composite, mod_id, algorithm, **kwargs):
     zedge_gon.set_origin(0,0,0,t)
     zedge_gon.set_extent(composite.series.rs, composite.series.cs, 1)
 
-    zedge_gon.array = zedge.copy()
+    zedge_gon.array = binary_mask.copy()
     zedge_gon.save_array(composite.series.experiment.composite_path, composite.templates.get(name='source'))
     zedge_gon.save()
 

@@ -54,14 +54,6 @@ class Command(BaseCommand):
       # select composite
       composite = series.composites.get()
 
-      # add all track files to composite
-      data_file_list = [f for f in os.listdir(composite.experiment.track_path) if (os.path.splitext(f)[1] in allowed_data_extensions and composite.experiment.path_matches_series(f, composite.series.name) and 'regions' not in f)]
-
-      for df_name in data_file_list:
-        print('data file {}... '.format(df_name), end='\r')
-        data_file, data_file_created, status = composite.get_or_create_data_file(composite.experiment.track_path, df_name)
-        print('data file {}... {}'.format(df_name, status))
-
       ### MARKERS
       for data_file in composite.data_files.filter(data_type='markers'):
         data = data_file.load()
