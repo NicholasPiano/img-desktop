@@ -36,27 +36,6 @@ class Command(BaseCommand):
       help='Name of the series' # who cares
     ),
 
-    make_option('--sigma', # option that will appear in cmd
-      action='store', # no idea
-      dest='sigma', # refer to this in options variable
-      default='5', # some default
-      help='' # who cares
-    ),
-
-    make_option('--R', # option that will appear in cmd
-      action='store', # no idea
-      dest='R', # refer to this in options variable
-      default='5', # some default
-      help='' # who cares
-    ),
-
-    make_option('--dz', # option that will appear in cmd
-      action='store', # no idea
-      dest='dz', # refer to this in options variable
-      default='-8', # some default
-      help='' # who cares
-    ),
-
   )
 
   args = ''
@@ -67,9 +46,6 @@ class Command(BaseCommand):
     # vars
     experiment_name = options['expt']
     series_name = options['series']
-    sigma = int(options['sigma'])
-    R = int(options['R'])
-    dz = int(options['dz'])
 
     # 1. create experiment and series
     if experiment_name!='' and series_name!='':
@@ -77,14 +53,12 @@ class Command(BaseCommand):
       series = experiment.series.get(name=series_name)
       composite = series.composites.get()
 
-      mod = composite.mods.create(id_token=generate_id_token('img', 'Mod'), algorithm='mod_zmod')
+      mod = composite.mods.create(id_token=generate_id_token('img', 'Mod'), algorithm='mod_bmod')
 
       # Run mod
-      for sigma in [2,3,4,5]:
-        for R in [1]:
-          print('processing mod_zmod sigma={} R={}...'.format(sigma, R), end='\r')
-          mod.run(sigma=sigma, R=R, dz=dz)
-          print('processing mod_zmod sigma={} R={}... done.{}'.format(sigma, R, spacer))
+      print('processing mod_bmod...', end='\r')
+      mod.run()
+      print('processing mod_bmod... done.{}'.format(spacer))
 
     else:
       print('Please enter an experiment')

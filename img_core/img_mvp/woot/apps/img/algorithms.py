@@ -265,16 +265,43 @@ def mod_zdiff(composite, mod_id, algorithm, **kwargs):
 
 def mod_zedge(composite, mod_id, algorithm, **kwargs):
 
-  zedge_channel, zedge_channel_created = composite.channels.get_or_create(name='-zedge')
+  zedge_channel, zedge_channel_created = composite.channels.get_or_create(name='-zedge-8-{}-{}'.format(R, sigma))
+
+  # constants
+  R = kwargs['R']
+  sigma = kwargs['sigma']
 
   for t in range(composite.series.ts):
-    print('step02 | processing mod_zedge t{}/{}...'.format(t+1, composite.series.ts), end='\r')
+    print('processing mod_zedge sigma={} R={} t{}/{}...'.format(sigma, R, t+1, composite.series.ts), end='\r')
 
-    zdiff_mask = composite.masks.get(channel__name__contains=kwargs['channel_unique_override'], t=t).load()
-    zbf = exposure.rescale_intensity(composite.gons.get(channel__name='-zbf', t=t).load() * 1.0)
+    # get zmod
+    zmod_gon = composite.gons.get(channel__name='-zmod-8-{}-{}'.format(R, sigma), t=t)
+    zmod = (exposure.rescale_intensity(zmod_gon.load() * 1.0) * composite.series.zs).astype(int)
+
+    zbf = exposure.rescale_intensity(composite.gons.get(channel__name='-zbf-8-{}-{}'.format(R, sigma), t=t).load() * 1.0)
+    zmean = exposure.rescale_intensity(composite.gons.get(channel__name='-zmean-8-{}-{}'.format(R, sigma), t=t).load() * 1.0)
+
+    # get markers
+    markers = composite.markers.filter(track_instance__t=t)
+
+    zdiff = np.zeros(zmod.shape)
+
+    for marker in markers:
+      marker_z = zmod[marker.r, marker.c]
+
+      diff = np.abs(zmod - marker_z)
+      diff_thresh = diff.copy()
+      diff_thresh = gf(diff_thresh, sigma=5)
+      diff_thresh[diff>1] = diff.max()
+      marker_diff = 1.0 - exposure.rescale_intensity(diff_thresh * 1.0)
+      zdiff = np.max(np.dstack([zdiff, marker_diff]), axis=2)
+
+    # threshold zdiff
+    binary_mask = zdiff_mask>zdiff_mask.mean()
+
+    # create zedge
     zedge = zbf.copy()
 
-    binary_mask = zdiff_mask>0
     outside_edge = distance_transform_edt(dilate(edge_image(binary_mask), iterations=4))
     outside_edge = 1.0 - exposure.rescale_intensity(outside_edge * 1.0)
     zedge *= outside_edge * outside_edge
@@ -286,3 +313,9 @@ def mod_zedge(composite, mod_id, algorithm, **kwargs):
     zedge_gon.array = zedge.copy()
     zedge_gon.save_array(composite.series.experiment.composite_path, composite.templates.get(name='source'))
     zedge_gon.save()
+
+def mod_bmod(composite, mod_id, algorithm, **kwargs):
+  pass
+
+def mod_gmod(composite, mod_id, algorithm, **kwargs):
+  pass

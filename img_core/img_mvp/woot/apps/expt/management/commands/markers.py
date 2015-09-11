@@ -95,7 +95,7 @@ class Command(BaseCommand):
       for sigma in [1,2,3,4,5]:
         for R in [1,2,3,4,5]:
           print('processing mod_zmod sigma={} R={}...'.format(sigma, R), end='\r')
-          mod.run(sigma=sigma, R=R, dz=dz)
+          mod.run(sigma=sigma, R=R)
           print('processing mod_zmod sigma={} R={}... done.{}'.format(sigma, R, spacer))
 
     else:
