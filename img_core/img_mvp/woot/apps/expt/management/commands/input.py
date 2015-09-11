@@ -135,17 +135,5 @@ class Command(BaseCommand):
       print('step01 | creating composite for experiment {} series {}'.format(experiment_name, series_name))
       composite = series.compose()
 
-      # 6. make zmod channels
-      if composite.channels.filter(name='-zmod').count()==0:
-        mod = composite.mods.create(id_token=generate_id_token('img', 'Mod'), algorithm='mod_zmod')
-
-        # Run mod
-        print('step01 | processing mod_zmod...', end='\r')
-        mod.run()
-        print('step01 | processing mod_zmod... done.{}'.format(spacer))
-
-      else:
-        print('step01 | zmod already exists...')
-
     else:
       print('Please enter an experiment')
