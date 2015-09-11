@@ -9,6 +9,13 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.ndimage.morphology import binary_erosion as erode
 
+def mask_edge_image(mask_img):
+  full_edge_img = np.zeros(mask_img.shape)
+  for unique in [u for u in np.unique(mask_img) if u>0]:
+    full_edge_img += edge_image(mask_img==unique)
+
+  return full_edge_img>0
+
 def cut_to_black(array):
   # coordinates of non-black
   r0 = np.argmax(np.any(array, axis=1))

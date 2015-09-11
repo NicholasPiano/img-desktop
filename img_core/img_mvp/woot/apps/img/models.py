@@ -8,10 +8,12 @@ from apps.expt.models import Experiment, Series
 from apps.expt.util import generate_id_token, str_value, random_string
 from apps.expt.data import *
 from apps.img import algorithms
+from apps.img.util import mask_edge_image
 
 # util
 import os
 import re
+from os.path import join
 from scipy.misc import imread, imsave, toimage
 from scipy.ndimage import label
 from skimage import exposure
@@ -165,13 +167,30 @@ class Channel(models.Model):
           cell_mask.area = float(cell_mask_data['AreaShape_Area']) if str(cell_mask_data['AreaShape_Area']) != 'nan' else -1.0
           cell_mask.save()
 
-  def outline(mask_channel_name):
+  def outline(self, mask_channel_name):
 
     outline_channel_name = '{}-outline{}'.format(self.name, mask_channel_name)
-    outline_channel, outline_channel_created = self.composite.channels.get_or_create(name=outline_channel_name)
 
     for t in range(self.composite.series.ts):
-      
+
+      gon = self.gons.get(t=t)
+      g = gon.load()
+
+      mask_mask = self.composite.masks.get(t=t, channel__name=mask_channel_name)
+      mask = mask_mask.load()
+
+      mask_outline = mask_edge_image(mask)
+
+      g_r = g.copy()
+      g_g = g.copy()
+      g_b = g.copy()
+
+      g_r[mask_outline>0] = 255
+      g_g[mask_outline>0] = 0
+      g_b[mask_outline>0] = 0
+
+      whole = np.dstack([g_r, g_g, g_b])
+      imsave(join(self.composite.experiment.video_path, 'tile_{}_s{}_ch{}_t{}.png'.format(self.composite.experiment.name, self.composite.series.name, outline_channel_name, str_value(t, self.composite.series.ts))), whole)
 
   # methods
   def get_or_create_gon(self, array, t, r=0, c=0, z=0, rs=None, cs=None, zs=1, path=None):

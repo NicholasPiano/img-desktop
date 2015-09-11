@@ -53,20 +53,20 @@ class Command(BaseCommand):
       # select composite
       composite = series.composites.get()
 
-      # iterate through zmod flavour channels and segment each one
+      zbf_channel = composite.channels.get(name='-zbf-8-5-5')
+
       # for sigma in [1,2,3,4,5]:
       #   for R in [1,2,3,4,5]:
       #     print('-zedge-8-{}-{}'.format(R, sigma))
-      #     zedge_channel = composite.channels.get(name='-zedge-8-{}-{}'.format(R, sigma))
-      #     zedge_channel.segment(marker_channel_name='-zcomp-8-1-1')
-
-      # bmod
-      bmod_channel = composite.channels.get(name='-bmod')
-      bmod_channel.segment(pipeline_name='bmod', marker_channel_name='-zcomp-8-1-1')
+      #     zbf_channel.outline(composite.mask_channels.get(name__contains='-zedge-8-{}-{}'.format(R, sigma)).name)
+      #
+      # # bmod
+      # print('bmod')
+      # zbf_channel.outline(composite.mask_channels.get(name__contains='bmod').name)
 
       # gmod
-      gmod_channel = composite.channels.get(name='-gmod')
-      gmod_channel.segment(pipeline_name='gmod', marker_channel_name='-zcomp-8-1-1')
+      print('gmod')
+      zbf_channel.outline(composite.mask_channels.get(name__contains='gmod').name)
 
     else:
       print('Please enter an experiment')
