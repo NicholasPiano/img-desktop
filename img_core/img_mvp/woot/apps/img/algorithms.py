@@ -39,9 +39,9 @@ def mod_zmod(composite, mod_id, algorithm, **kwargs):
   template = composite.templates.get(name='source') # SOURCE TEMPLATE
 
   # constants
-  delta_z = int(kwargs['dz'])
-  R = int(kwargs['R'])
-  sigma = int(kwargs['sigma'])
+  delta_z = kwargs['dz']
+  R = kwargs['R']
+  sigma = kwargs['sigma']
 
   # channels
   zmod_channel, zmod_channel_created = composite.channels.get_or_create(name='-zmod-{}-{}-{}'.format(abs(delta_z), R, sigma))
