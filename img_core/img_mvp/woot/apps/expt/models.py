@@ -6,7 +6,7 @@ from django.db import models
 # local
 from apps.expt.data import *
 from apps.expt.util import generate_id_token, random_string
-from apps.expt.pipeline import marker_pipeline, region_pipeline
+from apps.expt.pipeline import zmod_pipeline, gmod_pipeline, bmod_pipeline
 
 # util
 import os
@@ -127,15 +127,22 @@ class Experiment(models.Model):
     # format and save file
     pipeline_text = ''
     if pipeline_name=='zmod':
-      
-    pipeline_text = marker_pipeline('{}_s{}_{}_'.format(self.name, series_name, unique), unique_key, 's{}_ch{}'.format(series_name, primary_channel_name), 's{}_ch{}'.format(series_name, secondary_channel_name),  threshold_correction_factor=threshold_correction_factor, background=background)
-    with open(os.path.join(self.pipeline_path, 'markers.cppipe'), 'w+') as open_pipeline_file:
-      open_pipeline_file.write(pipeline_text)
+      pipeline_text = zmod_pipeline('{}_s{}_{}_'.format(self.name, series_name, unique), unique_key, 's{}_ch{}'.format(series_name, primary_channel_name), 's{}_ch{}'.format(series_name, secondary_channel_name))
+      with open(os.path.join(self.pipeline_path, 'zmod.cppipe'), 'w+') as open_pipeline_file:
+        open_pipeline_file.write(pipeline_text)
 
-  def run_pipeline(self, series_ts=0, key='marker'):
-    pipeline = os.path.join(self.pipeline_path, 'markers.cppipe')
-    if key!='marker':
-      pipeline = os.path.join(self.pipeline_path, 'regions.cppipe')
+    elif pipeline_name=='bmod':
+      pipeline_text = bmod_pipeline('{}_s{}_{}_'.format(self.name, series_name, unique), unique_key, 's{}_ch{}'.format(series_name, primary_channel_name), 's{}_ch{}'.format(series_name, secondary_channel_name))
+      with open(os.path.join(self.pipeline_path, 'bmod.cppipe'), 'w+') as open_pipeline_file:
+        open_pipeline_file.write(pipeline_text)
+
+    elif pipeline_name=='gmod':
+      pipeline_text = gmod_pipeline('{}_s{}_{}_'.format(self.name, series_name, unique), unique_key, 's{}_ch{}'.format(series_name, primary_channel_name), 's{}_ch{}'.format(series_name, secondary_channel_name))
+      with open(os.path.join(self.pipeline_path, 'gmod.cppipe'), 'w+') as open_pipeline_file:
+        open_pipeline_file.write(pipeline_text)
+
+  def run_pipeline(self, series_ts=0, key='zmod'):
+    pipeline = os.path.join(self.pipeline_path, '{}.cppipe'.format(key))
     cmd = '/Applications/CellProfiler.app/Contents/MacOS/CellProfiler -c -r -i {} -o {} -p {}'.format(self.composite_path, self.cp_path, pipeline)
     print('segmenting...')
     # process = subprocess.Popen(cmd, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)

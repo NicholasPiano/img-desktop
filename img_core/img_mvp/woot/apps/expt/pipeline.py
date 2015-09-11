@@ -4,7 +4,7 @@
 Text representation of a cell profiler pipeline that can be used to modify data processing.
 '''
 
-def zedge_pipeline(experiment_prefix, unique_key, primary_channel_name, secondary_channel_name):
+def zmod_pipeline(experiment_prefix, unique_key, primary_channel_name, secondary_channel_name):
   text = 'CellProfiler Pipeline: http://www.cellprofiler.org\n\
 Version:3\n\
 DateRevision:20140723173957\n\
@@ -119,7 +119,7 @@ IdentifySecondaryObjects:[module_num:3|svn_version:\'Unknown\'|variable_revision
     Thresholding method:Otsu\n\
     Select the smoothing method for thresholding:Automatic\n\
     Threshold smoothing scale:1.0\n\
-    Threshold correction factor:{threshold_correction_factor}\n\
+    Threshold correction factor:1.2\n\
     Lower and upper bounds on threshold:0.0,1.0\n\
     Approximate fraction of image covered by objects?:0.01\n\
     Manual threshold:0.0\n\
@@ -128,7 +128,7 @@ IdentifySecondaryObjects:[module_num:3|svn_version:\'Unknown\'|variable_revision
     Masking objects:None\n\
     Two-class or three-class thresholding?:Three classes\n\
     Minimize the weighted variance or the entropy?:Weighted variance\n\
-    Assign pixels in the middle intensity class to the foreground or the background?:{background}\n\
+    Assign pixels in the middle intensity class to the foreground or the background?:Background\n\
     Method to calculate adaptive window size:Image size\n\
     Size of adaptive window:10\n\
 \n\
@@ -182,7 +182,7 @@ ExportToSpreadsheet:[module_num:6|svn_version:\'Unknown\'|variable_revision_numb
     Data to export:Do not use\n\
     Combine these object measurements with those of the previous object?:No\n\
     File name:DATA.csv\n\
-    Use the object name for the file name?:Yes'.format(experiment_prefix=experiment_prefix, unique_key=unique_key, primary_channel_name=primary_channel_name, secondary_channel_name=secondary_channel_name, threshold_correction_factor=threshold_correction_factor, background='Background' if background else 'Foreground')
+    Use the object name for the file name?:Yes'.format(experiment_prefix=experiment_prefix, unique_key=unique_key, primary_channel_name=primary_channel_name, secondary_channel_name=secondary_channel_name)
 
   return text
 
@@ -301,7 +301,7 @@ IdentifySecondaryObjects:[module_num:3|svn_version:\'Unknown\'|variable_revision
     Thresholding method:Otsu\n\
     Select the smoothing method for thresholding:Automatic\n\
     Threshold smoothing scale:1.0\n\
-    Threshold correction factor:{threshold_correction_factor}\n\
+    Threshold correction factor:1.2\n\
     Lower and upper bounds on threshold:0.0,1.0\n\
     Approximate fraction of image covered by objects?:0.01\n\
     Manual threshold:0.0\n\

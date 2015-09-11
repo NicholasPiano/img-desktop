@@ -50,23 +50,19 @@ class Command(BaseCommand):
       experiment = Experiment.objects.get(name=experiment_name)
       series = experiment.series.get(name=series_name)
 
+      # 2. Import tracks
       # select composite
       composite = series.composites.get()
 
-      # iterate through zmod flavour channels and segment each one
-      # for sigma in [1,2,3,4,5]:
-      #   for R in [1,2,3,4,5]:
-      #     print('-zedge-8-{}-{}'.format(R, sigma))
-      #     zedge_channel = composite.channels.get(name='-zedge-8-{}-{}'.format(R, sigma))
-      #     zedge_channel.segment(marker_channel_name='-zcomp-8-1-1')
+      # iterate through each channel in composite and create a zedge channel for each of them.
+      mod = composite.mods.create(id_token=generate_id_token('img', 'Mod'), algorithm='mod_zedge')
 
-      # bmod
-      bmod_channel = composite.channels.get(name='-bmod')
-      bmod_channel.segment(pipeline_name='bmod', marker_channel_name='-zcomp-8-1-1')
-
-      # gmod
-      gmod_channel = composite.channels.get(name='-gmod')
-      gmod_channel.segment(pipeline_name='gmod', marker_channel_name='-zcomp-8-1-1')
+      # Run mod
+      for sigma in [1,2,3,4,5]:
+        for R in [1,2,3,4,5]:
+          print('processing mod_zmod sigma={} R={}...'.format(sigma, R), end='\r')
+          mod.run(sigma=sigma, R=R)
+          print('processing mod_zmod sigma={} R={}... done.{}'.format(sigma, R, spacer))
 
     else:
       print('Please enter an experiment')

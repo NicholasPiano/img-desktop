@@ -165,6 +165,14 @@ class Channel(models.Model):
           cell_mask.area = float(cell_mask_data['AreaShape_Area']) if str(cell_mask_data['AreaShape_Area']) != 'nan' else -1.0
           cell_mask.save()
 
+  def outline(mask_channel_name):
+
+    outline_channel_name = '{}-outline{}'.format(self.name, mask_channel_name)
+    outline_channel, outline_channel_created = self.composite.channels.get_or_create(name=outline_channel_name)
+
+    for t in range(self.composite.series.ts):
+      
+
   # methods
   def get_or_create_gon(self, array, t, r=0, c=0, z=0, rs=None, cs=None, zs=1, path=None):
     # self.defaults

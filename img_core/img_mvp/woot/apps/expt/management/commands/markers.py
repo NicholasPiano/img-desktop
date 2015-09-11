@@ -54,6 +54,14 @@ class Command(BaseCommand):
       # select composite
       composite = series.composites.get()
 
+      # add all track files to composite
+      data_file_list = [f for f in os.listdir(composite.experiment.track_path) if (os.path.splitext(f)[1] in allowed_data_extensions and composite.experiment.path_matches_series(f, composite.series.name) and 'regions' not in f)]
+
+      for df_name in data_file_list:
+        print('step02 | data file {}... '.format(df_name), end='\r')
+        data_file, data_file_created, status = composite.get_or_create_data_file(composite.experiment.track_path, df_name)
+        print('step02 | data file {}... {}'.format(df_name, status))
+
       ### MARKERS
       for data_file in composite.data_files.filter(data_type='markers'):
         data = data_file.load()
@@ -79,16 +87,6 @@ class Command(BaseCommand):
                                                                         c=int(marker_prototype['c']))
 
           print('processing marker ({}/{})... {} tracks, {} instances, {} markers'.format(i+1,len(data),composite.tracks.count(), composite.track_instances.count(), composite.markers.count()), end='\n' if i==len(data)-1 else '\r')
-
-      # iterate through each channel in composite and create a zedge channel for each of them.
-      mod = composite.mods.create(id_token=generate_id_token('img', 'Mod'), algorithm='mod_zedge')
-
-      # Run mod
-      for sigma in [1,2,3,4,5]:
-        for R in [1,2,3,4,5]:
-          print('processing mod_zmod sigma={} R={}...'.format(sigma, R), end='\r')
-          mod.run(sigma=sigma, R=R)
-          print('processing mod_zmod sigma={} R={}... done.{}'.format(sigma, R, spacer))
 
     else:
       print('Please enter an experiment')

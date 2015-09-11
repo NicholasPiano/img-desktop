@@ -226,43 +226,6 @@ def mod_tile(composite, mod_id, algorithm, **kwargs):
 
     imsave(join(tile_path, 'tile_{}_s{}_t{}.tiff'.format(composite.experiment.name, composite.series.name, str_value(t, composite.series.ts))), whole)
 
-def mod_zdiff(composite, mod_id, algorithm, **kwargs):
-
-  zdiff_channel, zdiff_channel_created = composite.channels.get_or_create(name='-zdiff')
-
-  for t in range(composite.series.ts):
-    print('step02 | processing mod_zdiff t{}/{}...'.format(t+1, composite.series.ts), end='\r')
-
-    # get zmod
-    zmod_gon = composite.gons.get(channel__name='-zmod', t=t)
-    zmod = (exposure.rescale_intensity(zmod_gon.load() * 1.0) * composite.series.zs).astype(int)
-
-    zbf = exposure.rescale_intensity(composite.gons.get(channel__name='-zbf', t=t).load() * 1.0)
-    zmean = exposure.rescale_intensity(composite.gons.get(channel__name='-zmean', t=t).load() * 1.0)
-
-    # get markers
-    markers = composite.markers.filter(track_instance__t=t)
-
-    zdiff = np.zeros(zmod.shape)
-
-    for marker in markers:
-      marker_z = zmod[marker.r, marker.c]
-
-      diff = np.abs(zmod - marker_z)
-      diff_thresh = diff.copy()
-      diff_thresh = gf(diff_thresh, sigma=5)
-      diff_thresh[diff>1] = diff.max()
-      marker_diff = 1.0 - exposure.rescale_intensity(diff_thresh * 1.0)
-      zdiff = np.max(np.dstack([zdiff, marker_diff]), axis=2)
-
-    zdiff_gon, zdiff_gon_created = composite.gons.get_or_create(experiment=composite.experiment, series=composite.series, channel=zdiff_channel, t=t)
-    zdiff_gon.set_origin(0,0,0,t)
-    zdiff_gon.set_extent(composite.series.rs, composite.series.cs, 1)
-
-    zdiff_gon.array = (zdiff.copy() + zmean.copy()) * zmean.copy()
-    zdiff_gon.save_array(composite.series.experiment.composite_path, composite.templates.get(name='source'))
-    zdiff_gon.save()
-
 def mod_zedge(composite, mod_id, algorithm, **kwargs):
 
   # constants
@@ -315,7 +278,41 @@ def mod_zedge(composite, mod_id, algorithm, **kwargs):
     zedge_gon.save()
 
 def mod_bmod(composite, mod_id, algorithm, **kwargs):
-  pass
+
+  bmod_channel, bmod_channel_created = composite.channels.get_or_create(name='-bmod')
+
+  for t in range(composite.series.ts):
+    print('processing mod_bmod t{}/{}...'.format(t+1, composite.series.ts), end='\r')
+
+    bf_gon = composite.gons.get(t=t, channel__name='1')
+    bf = exposure.rescale_intensity(bf_gon.load() * 1.0)
+
+    bf_std = np.std(bf, axis=2)
+
+    bmod_gon, bmod_gon_created = composite.gons.get_or_create(experiment=composite.experiment, series=composite.series, channel=bmod_channel, t=t)
+    bmod_gon.set_origin(0,0,0,t)
+    bmod_gon.set_extent(composite.series.rs, composite.series.cs, 1)
+
+    bmod_gon.array = bf_std.copy()
+    bmod_gon.save_array(composite.series.experiment.composite_path, composite.templates.get(name='source'))
+    bmod_gon.save()
 
 def mod_gmod(composite, mod_id, algorithm, **kwargs):
-  pass
+
+  gmod_channel, gmod_channel_created = composite.channels.get_or_create(name='-gmod')
+
+  for t in range(composite.series.ts):
+    print('processing mod_gmod t{}/{}...'.format(t+1, composite.series.ts), end='\r')
+
+    gfp_gon = composite.gons.get(t=t, channel__name='0')
+    gfp = exposure.rescale_intensity(gfp_gon.load() * 1.0)
+
+    gfp_max = np.max(gfp, axis=2)
+
+    gmod_gon, gmod_gon_created = composite.gons.get_or_create(experiment=composite.experiment, series=composite.series, channel=gmod_channel, t=t)
+    gmod_gon.set_origin(0,0,0,t)
+    gmod_gon.set_extent(composite.series.rs, composite.series.cs, 1)
+
+    gmod_gon.array = gfp_max.copy()
+    gmod_gon.save_array(composite.series.experiment.composite_path, composite.templates.get(name='source'))
+    gmod_gon.save()
