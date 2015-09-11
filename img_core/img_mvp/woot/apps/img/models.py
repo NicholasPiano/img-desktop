@@ -98,11 +98,11 @@ class Channel(models.Model):
 
     # 1. create primary from markers with marker_channel
     print('running primary')
-    marker_channel_primary_name = marker_channel.primary(unique=unique)
+    marker_channel_primary_name = marker_channel.primary(unique)
 
     # 2. create pipeline and run
     print('run pipeline')
-    self.composite.experiment.save_marker_pipeline(pipeline_name='zmod', series_name=self.composite.series.name, primary_channel_name=marker_channel_primary_name, secondary_channel_name=self.name, unique=unique, unique_key=unique_key)
+    self.composite.experiment.save_marker_pipeline('zmod', series_name=self.composite.series.name, primary_channel_name=marker_channel_primary_name, secondary_channel_name=self.name, unique=unique, unique_key=unique_key)
     self.composite.experiment.run_pipeline(series_ts=self.composite.series.ts)
 
     print('import masks')
@@ -183,7 +183,7 @@ class Channel(models.Model):
 
     return gon, gon_created
 
-  def primary(self, unique=''):
+  def primary(self, unique):
     if self.markers.count()!=0:
       channel_name = ''
 

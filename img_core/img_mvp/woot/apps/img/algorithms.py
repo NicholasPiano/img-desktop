@@ -310,7 +310,7 @@ def mod_zedge(composite, mod_id, algorithm, **kwargs):
     zedge_gon.set_origin(0,0,0,t)
     zedge_gon.set_extent(composite.series.rs, composite.series.cs, 1)
 
-    zedge_gon.array = binary_mask.copy()
+    zedge_gon.array = zedge.copy()
     zedge_gon.save_array(composite.series.experiment.composite_path, composite.templates.get(name='source'))
     zedge_gon.save()
 
