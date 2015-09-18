@@ -98,9 +98,20 @@ class Command(BaseCommand):
       for df_name in data_file_list:
         print('step02 | data file {}... '.format(df_name), end='\r')
         data_file, data_file_created, status = composite.get_or_create_data_file(composite.experiment.track_path, df_name)
+        if not data_file_created:
+          os.remove(data_file.url)
+          data_file.delete()
+          status = 'deleted.'
         print('step02 | data file {}... {}'.format(df_name, status))
 
       ### MARKERS
+      composite.region_markers.all().delete()
+      composite.region_track_instances.all().delete()
+      composite.region_tracks.all().delete()
+      series.region_masks.all().delete()
+      series.region_instances.all().delete()
+      series.regions.all().delete()
+
       for data_file in composite.data_files.filter(data_type='regions'):
         data = data_file.load()
         for t in range(series.ts):
@@ -132,7 +143,42 @@ class Command(BaseCommand):
       zbf_channel = composite.channels.get(name='-zbf')
       unique = zbf_channel.segment_regions(region_marker_channel_name='-zbf')
 
-      # 5. Region test mod
+      # 5. re-run cell instance regions if necessary
+      region_mask_channel = composite.mask_channels.get(name__contains=unique)
+      if series.cells.count()>0:
+        for t in range(composite.series.ts):
+          # load region mask
+          region_mask_mask = region_mask_channel.masks.get(t=t)
+          region_mask = region_mask_mask.load()
+
+          for cell_instance in series.cell_instances.filter(track_instance__t=t):
+
+            # 3. create cell mask
+            region_gray_value_id = region_mask[cell_instance.r, cell_instance.c]
+            region_instance = composite.series.region_instances.filter(region_track_instance__t=t, mode_gray_value_id=region_gray_value_id)
+            if region_instance:
+              region_instance = region_instance[0]
+            else:
+              region_instance = None
+              for ri in composite.series.region_instances.filter(region_track_instance__t=t):
+                gray_value_ids = [ri_mask.gray_value_id for ri_mask in ri.masks.all()]
+                if region_instance is None and region_gray_value_id in gray_value_ids:
+                  region_instance = ri
+
+            # for now
+            cell_instance.region = region_instance.region if region_instance is not None else None
+            cell_instance.region_instance = region_instance if region_instance is not None else None
+            cell_instance.save()
+
+        # re-create tile mod
+        tile_mod = composite.mods.create(id_token=generate_id_token('img', 'Mod'), algorithm='mod_tile')
+
+        # Run mod
+        print('step02 | processing mod_tile...', end='\r')
+        tile_mod.run(channel_unique_override=composite.current_zedge_unique)
+        print('step02 | processing mod_tile... done.{}'.format(spacer))
+
+      # 6. Region test mod
       region_mod = composite.mods.create(id_token=generate_id_token('img', 'Mod'), algorithm='mod_region_test')
 
       # Run mod

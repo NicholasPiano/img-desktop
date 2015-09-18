@@ -100,9 +100,20 @@ class Command(BaseCommand):
       for df_name in data_file_list:
         print('step02 | data file {}... '.format(df_name), end='\r')
         data_file, data_file_created, status = composite.get_or_create_data_file(composite.experiment.track_path, df_name)
+        if not data_file_created:
+          os.remove(data_file.url)
+          data_file.delete()
+          status = 'deleted.'
         print('step02 | data file {}... {}'.format(df_name, status))
 
       ### MARKERS
+      composite.markers.all().delete()
+      composite.track_instances.all().delete()
+      composite.tracks.all().delete()
+      series.cell_masks.all().delete()
+      series.cell_instances.all().delete()
+      series.cells.all().delete()
+
       for data_file in composite.data_files.filter(data_type='markers'):
         data = data_file.load()
         for i, marker_prototype in enumerate(data):
@@ -162,7 +173,7 @@ class Command(BaseCommand):
 
       # Run mod
       print('step02 | processing mod_tile...', end='\r')
-      tile_mod.run(channel_unique_override=zedge_unique)
+      tile_mod.run(channel_unique_override=composite.current_zedge_unique)
       print('step02 | processing mod_tile... done.{}'.format(spacer))
 
     else:
