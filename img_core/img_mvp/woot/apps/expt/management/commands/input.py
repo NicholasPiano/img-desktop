@@ -78,7 +78,7 @@ class Command(BaseCommand):
         print('step01 | series {}... already exists.'.format(series_name))
 
       # 2. if lif is not extracted, do it.
-      if len(os.listdir(experiment.storage_path))==0:
+      if len(os.listdir(experiment.storage_path))==0 and len(os.listdir(experiment.composite_path))==0:
 
         # extract lif
         lif_path = join(lif_root, lif_name)

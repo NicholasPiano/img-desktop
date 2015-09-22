@@ -31,7 +31,9 @@ SITE_NAME = basename(dirname(DJANGO_ROOT))
 # name in our dotted import paths:
 path.append(DJANGO_ROOT)
 
-DATA_ROOT = '/Volumes/transport/data/puzzle/'
+desktop_path = join(dirname(dirname(dirname(dirname(dirname(DJANGO_ROOT))))), 'Desktop/img')
+transport_path = '/Volumes/transport/data/puzzle/'
+DATA_ROOT = transport_path if not exists(desktop_path) else desktop_path
 LIF_ROOT = join(DATA_ROOT, 'lif')
 BACKUP_ROOT = join(DATA_ROOT, 'backup')
 ########## END PATH CONFIGURATION
