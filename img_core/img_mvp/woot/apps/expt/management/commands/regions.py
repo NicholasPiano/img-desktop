@@ -114,30 +114,29 @@ class Command(BaseCommand):
 
       for data_file in composite.data_files.filter(data_type='regions'):
         data = data_file.load()
-        for t in range(series.ts):
-          for i, region_marker_prototype in enumerate(data):
-            region_track, region_track_created = composite.region_tracks.get_or_create(experiment=composite.experiment,
-                                                                                       series=composite.series,
-                                                                                       composite=composite,
-                                                                                       channel=composite.channels.get(name=region_marker_prototype['channel']),
-                                                                                       name=region_marker_prototype['region'])
+        for i, region_marker_prototype in enumerate(data):
+          region_track, region_track_created = composite.region_tracks.get_or_create(experiment=composite.experiment,
+                                                                                     series=composite.series,
+                                                                                     composite=composite,
+                                                                                     channel=composite.channels.get(name=region_marker_prototype['channel']),
+                                                                                     name=region_marker_prototype['region'])
 
-            region_track_instance, region_track_instance_created = region_track.instances.get_or_create(experiment=composite.experiment,
-                                                                                                        series=composite.series,
-                                                                                                        composite=composite,
-                                                                                                        channel=composite.channels.get(name=region_marker_prototype['channel']),
-                                                                                                        t=t)
+          region_track_instance, region_track_instance_created = region_track.instances.get_or_create(experiment=composite.experiment,
+                                                                                                      series=composite.series,
+                                                                                                      composite=composite,
+                                                                                                      channel=composite.channels.get(name=region_marker_prototype['channel']),
+                                                                                                      t=0)
 
-            region_marker, region_marker_created = region_track_instance.markers.get_or_create(experiment=composite.experiment,
-                                                                                               series=composite.series,
-                                                                                               composite=composite,
-                                                                                               channel=composite.channels.get(name=region_marker_prototype['channel']),
-                                                                                               region_track=region_track,
-                                                                                               region_track_index=int(region_marker_prototype['index']),
-                                                                                               r=int(region_marker_prototype['r']),
-                                                                                               c=int(region_marker_prototype['c']))
+          region_marker, region_marker_created = region_track_instance.markers.get_or_create(experiment=composite.experiment,
+                                                                                             series=composite.series,
+                                                                                             composite=composite,
+                                                                                             channel=composite.channels.get(name=region_marker_prototype['channel']),
+                                                                                             region_track=region_track,
+                                                                                             region_track_index=int(region_marker_prototype['index']),
+                                                                                             r=int(region_marker_prototype['r']),
+                                                                                             c=int(region_marker_prototype['c']))
 
-            print('step02 | processing t={}/{} marker ({}/{})... {} tracks, {} instances, {} markers'.format(t+1,series.ts,i+1,len(data),composite.region_tracks.count(), composite.region_track_instances.count(), composite.region_markers.count()), end='\n' if t==series.ts-1 and i==len(data)-1 else '\r')
+          print('step02 | processing marker ({}/{})... {} tracks, {} instances, {} markers'.format(i+1,len(data),composite.region_tracks.count(), composite.region_track_instances.count(), composite.region_markers.count()), end='\n' if i==len(data)-1 else '\r')
 
       # 4. Segment zbf channel
       zbf_channel = composite.channels.get(name='-zbf')

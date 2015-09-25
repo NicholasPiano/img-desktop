@@ -33,7 +33,8 @@ path.append(DJANGO_ROOT)
 
 desktop_path = join(dirname(dirname(dirname(dirname(dirname(DJANGO_ROOT))))), 'Desktop/img')
 transport_path = '/Volumes/transport/data/puzzle/'
-DATA_ROOT = transport_path if not exists(desktop_path) else desktop_path
+# DATA_ROOT = transport_path if not exists(desktop_path) else desktop_path
+DATA_ROOT = desktop_path if not exists(transport_path) else transport_path
 LIF_ROOT = join(DATA_ROOT, 'lif')
 BACKUP_ROOT = join(DATA_ROOT, 'backup')
 ########## END PATH CONFIGURATION

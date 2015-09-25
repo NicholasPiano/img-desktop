@@ -259,10 +259,10 @@ class Channel(models.Model):
 
         # 3. create cell mask
         gray_value_id = mask[region_marker.r, region_marker.c]
-        region_mask, region_mask_created = region_instance.masks.get_or_create(experiment=region.experiment,
-                                                                               series=region.series,
-                                                                               region=region,
-                                                                               mask=mask_mask)
+        region_mask = region_instance.masks.create(experiment=region.experiment,
+                                                   series=region.series,
+                                                   region=region,
+                                                   mask=mask_mask)
         region_mask.gray_value_id = gray_value_id
         region_mask.save()
 
