@@ -7,27 +7,27 @@ Text representation of a cell profiler pipeline that can be used to modify data 
 def marker_pipeline(experiment_prefix, unique_key, primary_channel_name, secondary_channel_name, threshold_correction_factor=1.2, background=True):
 
   pipeline = ''
-  pipeline += Header(1)
-  pipeline += LoadImages(2, primary_channel_name, 'Images', 'Primary', 'ObjectName', 'OutlineName')
-  pipeline += LoadImages(3, secondary_channel_name, 'Images', 'Secondary', 'ObjectName', 'OutlineName')
-  pipeline += IdentifyPrimaryObjects(4, 'Primary', 'Markers')
-  pipeline += IdentifySecondaryObjects(5, 'Markers', 'Cells', threshold_correction_factor=threshold_correction_factor, background=background)
-  pipeline += MeasureObjectSizeShape(6, 'Cells')
-  pipeline += ExportToSpreadsheet(7, experiment_prefix)
-  pipeline += SaveImages(8, 'Objects', 'ImageName', 'Cells', 'Secondary', unique_key)
+  pipeline += Header(7)
+  pipeline += LoadImages(1, primary_channel_name, 'Images', 'Primary', 'ObjectName', 'OutlineName')
+  pipeline += LoadImages(2, secondary_channel_name, 'Images', 'Secondary', 'ObjectName', 'OutlineName')
+  pipeline += IdentifyPrimaryObjects(3, 'Primary', 'Markers')
+  pipeline += IdentifySecondaryObjects(4, 'Markers', 'Cells', 'Secondary', 'OutlineName', threshold_correction_factor=threshold_correction_factor, background=background)
+  pipeline += MeasureObjectSizeShape(5, 'Cells')
+  pipeline += ExportToSpreadsheet(6, experiment_prefix)
+  pipeline += SaveImages(7, 'Objects', 'ImageName', 'Cells', 'Secondary', unique_key)
 
   return pipeline
 
 def region_pipeline(experiment_prefix, unique_key, primary_channel_name, secondary_channel_name, threshold_correction_factor=1.2, background=True):
 
   pipeline = ''
-  pipeline += Header(1)
-  pipeline += LoadImages(2, primary_channel_name, 'Objects', 'ImageName', 'RegionMarkers', 'OutlineName')
-  pipeline += LoadImages(3, secondary_channel_name, 'Images', 'Secondary', 'ObjectName', 'OutlineName')
-  pipeline += IdentifySecondaryObjects(4, 'RegionMarkers', 'Regions', threshold_correction_factor=threshold_correction_factor, background=background)
-  pipeline += ExpandOrShrinkObjects(5, 'Regions', 'ExpandedRegions')
-  pipeline += TrackObjects(6, 'ExpandedRegions')
-  pipeline += SaveImages(7, 'Objects', 'ImageName', 'ExpandedRegions', 'Secondary', unique_key)
+  pipeline += Header(6)
+  pipeline += LoadImages(1, primary_channel_name, 'Objects', 'ImageName', 'RegionMarkers', 'OutlineName')
+  pipeline += LoadImages(2, secondary_channel_name, 'Images', 'Secondary', 'ObjectName', 'OutlineName')
+  pipeline += IdentifySecondaryObjects(3, 'RegionMarkers', 'Regions', 'Secondary', 'OutlineName', threshold_correction_factor=threshold_correction_factor, background=background)
+  pipeline += ExpandOrShrinkObjects(4, 'Regions', 'ExpandedRegions')
+  pipeline += TrackObjects(5, 'ExpandedRegions')
+  pipeline += SaveImages(6, 'Objects', 'ImageName', 'ExpandedRegions', 'Secondary', unique_key)
 
   return pipeline
 
@@ -43,16 +43,16 @@ def LoadImages(module_num, channel_name, objects_or_images, image_name, object_n
   return 'LoadImages:[module_num:{module_num}|svn_version:\'Unknown\'|variable_revision_number:11|show_window:False|notes:\x5B\x5D|batch_state:array(\x5B\x5D, dtype=uint8)|enabled:True|wants_pause:False]\n\
           File type to be loaded:individual images\n\
           File selection method:Text-Regular expressions\n\
+          Number of images in each group?:3\n\
           Type the text that the excluded images have in common:Do not use\n\
           Analyze all subfolders within the selected folder?:None\n\
-          Input image file location:Default Input Folder|\n\
+          Input image file location:Default Input Folder\x7C\n\
           Check image sets for unmatched or duplicate files?:Yes\n\
           Group images by metadata?:No\n\
           Exclude certain files?:No\n\
           Specify metadata fields to group by:\n\
           Select subfolders to analyze:\n\
           Image count:1\n\
-          \
           Text that these images have in common (case-sensitive):{channel_name}_\n\
           Position of this image in each group:1\n\
           Extract metadata from where?:None\n\
