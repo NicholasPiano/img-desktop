@@ -8,12 +8,13 @@ def marker_pipeline(experiment_prefix, unique_key, primary_channel_name, seconda
 
   pipeline = ''
   pipeline += Header(1)
-  pipeline += LoadImages(2, primary_channel_name, 'Images', 'Primary', '')
-  pipeline += IdentifyPrimaryObjects(3)
-  pipeline += IdentifySecondaryObjects(4, secondary_object_name, threshold_correction_factor=threshold_correction_factor, background=background)
-  pipeline += MeasureObjectSizeShape(5)
-  pipeline += ExportToSpreadsheet(6, experiment_prefix)
-  pipeline += SaveImages(7, unique_key, secondary_object_name)
+  pipeline += LoadImages(2, primary_channel_name, 'Images', 'Primary', 'ObjectName', 'OutlineName')
+  pipeline += LoadImages(3, secondary_channel_name, 'Images', 'Secondary', 'ObjectName', 'OutlineName')
+  pipeline += IdentifyPrimaryObjects(4, 'Primary', 'Markers')
+  pipeline += IdentifySecondaryObjects(5, 'Markers', 'Cells', threshold_correction_factor=threshold_correction_factor, background=background)
+  pipeline += MeasureObjectSizeShape(6, 'Cells')
+  pipeline += ExportToSpreadsheet(7, experiment_prefix)
+  pipeline += SaveImages(8, 'Objects', 'ImageName', 'Cells', 'Secondary', unique_key)
 
   return pipeline
 
@@ -21,11 +22,12 @@ def region_pipeline(experiment_prefix, unique_key, primary_channel_name, seconda
 
   pipeline = ''
   pipeline += Header(1)
-  pipeline += LoadImages(2, primary_channel_name, secondary_channel_name)
-  pipeline += IdentifySecondaryObjects(4, secondary_object_name, threshold_correction_factor=threshold_correction_factor, background=background)
-  pipeline += ExpandOrShrinkObjects(5, secondary_object_name)
-  pipeline += TrackObjects(6, secondary_object_name)
-  pipeline += SaveImages(7, unique_key, secondary_object_name)
+  pipeline += LoadImages(2, primary_channel_name, 'Objects', 'ImageName', 'RegionMarkers', 'OutlineName')
+  pipeline += LoadImages(3, secondary_channel_name, 'Images', 'Secondary', 'ObjectName', 'OutlineName')
+  pipeline += IdentifySecondaryObjects(4, 'RegionMarkers', 'Regions', threshold_correction_factor=threshold_correction_factor, background=background)
+  pipeline += ExpandOrShrinkObjects(5, 'Regions', 'ExpandedRegions')
+  pipeline += TrackObjects(6, 'ExpandedRegions')
+  pipeline += SaveImages(7, 'Objects', 'ImageName', 'ExpandedRegions', 'Secondary', unique_key)
 
   return pipeline
 
@@ -207,7 +209,7 @@ def Smooth(module_num, input_image_name, output_image_name, typical_artifact_dia
                                                        output_image_name=output_image_name,
                                                        typical_artifact_diameter=typical_artifact_diameter)
 
-def ExpandOrShrinkObjects(module_num, secondary_object_name):
+def ExpandOrShrinkObjects(module_num, input_object_name, output_object_name):
   return 'ExpandOrShrinkObjects:[module_num:{module_num}|svn_version:\'Unknown\'|variable_revision_number:1|show_window:True|notes:\x5B\x5D|batch_state:array(\x5B\x5D, dtype=uint8)|enabled:True|wants_pause:False]\n\
           Select the input objects:{input_object_name}\n\
           Name the output objects:{output_object_name}\n\

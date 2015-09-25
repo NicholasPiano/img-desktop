@@ -44,11 +44,11 @@ class Command(BaseCommand):
 
   def handle(self, *args, **options):
 
-    # pipeline = marker_pipeline('260714_s13_7OFMC9VV_', '-zcomp-zedge-7OFMC9VV', 's13_ch-zcomp-primary-7OFMC9VV', 's13_ch-zedge')
+    pipeline = marker_pipeline('260714_s13_7OFMC9VV_', '-zcomp-zedge-7OFMC9VV', 's13_ch-zcomp-primary-7OFMC9VV', 's13_ch-zedge')
 
-    # out_path = '/Volumes/transport/data/puzzle/260714/pipelines/test.cppipe'
+    out_path = '/Volumes/transport/data/puzzle/260714/pipelines/test.cppipe'
 
-    pipeline = region_pipeline('s14_ch-zbf-regionprimary-8C3WCS1E', 's14_ch-zbf')
+    # pipeline = region_pipeline('s14_ch-zbf-regionprimary-8C3WCS1E', 's14_ch-zbf')
 
     with open(out_path, 'w+') as f:
       f.write(pipeline)
