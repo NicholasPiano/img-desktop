@@ -4,55 +4,25 @@
     'pomodori':
     {
       {
-        'time':'',
+        'time':'19:10',
         'goals':
         {
-          'goal1',
-          'goal2',
+          'At least try out something related to confidence in order to rank cell masks',
         },
-        'achievements':
+        'process':
         {
-          'achievement1',
-          'achievement2',
-        },
-      },
-      {
-        'time':'',
-        'goals':
-        {
-
+          'run mini project to get basic data',
+          'running 260714-15',
+          'actually running mini 050714-13',
+          'have to generate zmod again but whatever',
+          'having to fix bug in data pipeline',
+          '',
         },
         'achievements':
         {
 
         },
-      },
-    },
-  },
-  {
-    'date':'',
-    'pomodori':
-    {
-      {
-        'time':'',
-        'goals':
-        {
-          'goal1',
-          'goal2',
-        },
-        'achievements':
-        {
-          'achievement1',
-          'achievement2',
-        },
-      },
-      {
-        'time':'',
-        'goals':
-        {
-
-        },
-        'achievements':
+        'lessons':
         {
 
         },

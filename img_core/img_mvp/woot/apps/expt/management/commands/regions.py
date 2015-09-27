@@ -151,7 +151,7 @@ class Command(BaseCommand):
                                                                                                r=int(region_marker_prototype['r']),
                                                                                                c=int(region_marker_prototype['c']))
 
-            print('step02 | processing marker t={}/{} ({}/{})... {} tracks, {} instances, {} markers'.format(t, composite.series.ts, i+1,len(data),composite.region_tracks.count(), composite.region_track_instances.count(), composite.region_markers.count()), end='\n' if t==composite.series.ts-1 and i==len(data)-1 else '\r')
+            print('step02 | processing marker t={}/{} ({}/{})... {} tracks, {} instances, {} markers'.format(t+1, composite.series.ts, i+1,len(data),composite.region_tracks.count(), composite.region_track_instances.count(), composite.region_markers.count()), end='\n' if t==composite.series.ts-1 and i==len(data)-1 else '\r')
 
       # 4. Segment zbf channel
       zbf_channel = composite.channels.get(name='-zbf')

@@ -147,7 +147,7 @@ class Experiment(models.Model):
       for line in process.stderr:
         if 'Version:' in line:
           print('setting up...')
-        elif 'Export' in line:
+        elif 'Load' in line:
           line_template = r'.+Image \# (?P<index>[0-9]+), module LoadImages.+'
           line_match = re.match(line_template, line)
           index = int(line_match.group('index'))
