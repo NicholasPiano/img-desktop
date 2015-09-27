@@ -58,7 +58,7 @@ class Command(BaseCommand):
 
       # Run mod
       print('step02 | processing mod_region_test...', end='\r')
-      tile_mod.run()
+      tile_mod.run(channel_unique_override='4MO57WF0')
       print('step02 | processing mod_region_test... done.{}'.format(spacer))
 
     else:

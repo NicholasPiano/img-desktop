@@ -267,8 +267,9 @@ def mod_region_test(composite, mod_id, algorithm, **kwargs):
         # get coords (isolate mask, cut to black, use r/c)
         isolated_mask = region_mask==unique
         cut, (r0,c0,rs,cs) = cut_to_black(isolated_mask)
+        com_r, com_c = com(isolated_mask)
 
-        draw.text((c0+30, r0+30), '{}'.format(region.name), font=ImageFont.load_default(), fill='rgb(0,0,255)')
+        draw.text((com_c+30, com_r+30), '{}'.format(region.name), font=ImageFont.load_default(), fill='rgb(0,0,255)')
 
     blank_slate = np.array(blank_slate_img)
     zbf_mask_r[blank_slate>0] = 0
