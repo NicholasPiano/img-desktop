@@ -62,7 +62,7 @@ class Command(BaseCommand):
     linestyles = ['-', '-+', '--', '-*']
     experiment_name = options['expt']
     series_name = options['series']
-    cells = [int(c) for c in options['cells'].split(',')]
+    cells = [int(c) for c in options['cells'].split(',')] if options['cells'] != 'all' else 'all'
     properties = [p for p in options['properties'].split(',')]
 
     plot_headers = {
@@ -86,6 +86,9 @@ class Command(BaseCommand):
     if experiment_name!='' and series_name!='':
       experiment = Experiment.objects.get(name=experiment_name)
       series = experiment.series.get(name=series_name)
+
+      if cells == 'all':
+        cells = [c.pk for c in series.cells.all()]
 
       if len(properties) <= 2 and len(properties) > 0:
         flag = True

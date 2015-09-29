@@ -243,9 +243,12 @@ class Channel(models.Model):
 
     # 4. create regions and tracks
     print('create regions and tracks...')
+    mask_mask = mask_channel.masks.get(t=0) # this is only the first mask. All others will have the same gray values.
+    mask = mask_mask.load()
+
     for t in range(self.composite.series.ts):
-      mask_mask = mask_channel.masks.get(t=t)
-      mask = mask_mask.load()
+      # mask_mask = mask_channel.masks.get(t=t) # this can be used if the regions are properly tracked.
+      # mask = mask_mask.load()
 
       region_markers = region_marker_channel.region_markers.filter(region_track_instance__t=t)
       for region_marker in region_markers:
@@ -258,6 +261,8 @@ class Channel(models.Model):
                                                                                   region_track_instance=region_marker.region_track_instance)
 
         # 3. create cell mask
+        # gray value id is only taken from the first frame since the regions are tracked
+        # and will retain their id.
         gray_value_id = mask[region_marker.r, region_marker.c]
         region_mask = region_instance.masks.create(experiment=region.experiment,
                                                    series=region.series,

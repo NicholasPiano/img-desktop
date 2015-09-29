@@ -192,6 +192,9 @@ class Command(BaseCommand):
         tile_mod.run(channel_unique_override=composite.current_zedge_unique)
         print('step02 | processing mod_tile... done.{}'.format(spacer))
 
+        # print out new data file
+        series.export_data()
+
       # 6. Region test mod
       region_mod = composite.mods.create(id_token=generate_id_token('img', 'Mod'), algorithm='mod_region_test')
 

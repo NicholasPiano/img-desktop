@@ -21,13 +21,15 @@ def marker_pipeline(experiment_prefix, unique_key, primary_channel_name, seconda
 def region_pipeline(experiment_prefix, unique_key, primary_channel_name, secondary_channel_name, threshold_correction_factor=1.2, background=True):
 
   pipeline = ''
-  pipeline += Header(6)
+  pipeline += Header(8)
   pipeline += LoadImages(1, primary_channel_name, 'Objects', 'ImageName', 'RegionMarkers', 'OutlineName')
   pipeline += LoadImages(2, secondary_channel_name, 'Images', 'Secondary', 'ObjectName', 'OutlineName')
-  pipeline += IdentifySecondaryObjects(3, 'RegionMarkers', 'Regions', 'Secondary', 'OutlineName', threshold_correction_factor=threshold_correction_factor, background=background)
-  pipeline += ExpandOrShrinkObjects(4, 'Regions', 'ExpandedRegions')
-  pipeline += TrackObjects(5, 'ExpandedRegions')
-  pipeline += SaveImages(6, 'Objects', 'ImageName', 'ExpandedRegions', 'Secondary', unique_key)
+  pipeline += MeasureObjectSizeShape(3, 'RegionMarkers')
+  pipeline += FilterObjects(4, 'FilteredRegionMarkers')
+  pipeline += IdentifySecondaryObjects(5, 'FilteredRegionMarkers', 'Regions', 'Secondary', 'OutlineName', threshold_correction_factor=threshold_correction_factor, background=background)
+  pipeline += ExpandOrShrinkObjects(6, 'Regions', 'ExpandedRegions')
+  pipeline += TrackObjects(7, 'ExpandedRegions')
+  pipeline += SaveImages(8, 'Objects', 'ImageName', 'ExpandedRegions', 'Secondary', unique_key)
 
   return pipeline
 
@@ -74,6 +76,27 @@ def LoadImages(module_num, channel_name, objects_or_images, image_name, object_n
                                                image_name=image_name,
                                                object_name=object_name,
                                                outline_name=outline_name)
+
+def FilterObjects(module_num, output_object_name, input_object_name):
+  return 'FilterObjects:[module_num:{module_num}|svn_version:\'Unknown\'|variable_revision_number:7|show_window:False|notes:\x5B\x5D|batch_state:array(\x5B\x5D, dtype=uint8)|enabled:True|wants_pause:False]\n\
+          Name the output objects:{output_object_name}\n\
+          Select the object to filter:{input_object_name}\n\
+          Select the filtering mode:Measurements\n\
+          Select the filtering method:Limits\n\
+          Select the objects that contain the filtered objects:None\n\
+          Retain outlines of the identified objects?:No\n\
+          Name the outline image:FilteredObjects\n\
+          Rules file location:Elsewhere...\x7C\n\
+          Rules file name:rules.txt\n\
+          Class number:1\n\
+          Measurement count:1\n\
+          Additional object count:0\n\
+          Assign overlapping child to:Both parents\n\
+          Select the measurement to filter by:AreaShape_Area\n\
+          Filter using a minimum measurement value?:Yes\n\
+          Minimum value:100.0\n\
+          Filter using a maximum measurement value?:No\n\
+          Maximum value:1.0\n\n'.format(module_num=module_num, output_object_name=output_object_name, input_object_name=input_object_name)
 
 def IdentifyPrimaryObjects(module_num, image_name, object_name, min_radius=3, max_radius=13):
   return 'IdentifyPrimaryObjects:[module_num:{module_num}|svn_version:\'Unknown\'|variable_revision_number:10|show_window:False|notes:\x5B\x5D|batch_state:array(\x5B\x5D, dtype=uint8)|enabled:True|wants_pause:False]\n\
