@@ -16,15 +16,85 @@
           'actually running mini 050714-13',
           'have to generate zmod again but whatever',
           'having to fix bug in data pipeline',
+          'simple text template bug',
+        },
+        'achievements':
+        {
+          'set up experiment',
+          'created new process',
+        },
+        'lessons':
+        {
+          'I didn't learn anything',
+        },
+      },
+      {
+        'time':'19:46',
+        'goals':
+        {
+          'write script to calculate average areas for each cell and the entire set',
+          'add to the script to find confidence value for each cell',
+        },
+        'process':
+        {
+          'test_confidence.py script',
+          'get mean global area',
+          'get mean local area',
+          'get mean global difference between global',
+          'get mean local difference between global and local areas',
+          'should get three values for each cell instance',
+          'confidence for cell can be computed from the mean of the cell instance confidence',
           '',
         },
         'achievements':
         {
-
+          'wrote initial script, appears to be working',
         },
         'lessons':
         {
-
+          'how to maths',
+          'an initial test of what confidence might look like',
+          'the problem will be in determining a ground truth automatically',
+          'perhaps i can use round cells to be the truth',
+          'need a statistically significant sample of both cells and cell instances to make this viable',
+        },
+      },
+      {
+        'time':'',
+        'goals':
+        {
+          '',
+        },
+        'process':
+        {
+          '',
+        },
+        'achievements':
+        {
+          '',
+        },
+        'lessons':
+        {
+          '',
+        },
+      },
+      {
+        'time':'',
+        'goals':
+        {
+          '',
+        },
+        'process':
+        {
+          '',
+        },
+        'achievements':
+        {
+          '',
+        },
+        'lessons':
+        {
+          '',
         },
       },
     },
