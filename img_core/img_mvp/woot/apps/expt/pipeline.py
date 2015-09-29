@@ -25,7 +25,7 @@ def region_pipeline(experiment_prefix, unique_key, primary_channel_name, seconda
   pipeline += LoadImages(1, primary_channel_name, 'Objects', 'ImageName', 'RegionMarkers', 'OutlineName')
   pipeline += LoadImages(2, secondary_channel_name, 'Images', 'Secondary', 'ObjectName', 'OutlineName')
   pipeline += MeasureObjectSizeShape(3, 'RegionMarkers')
-  pipeline += FilterObjects(4, 'FilteredRegionMarkers')
+  pipeline += FilterObjects(4, 'FilteredRegionMarkers', 'RegionMarkers')
   pipeline += IdentifySecondaryObjects(5, 'FilteredRegionMarkers', 'Regions', 'Secondary', 'OutlineName', threshold_correction_factor=threshold_correction_factor, background=background)
   pipeline += ExpandOrShrinkObjects(6, 'Regions', 'ExpandedRegions')
   pipeline += TrackObjects(7, 'ExpandedRegions')
