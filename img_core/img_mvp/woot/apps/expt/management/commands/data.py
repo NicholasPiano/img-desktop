@@ -114,6 +114,29 @@ class Command(BaseCommand):
       series.cell_instances.all().delete()
       series.cells.all().delete()
 
+      # clear cp directory
+      # print('removing contents of cp directory...')
+      # for path in os.listdir(experiment.cp_path):
+      #   os.remove(os.path.join(experiment.cp_path, path))
+      #
+      # # delete all images in composite that contain "primary"
+      # print('removing previous primary gons...')
+      # for gon in composite.gons.filter(channel__name__contains='-primary-'):
+      #   for path in gon.paths.all():
+      #     os.remove(path.url)
+      #     path.delete()
+      #   gon.delete()
+      #
+      # print('removing previous zdiff masks...')
+      # for mask in composite.masks.filter(channel__name__contains='-zdiff-'):
+      #   os.remove(mask.url)
+      #   mask.delete()
+      #
+      # print('removing previous zedge masks...')
+      # for mask in composite.masks.filter(channel__name__contains='-zedge-'):
+      #   os.remove(mask.url)
+      #   mask.delete()
+
       for data_file in composite.data_files.filter(data_type='markers'):
         data = data_file.load()
         for i, marker_prototype in enumerate(data):

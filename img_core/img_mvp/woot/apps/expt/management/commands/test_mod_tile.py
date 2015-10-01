@@ -60,7 +60,7 @@ class Command(BaseCommand):
 
       # Run mod
       print('step02 | processing mod_tile...', end='\r')
-      tile_mod.run()
+      tile_mod.run(channel_unique_override='365YZUOO')
       print('step02 | processing mod_tile... done.{}'.format(spacer))
 
     else:

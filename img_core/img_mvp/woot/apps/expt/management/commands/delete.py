@@ -11,9 +11,11 @@ from apps.expt.util import *
 
 # util
 import os
+import numpy as np
 from os.path import join, exists, splitext
 from optparse import make_option
 from subprocess import call
+import matplotlib.pyplot as plt
 
 spacer = ' ' *  20
 
@@ -52,7 +54,7 @@ class Command(BaseCommand):
     # vars
     experiment_name = options['expt']
     series_name = options['series']
-    cell_pks = options['cells'].split(',')
+    cell_groups = options['cells'].split(';')
 
     if experiment_name!='' and series_name!='':
       experiment = Experiment.objects.get(name=experiment_name)
@@ -62,58 +64,72 @@ class Command(BaseCommand):
       composite = series.composites.get()
 
       # template
-      template = composite.templates.get(name='source')
+      template = composite.templates.get(name='mask')
 
       # image root
       root = experiment.composite_path
 
-      # select cell
-      if len(cell_pks)>0:
-        for pk in cell_pks:
-          if pk != '':
-            if series.cells.filter(pk=pk).count()!=0:
-              cell = series.cells.get(pk=pk)
+      # 1. convert cell groups to dictionary
+      cell_dictionary = {}
+      for group in cell_groups:
+        parsed_group = [int(value) for value in group[1:-1].split(',')]
+        cell_id = parsed_group[0]
+        cell = series.cells.get(pk=cell_id)
 
-              # what do I need to know about a cell to completely remove it?
-              # 1. all its cell instances
-              # 2. The gray value of each cell instance in all the masks
-
-              # steps
-              # 1. for each cell instance, load all masks and change gray value to 0, save image
-              for cell_instance in cell.instances.all():
-                for cell_mask in cell_instance.masks.all():
-                  print('Removing {} {} cell {}, cell instance {}, cell mask {}...'.format(experiment_name, series_name, cell.pk, cell_instance.pk, cell_mask.pk))
-                  mask_mask = cell_mask.mask
-                  mask = mask_mask.load()
-                  mask[mask==cell_mask.gray_value_id] = 0
-
-                  mask_mask.array = mask.copy()
-                  mask_mask.save_array(root, template)
-                  mask_mask.save()
-
-                  cell_mask.delete()
-                cell_instance.delete()
-              cell.delete()
-
+        if len(parsed_group)==1:
+          # add all cell instances to cell_dictionary
+          for cell_instance in cell.instances.all():
+            if cell_instance.t in cell_dictionary:
+              cell_dictionary[cell_instance.t].append(cell_instance.pk)
             else:
-              print('No cell with primary key {} exists in {} {}, skipping...'.format(pk, experiment_name, series_name))
+              cell_dictionary[cell_instance.t] = [cell_instance.pk]
 
+        else:
+          t = parsed_group[1]
+          cell_instance = cell.instances.get(t=t)
+          if cell_instance.t in cell_dictionary:
+            cell_dictionary[cell_instance.t].append(cell_instance.pk)
           else:
-            print('No pk, skipping...')
+            cell_dictionary[cell_instance.t] = [cell_instance.pk]
 
-          # redo data
-          series.export_data()
+      # 2. load each frame and delete from image
+      mask_channel = composite.mask_channels.get(name__contains=composite.current_zedge_unique)
 
-          # redo video
-          tile_mod = composite.mods.create(id_token=generate_id_token('img', 'Mod'), algorithm='mod_tile')
+      # determine marker
+      for t, cell_instance_pk_list in cell_dictionary.items():
+        # load image
+        mask_mask = mask_channel.masks.get(t=t)
+        mask = mask_mask.load()
 
-          # Run mod
-          print('step02 | processing mod_tile...', end='\r')
-          tile_mod.run(channel_unique_override=composite.current_zedge_unique)
-          print('step02 | processing mod_tile... done.{}'.format(spacer))
+        for cell_instance_pk in cell_instance_pk_list:
+          # delete mask from mask image
+          cell_instance = series.cell_instances.get(pk=cell_instance_pk)
 
-      else:
-        print('Please enter at least one cell to delete')
+          marker = cell_instance.track_instance.markers.get()
+          r, c = marker.r, marker.c
 
-    else:
-      print('Please enter an experiment')
+          print(cell_instance.AreaShape_Area, (mask==mask[r,c]).sum(), mask[r,c], np.unique(mask), np.sum(mask>0))
+          plt.imshow(mask)
+          plt.show()
+          mask[mask==mask[r,c]] = 0
+          print(cell_instance.AreaShape_Area, (mask==mask[r,c]).sum(), mask[r,c], np.unique(mask), np.sum(mask>0))
+          plt.imshow(mask)
+          plt.show()
+
+          # delete cell instance
+          cell_instance.masks.all().delete()
+          cell_instance.delete()
+
+        mask_mask.array = mask.copy()
+        mask_mask.save_array(root, template)
+
+      # 3. recreate data file
+      series.export_data()
+
+      # 4. recreate tile image
+      tile_mod = composite.mods.create(id_token=generate_id_token('img', 'Mod'), algorithm='mod_tile')
+
+      # Run mod
+      print('step02 | processing mod_tile...', end='\r')
+      tile_mod.run(channel_unique_override=composite.current_zedge_unique)
+      print('step02 | processing mod_tile... done.{}'.format(spacer))

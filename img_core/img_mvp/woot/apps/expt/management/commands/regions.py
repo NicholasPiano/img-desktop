@@ -105,17 +105,22 @@ class Command(BaseCommand):
         print('step02 | data file {}... {}'.format(df_name, status))
 
       # clear cp directory
-      print('removing contents of cp directory...')
-      for path in os.listdir(experiment.cp_path):
-        os.remove(os.path.join(experiment.cp_path, path))
+      # print('removing contents of cp directory...')
+      # for path in os.listdir(experiment.cp_path):
+      #   os.remove(os.path.join(experiment.cp_path, path))
 
       # delete all images in composite that contain "regionprimary"
-      print('removing previous regionprimary gons...')
-      for gon in composite.gons.filter(channel__name__contains='-regionprimary-'):
-        for path in gon.paths.all():
-          os.remove(path.url)
-          path.delete()
-        gon.delete()
+      # print('removing previous regionprimary gons...')
+      # for gon in composite.gons.filter(channel__name__contains='-regionprimary-'):
+      #   for path in gon.paths.all():
+      #     os.remove(path.url)
+      #     path.delete()
+      #   gon.delete()
+      #
+      # print('removing previous -zbf- masks...')
+      # for mask in composite.masks.filter(channel__name__contains='-zbf-'):
+      #   os.remove(mask.url)
+      #   mask.delete()
 
       ### MARKERS
       print('removing previous region tracks...')

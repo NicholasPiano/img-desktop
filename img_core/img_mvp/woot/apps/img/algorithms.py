@@ -166,28 +166,28 @@ def mod_tile(composite, mod_id, algorithm, **kwargs):
 
     markers = composite.markers.filter(track_instance__t=t, track__cell__isnull=False)
     for marker in markers:
+      if hasattr(marker.track_instance, 'cell_instance'):
+        # 2. draw markers in blue channel
+        zbf_mask_r[marker.r-2:marker.r+3,marker.c-2:marker.c+3] = 0
+        zbf_mask_g[marker.r-2:marker.r+3,marker.c-2:marker.c+3] = 0
+        zbf_mask_b[marker.r-2:marker.r+3,marker.c-2:marker.c+3] = 255
+        zcomp_mask_r[marker.r-2:marker.r+3,marker.c-2:marker.c+3] = 0
+        zcomp_mask_g[marker.r-2:marker.r+3,marker.c-2:marker.c+3] = 0
+        zcomp_mask_b[marker.r-2:marker.r+3,marker.c-2:marker.c+3] = 255
 
-      # 2. draw markers in blue channel
-      zbf_mask_r[marker.r-2:marker.r+3,marker.c-2:marker.c+3] = 0
-      zbf_mask_g[marker.r-2:marker.r+3,marker.c-2:marker.c+3] = 0
-      zbf_mask_b[marker.r-2:marker.r+3,marker.c-2:marker.c+3] = 255
-      zcomp_mask_r[marker.r-2:marker.r+3,marker.c-2:marker.c+3] = 0
-      zcomp_mask_g[marker.r-2:marker.r+3,marker.c-2:marker.c+3] = 0
-      zcomp_mask_b[marker.r-2:marker.r+3,marker.c-2:marker.c+3] = 255
+        # 3. draw text in green channel
+        blank_slate = np.zeros(zbf.shape)
+        blank_slate_img = Image.fromarray(blank_slate)
+        draw = ImageDraw.Draw(blank_slate_img)
+        draw.text((marker.c+5, marker.r+5), '{}'.format(marker.track.cell.pk), font=ImageFont.load_default(), fill='rgb(0,0,255)')
+        blank_slate = np.array(blank_slate_img)
 
-      # 3. draw text in green channel
-      blank_slate = np.zeros(zbf.shape)
-      blank_slate_img = Image.fromarray(blank_slate)
-      draw = ImageDraw.Draw(blank_slate_img)
-      draw.text((marker.c+5, marker.r+5), '{}'.format(marker.track.cell.pk), font=ImageFont.load_default(), fill='rgb(0,0,255)')
-      blank_slate = np.array(blank_slate_img)
-
-      zbf_mask_r[blank_slate>0] = 0
-      zbf_mask_g[blank_slate>0] = 255
-      zbf_mask_b[blank_slate>0] = 0
-      zcomp_mask_r[blank_slate>0] = 0
-      zcomp_mask_g[blank_slate>0] = 255
-      zcomp_mask_b[blank_slate>0] = 0
+        zbf_mask_r[blank_slate>0] = 0
+        zbf_mask_g[blank_slate>0] = 255
+        zbf_mask_b[blank_slate>0] = 0
+        zcomp_mask_r[blank_slate>0] = 0
+        zcomp_mask_g[blank_slate>0] = 255
+        zcomp_mask_b[blank_slate>0] = 0
 
     # regions
     region_mask = composite.masks.get(t=t, channel__name__contains=composite.current_region_unique).load()

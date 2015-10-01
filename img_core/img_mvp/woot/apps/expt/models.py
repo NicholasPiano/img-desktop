@@ -145,13 +145,18 @@ class Experiment(models.Model):
     # process = subprocess.Popen(cmd, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     with subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, bufsize=1, universal_newlines=True) as process:
       for line in process.stderr:
-        if 'Version:' in line:
-          print('setting up...')
-        elif 'Load' in line:
-          line_template = r'.+Image \# (?P<index>[0-9]+), module LoadImages.+'
-          line_match = re.match(line_template, line)
-          index = int(line_match.group('index'))
-          print('segmenting... {}/{} cycles completed.'.format(index, series_ts), end='\r' if index<series_ts else '\n')
+        debug = True
+        if not debug:
+          if 'Version:' in line:
+            print('setting up...')
+          elif 'Load' in line:
+            line_template = r'.+Image \# (?P<index>[0-9]+), module LoadImages.+'
+            line_match = re.match(line_template, line)
+            index = int(line_match.group('index'))
+            print('segmenting... {}/{} cycles completed.'.format(index, series_ts), end='\r' if index<series_ts else '\n')
+        else:
+          print(line.rstrip())
+
     print('segmentation complete.')
 
 class Series(models.Model):

@@ -8,6 +8,7 @@ from apps.expt.models import Experiment, Series
 from apps.expt.util import generate_id_token, str_value, random_string
 from apps.expt.data import *
 from apps.img import algorithms
+from apps.img.cpmath.threshold import get_threshold
 
 # util
 import os
@@ -481,6 +482,82 @@ class Gon(models.Model):
 
         gon.save_array(self.experiment.composite_path, template)
         gon.save()
+
+  def segment_primary(self):
+
+    # important methods
+    # self.threshold_image (Identify)
+    # -- self.get_threshold (Identify)
+    # ---- get_threshold (cellprofiler.cpmath.threshold)
+    # -- smooth_with_function_and_mask (cellprofiler.cpmath.smooth)
+    # ----
+    # scipy.ndimage.label (scipy)
+    # self.separate_neighboring_objects (Identify)
+
+    # 1. threshold image
+    binary_image = self.threshold_image()
+
+    # 2. fill background holes in foreground objects
+    # size_fn
+    # fill_labeled_holes
+    def size_fn(size, is_foreground):
+      return size < self.size_range.max * self.size_range.max
+    binary_image = fill_labeled_holes(binary_image, size_fn=size_fn)
+
+    # 3. perform recognition
+    # scipy.ndimage.label
+    # self.separate_neighboring_objects
+    labeled_image, object_count = scipy.ndimage.label(binary_image, np.ones((3,3), bool))
+    labeled_image, object_count, maxima_suppression_size, LoG_threshold, LoG_filter_diameter = self.separate_neighboring_objects(workspace, labeled_image, object_count)
+
+    # 4. fill holes again
+    # labeled_image = fill_labeled_holes(labeled_image)
+
+    # 5. create objects
+
+  def threshold_image(self):
+    # image = bitch I know where my image at
+    local_threshold, global_threshold = self.get_threshold(image)
+
+    # Convert from a scale into a sigma. What I've done here
+    # is to structure the Gaussian so that 1/2 of the smoothed
+    # intensity is contributed from within the smoothing diameter
+    # and 1/2 is contributed from outside.
+    sigma = self.threshold_smoothing_scale.value / 0.6744 / 2.0
+
+    def fn(img, sigma=sigma):
+      return scipy.ndimage.gaussian_filter(img, sigma, mode='constant', cval=0)
+
+    blurred_image = smooth_with_function_and_mask(img, fn, mask)
+    binary_image = (blurred_image >= local_threshold) & mask
+
+    return binary_image
+
+  def get_threshold(self):
+    img = image.pixel_data
+    if self.adaptive_window_method == FI_IMAGE_SIZE:
+      # The original behavior
+      image_size = np.array(img.shape[:2], dtype=int)
+      block_size = image_size / 10
+      block_size[block_size<50] = 50
+
+    kwparams = {}
+    kwparams['use_weighted_variance'] = True
+    kwparams['two_class_otsu'] = False
+    kwparams['assign_middle_to_foreground'] = False
+
+    local_threshold, global_threshold = get_threshold(self.threshold_algorithm,
+                                                      self.threshold_modifier,
+                                                      img,
+                                                      mask = mask,
+                                                      labels = labels,
+                                                      adaptive_window_size = block_size,
+                                                      **kwparams)
+
+    return local_threshold, global_threshold
+
+  def separate_neighboring_objects(self):
+    pass
 
 ### GON STRUCTURE AND MODIFICATION ###
 class Path(models.Model):
