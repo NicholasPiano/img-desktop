@@ -246,8 +246,17 @@ static PyMethodDef methods[] = {
     { NULL, NULL, 0, NULL}
 };
 
-PyMODINIT_FUNC init_cpmorphology(void)
+static struct PyModuleDef cModPyDem =
 {
-    Py_InitModule("_cpmorphology", methods);
+    PyModuleDef_HEAD_INIT,
+    "_cpmorphology", /* name of module */
+    "",          /* module documentation, may be NULL */
+    -1,          /* size of per-interpreter state of the module, or -1 if the module keeps state in global variables. */
+    methods
+};
+
+PyMODINIT_FUNC PyInit__cpmorphology(void)
+{
     import_array();
+    return PyModule_Create(&cModPyDem);
 }

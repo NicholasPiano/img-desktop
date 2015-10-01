@@ -21,12 +21,12 @@ import apps.img.cpmath._cpmorphology
 from apps.img.cpmath.outline import outline
 from apps.img.cpmath.rankorder import rank_order
 from apps.img.cpmath.index import Indexes
-from _cpmorphology2 import skeletonize_loop, table_lookup_index
-from _cpmorphology2 import grey_reconstruction_loop
-from _cpmorphology2 import _all_connected_components
-from _cpmorphology2 import index_lookup, prepare_for_index_lookup
-from _cpmorphology2 import extract_from_image_lookup, fill_labeled_holes_loop
-from _cpmorphology2 import trace_outlines
+from apps.img.cpmath._cpmorphology2 import skeletonize_loop, table_lookup_index
+from apps.img.cpmath._cpmorphology2 import grey_reconstruction_loop
+from apps.img.cpmath._cpmorphology2 import _all_connected_components
+from apps.img.cpmath._cpmorphology2 import index_lookup, prepare_for_index_lookup
+from apps.img.cpmath._cpmorphology2 import extract_from_image_lookup, fill_labeled_holes_loop
+from apps.img.cpmath._cpmorphology2 import trace_outlines
 try:
     from apps.img.cpmath._cpmorphology2 import ptrsize
 except:
@@ -2312,10 +2312,11 @@ def __calculate_perimeter_scoring():
     i = i+16
     for j in range(4,8):
         i = i+((prashker[:,0].astype(int) / 2**j)%2)*2**(j+1)
+    print(i)
     score[i.astype(int)] = prashker[:,1]
     return score
 
-__perimeter_scoring = __calculate_perimeter_scoring()
+# __perimeter_scoring = __calculate_perimeter_scoring()
 
 def calculate_perimeters(labels, indexes):
     """Count the distances between adjacent pixels in the perimeters of the labels"""

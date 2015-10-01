@@ -9,6 +9,7 @@ from apps.expt.util import generate_id_token, str_value, random_string
 from apps.expt.data import *
 from apps.img import algorithms
 from apps.img.cpmath.threshold import get_threshold
+from apps.img.cpmath.cpmorphology import fill_labeled_holes, strel_disk
 
 # util
 import os
@@ -517,7 +518,7 @@ class Gon(models.Model):
 
   def threshold_image(self):
     # image = bitch I know where my image at
-    local_threshold, global_threshold = self.get_threshold(image)
+    local_threshold, global_threshold = self.get_threshold()
 
     # Convert from a scale into a sigma. What I've done here
     # is to structure the Gaussian so that 1/2 of the smoothed
@@ -534,23 +535,22 @@ class Gon(models.Model):
     return binary_image
 
   def get_threshold(self):
-    img = image.pixel_data
-    if self.adaptive_window_method == FI_IMAGE_SIZE:
-      # The original behavior
-      image_size = np.array(img.shape[:2], dtype=int)
-      block_size = image_size / 10
-      block_size[block_size<50] = 50
+    img = self.load()
+    # The original behavior
+    image_size = np.array(img.shape[:2], dtype=int)
+    block_size = image_size / 10
+    block_size[block_size<50] = 50
 
     kwparams = {}
     kwparams['use_weighted_variance'] = True
     kwparams['two_class_otsu'] = False
     kwparams['assign_middle_to_foreground'] = False
 
-    local_threshold, global_threshold = get_threshold(self.threshold_algorithm,
-                                                      self.threshold_modifier,
+    local_threshold, global_threshold = get_threshold('Otsu',
+                                                      'Adaptive',
                                                       img,
-                                                      mask = mask,
-                                                      labels = labels,
+                                                      mask = np.zeros(img.shape),
+                                                      labels = None,
                                                       adaptive_window_size = block_size,
                                                       **kwparams)
 

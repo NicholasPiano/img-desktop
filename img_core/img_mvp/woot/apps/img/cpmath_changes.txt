@@ -6,9 +6,13 @@ for cpmorphology such as PyInt_AsLong. as per: http://py3c.readthedocs.org/en/la
   a. PyInt_AsLong -> PyLong_AsLong
   b. PyString_ToString -> PyUnicode_ToString
   c. Py_InitModule ->
+    i. http://stackoverflow.com/questions/28305731/compiler-cant-find-py-initmodule-is-it-deprecated-and-if-so-what-should-i
 
 2. Path shenanigans
 
   a. cpmorphology, filter, index, setup, threshold import paths need to point to apps.img.cpmath
 
 3. Run setup with "~$ python3 setup.py build_ext -i" as found in CellProfiler.build_extensions
+
+4. Perimeter calculation is broken on line 2319 of cpmorphology as far as I can tell. I can just use
+my own perimeter calculation for now.
