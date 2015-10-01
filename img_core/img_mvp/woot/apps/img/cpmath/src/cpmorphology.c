@@ -26,7 +26,7 @@
 
 static void to_stdout(const char *text)
 {
-     PySys_WriteStdout("%s", text);     
+     PySys_WriteStdout("%s", text);
 }
 
 static PyObject *
@@ -108,7 +108,7 @@ cpmaximum(PyObject *self, PyObject *args)
      }
      for (i=0;i<4;i++) {
           PyObject *obDim = PyTuple_GetItem(*shapes[i],indices[i]);
-          *(slots[i]) = PyInt_AsLong(obDim);
+          *(slots[i]) = PyLong_AsLong(obDim);
           if (PyErr_Occurred()) {
                error = "Array shape is not a tuple of integers";
                goto exit;
@@ -138,7 +138,7 @@ cpmaximum(PyObject *self, PyObject *args)
                error = "Failed to get x offset from tuple";
                goto exit;
           }
-          xoff = PyInt_AsLong(temp);
+          xoff = PyLong_AsLong(temp);
           if (PyErr_Occurred()) {
                error = "Offset X is not an integer";
                goto exit;
@@ -148,13 +148,13 @@ cpmaximum(PyObject *self, PyObject *args)
                error = "Failed to get y offset from tuple";
                goto exit;
           }
-          yoff = PyInt_AsLong(temp);
+          yoff = PyLong_AsLong(temp);
           if (PyErr_Occurred()) {
                error = "Offset Y is not an integer";
                goto exit;
           }
      }
-     
+
      dims[0] = width;
      dims[1] = height;
      output = PyArray_SimpleNew(2, dims, NPY_DOUBLE);
@@ -204,7 +204,7 @@ cpmaximum(PyObject *self, PyObject *args)
                *out_data++ = value;
           }
      }
-     
+
 
   exit:
      if (image) {
@@ -233,7 +233,7 @@ cpmaximum(PyObject *self, PyObject *args)
           if (output) {
                Py_DECREF(output);
           }
-          output = PyString_FromString(error);
+          output = PyUnicode_FromString(error);
           if (! output) {
                Py_RETURN_NONE;
           }
@@ -251,4 +251,3 @@ PyMODINIT_FUNC init_cpmorphology(void)
     Py_InitModule("_cpmorphology", methods);
     import_array();
 }
-

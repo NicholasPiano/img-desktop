@@ -1,0 +1,14 @@
+Some changes had to made to cpmath to integrate it into the code
+
+1. We are operating in Python3 here, so Some definitions had to be changed in the Cython code
+for cpmorphology such as PyInt_AsLong. as per: http://py3c.readthedocs.org/en/latest/reference.html
+
+  a. PyInt_AsLong -> PyLong_AsLong
+  b. PyString_ToString -> PyUnicode_ToString
+  c. Py_InitModule ->
+
+2. Path shenanigans
+
+  a. cpmorphology, filter, index, setup, threshold import paths need to point to apps.img.cpmath
+
+3. Run setup with "~$ python3 setup.py build_ext -i" as found in CellProfiler.build_extensions

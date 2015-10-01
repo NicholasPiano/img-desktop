@@ -72,11 +72,11 @@ def configuration():
                   Extension(name="_fastemd",
                             sources=["_fastemd.pyx"],
                             include_dirs = [
-                                "include", get_include(), 
-                                "../../contrib/include/FastEMD"],
+                                "include", get_include(),
+                                "../contrib/include/FastEMD"],
                             depends=["include/fastemd_hat.hpp",
                                      "include/npy_helpers.hpp"] +
-                            glob.glob("../../contrib/include/FastEMD/*.hpp"),
+                            glob.glob("../contrib/include/FastEMD/*.hpp"),
                             extra_compile_args = extra_compile_args,
                             extra_link_args=extra_link_args,
                             language="c++")
@@ -94,5 +94,3 @@ if __name__ == '__main__':
     if '/' in __file__:
         os.chdir(os.path.dirname(__file__))
     setup(**configuration())
-    
-
