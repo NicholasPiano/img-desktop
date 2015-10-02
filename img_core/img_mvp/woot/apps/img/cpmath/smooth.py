@@ -18,20 +18,20 @@ import scipy.linalg
 
 def smooth_with_noise(image, bits):
     """Smooth the image with a per-pixel random multiplier
-    
+
     image - the image to perturb
     bits - the noise is this many bits below the pixel value
-    
+
     The noise is random with normal distribution, so the individual pixels
     get either multiplied or divided by a normally distributed # of bits
     """
-    
+
     rr = np.random.RandomState()
     rr.seed(0)
     r = rr.normal(size=image.shape)
     delta = pow(2.0,-bits)
     image_copy = np.clip(image, delta, 1)
-    result = np.exp2(np.log2(image_copy + delta) * r + 
+    result = np.exp2(np.log2(image_copy + delta) * r +
                      (1-r) * np.log2(image_copy))
     result[result>1] = 1
     result[result<0] = 0
@@ -39,11 +39,11 @@ def smooth_with_noise(image, bits):
 
 def smooth_with_function_and_mask(image, function, mask):
     """Smooth an image with a linear function, ignoring the contribution of masked pixels
-    
+
     image - image to smooth
     function - a function that takes an image and returns a smoothed image
     mask  - mask with 1's for significant pixels, 0 for masked pixels
-    
+
     This function calculates the fractional contribution of masked pixels
     by applying the function to the mask (which gets you the fraction of
     the pixel data that's due to significant points). We then mask the image
@@ -61,10 +61,10 @@ def smooth_with_function_and_mask(image, function, mask):
 
 def circular_gaussian_kernel(sd,radius):
     """Create a 2-d Gaussian convolution kernel
-    
+
     sd     - standard deviation of the gaussian in pixels
     radius - build a circular kernel that convolves all points in the circle
-             bounded by this radius 
+             bounded by this radius
     """
     i,j = np.mgrid[-radius:radius+1,-radius:radius+1].astype(float) / radius
     mask = i**2 + j**2 <= 1
@@ -82,14 +82,14 @@ def circular_gaussian_kernel(sd,radius):
 
 def fit_polynomial(pixel_data, mask, clip=True):
     '''Return an "image" which is a polynomial fit to the pixel data
-    
+
     Fit the image to the polynomial Ax**2+By**2+Cxy+Dx+Ey+F
-    
+
     pixel_data - a two-dimensional numpy array to be fitted
-    
+
     mask - a mask of pixels whose intensities should be considered in the
            least squares fit
-           
+
     clip - if True, clip the output array so that pixels less than zero
            in the fitted image are zero and pixels that are greater than
            one are one.

@@ -20,7 +20,7 @@ pixel distance.
 
 The priority queue operates using integer values. Doubles can be ordered
 lexicographically by their bits - this means that the following
-equation converts a double to two ints  that preserve order when 
+equation converts a double to two ints  that preserve order when
 lexicographically compared:
 
 double x
@@ -47,17 +47,17 @@ Website: http://www.cellprofiler.org
 
 import numpy as np
 
-import _propagate
+from apps.img.cpmath import _propagate
 
 def propagate(image, labels, mask, weight):
     """Propagate the labels to the nearest pixels
-    
+
     image - gives the Z height when computing distance
     labels - the labeled image pixels
     mask   - only label pixels within the mask
     weight - the weighting of x/y distance vs z distance
              high numbers favor x/y, low favor z
-    
+
     returns a label matrix and the computed distances
     """
     if image.shape != labels.shape:
@@ -81,4 +81,3 @@ def propagate(image, labels, mask, weight):
                          labels_out, distances, float(weight))
     labels_out[labels > 0] = labels[labels > 0]
     return labels_out,distances
-    

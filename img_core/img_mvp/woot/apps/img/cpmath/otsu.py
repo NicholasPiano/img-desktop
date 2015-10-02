@@ -1,21 +1,21 @@
 """Otsu's method:
 
-Otsu's method (N. Otsu, "A Threshold Selection Method from Gray-Level Histograms", 
+Otsu's method (N. Otsu, "A Threshold Selection Method from Gray-Level Histograms",
 IEEE Transactions on Systems, Man, and Cybernetics, vol. 9, no. 1, pp. 62-66, 1979.)
 
 Consider the sets of pixels in C classified as being above and below a threshold k: C0=I(I<=k) and C1=I(I>k)
-    * The probability of a pixel being in C0, C1 or C is w0,w1,or wT(=1), 
-      the mean values of the classes are u0, u1 and uT 
+    * The probability of a pixel being in C0, C1 or C is w0,w1,or wT(=1),
+      the mean values of the classes are u0, u1 and uT
       and the variances are s0,s1,sT
-    * Define within-class variance and between-class variance as 
+    * Define within-class variance and between-class variance as
       sw=w0*s0+w1*s1 and sb=w0(u0-uT)^2 +w1(u1-uT)^2 = w0*w1(u1-u0)^2
     * Define L = sb/sw, K = sT / sw and N=sb/sT
     * Well-thresholded classes should be separated in gray levels, so sb should
       be maximized wrt to sw, sT wrt to sw and sb wrt to sT. It turns out that
       satisfying any one of these satisfies the others.
-    * sT is independent of choice of threshold k, so N can be maximized with 
+    * sT is independent of choice of threshold k, so N can be maximized with
       respect to K by maximizing sb.
-    * Algorithm: compute w0*w1(u1-u0)^2 for all k and pick the maximum. 
+    * Algorithm: compute w0*w1(u1-u0)^2 for all k and pick the maximum.
 
 CellProfiler is distributed under the GNU General Public License,
 but this file is licensed under the more permissive BSD license.
@@ -34,7 +34,7 @@ import scipy.ndimage.measurements
 
 def otsu(data, min_threshold=None, max_threshold=None,bins=256):
     """Compute a threshold using Otsu's method
-    
+
     data           - an array of intensity values between zero and one
     min_threshold  - only consider thresholds above this minimum value
     max_threshold  - only consider thresholds below this maximum value
@@ -48,7 +48,7 @@ def otsu(data, min_threshold=None, max_threshold=None,bins=256):
         if not max_threshold is None and threshold > max_threshold:
             threshold = max_threshold
         return threshold
-    
+
     data = np.atleast_1d(data)
     data = data[~ np.isnan(data)]
     if len(data) == 0:
@@ -61,9 +61,9 @@ def otsu(data, min_threshold=None, max_threshold=None,bins=256):
         bins = len(data)
     data.sort()
     var = running_variance(data)
-    rvar = np.flipud(running_variance(np.flipud(data))) 
+    rvar = np.flipud(running_variance(np.flipud(data)))
     thresholds = data[1:len(data):len(data)/bins]
-    score_low = (var[0:len(data)-1:len(data)/bins] * 
+    score_low = (var[0:len(data)-1:len(data)/bins] *
                  np.arange(0,len(data)-1,len(data)/bins))
     score_high = (rvar[1:len(data):len(data)/bins] *
                   (len(data) - np.arange(1,len(data),len(data)/bins)))
@@ -85,17 +85,17 @@ def otsu(data, min_threshold=None, max_threshold=None,bins=256):
     if index == len(thresholds)-1:
         index_high = len(thresholds)-1
     else:
-        index_high = index+1 
+        index_high = index+1
     return constrain((thresholds[index_low]+thresholds[index_high]) / 2)
 
 def entropy(data, bins=256):
     """Compute a threshold using Ray's entropy measurement
-    
+
     data           - an array of intensity values between zero and one
     bins           - we bin the data into this many equally-spaced bins, then pick
                      the bin index that optimizes the metric
     """
-    
+
     data = np.atleast_1d(data)
     data = data[~ np.isnan(data)]
     if len(data) == 0:
@@ -107,13 +107,13 @@ def entropy(data, bins=256):
         bins = len(data)
     data.sort()
     var = running_variance(data)+1.0/512.0
-    rvar = np.flipud(running_variance(np.flipud(data)))+1.0/512.0 
+    rvar = np.flipud(running_variance(np.flipud(data)))+1.0/512.0
     thresholds = data[1:len(data):len(data)/bins]
     w = np.arange(0,len(data)-1,len(data)/bins)
     score_low = w * np.log(var[0:len(data)-1:len(data)/bins] *
                            w * np.sqrt(2*np.pi*np.exp(1)))
     score_low[np.isnan(score_low)]=0
-    
+
     w = len(data) - np.arange(1,len(data),len(data)/bins)
     score_high = w * np.log(rvar[1:len(data):len(data)/bins] * w *
                             np.sqrt(2*np.pi*np.exp(1)))
@@ -134,27 +134,27 @@ def entropy(data, bins=256):
     if index == len(thresholds)-1:
         index_high = len(thresholds)-1
     else:
-        index_high = index+1 
+        index_high = index+1
     return (thresholds[index_low]+thresholds[index_high]) / 2
 
-def otsu3(data, min_threshold=None, max_threshold=None,bins=128):    
+def otsu3(data, min_threshold=None, max_threshold=None,bins=128):
     """Compute a threshold using a 3-category Otsu-like method
-    
+
     data           - an array of intensity values between zero and one
     min_threshold  - only consider thresholds above this minimum value
     max_threshold  - only consider thresholds below this maximum value
     bins           - we bin the data into this many equally-spaced bins, then pick
                      the bin index that optimizes the metric
-    
+
     We find the maximum weighted variance, breaking the histogram into
     three pieces.
     Returns the lower and upper thresholds
     """
     assert min_threshold==None or max_threshold==None or min_threshold < max_threshold
-    
+
     #
     # Compute the running variance and reverse running variance.
-    # 
+    #
     data = np.atleast_1d(data)
     data = data[~ np.isnan(data)]
     data.sort()
@@ -164,9 +164,9 @@ def otsu3(data, min_threshold=None, max_threshold=None,bins=128):
     rvar = np.flipud(running_variance(np.flipud(data)))
     if bins > len(data):
         bins = len(data)
-    bin_len = int(len(data)/bins) 
+    bin_len = int(len(data)/bins)
     thresholds = data[0:len(data):bin_len]
-    score_low = (var[0:len(data):bin_len] * 
+    score_low = (var[0:len(data):bin_len] *
                  np.arange(0,len(data),bin_len))
     score_high = (rvar[0:len(data):bin_len] *
                   (len(data) - np.arange(0,len(data),bin_len)))
@@ -182,25 +182,25 @@ def otsu3(data, min_threshold=None, max_threshold=None,bins=128):
     mean2 = (cs2[j] - cs2[i]) / diff
     score_middle = w * (mean2 - mean**2)
     score_middle[i >= j] = np.Inf
-    score = score_low[i*bins/len(data)] + score_middle + score_high[j*bins/len(data)]
+    score = score_low[(i*bins/len(data)).astype(int)] + score_middle + score_high[(j*bins/len(data)).astype(int)]
     best_score = np.min(score)
     best_i_j = np.argwhere(score==best_score)
     return (thresholds[best_i_j[0,0]],thresholds[best_i_j[0,1]])
 
-def entropy3(data, bins=128):    
+def entropy3(data, bins=128):
     """Compute a threshold using a 3-category Otsu-like method
-    
+
     data           - an array of intensity values between zero and one
     bins           - we bin the data into this many equally-spaced bins, then pick
                      the bin index that optimizes the metric
-    
+
     We find the maximum weighted variance, breaking the histogram into
     three pieces.
     Returns the lower and upper thresholds
     """
     #
     # Compute the running variance and reverse running variance.
-    # 
+    #
     data = np.atleast_1d(data)
     data = data[~ np.isnan(data)]
     data.sort()
@@ -209,11 +209,11 @@ def entropy3(data, bins=128):
     var = running_variance(data)+1.0/512.0
     if bins > len(data):
         bins = len(data)
-    bin_len = int(len(data)/bins) 
+    bin_len = int(len(data)/bins)
     thresholds = data[0:len(data):bin_len]
     score_low = entropy_score(var,bins)
-    
-    rvar = running_variance(np.flipud(data))+1.0/512.0 
+
+    rvar = running_variance(np.flipud(data))+1.0/512.0
     score_high = np.flipud(entropy_score(rvar,bins))
     #
     # Compute the middles
@@ -234,7 +234,7 @@ def entropy3(data, bins=128):
 
 def entropy_score(var,bins, w=None, decimate=True):
     '''Compute entropy scores, given a variance and # of bins
-    
+
     '''
     if w is None:
         n = len(var)
@@ -245,7 +245,7 @@ def entropy_score(var,bins, w=None, decimate=True):
     score = w * np.log(var * w * np.sqrt(2*np.pi*np.exp(1)))
     score[np.isnan(score)]=np.Inf
     return score
-    
+
 
 def weighted_variance(cs, cs2, lo, hi):
     if hi == lo:
@@ -265,7 +265,7 @@ def otsu_entropy(cs, cs2, lo, hi):
 
 def running_variance(x):
     '''Given a vector x, compute the variance for x[0:i]
-    
+
     Thank you http://www.johndcook.com/standard_deviation.html
     S[i] = S[i-1]+(x[i]-mean[i-1])*(x[i]-mean[i])
     var(i) = S[i] / (i-1)
@@ -282,8 +282,8 @@ def running_variance(x):
     var = s / np.arange(2,n+1)
     # Prepend Inf so we have a variance for x[0]
     return np.hstack(([0],var))
-    
-    
+
+
 if __name__=='__main__':
     import PIL.Image as PILImage
     import wx
@@ -292,7 +292,7 @@ if __name__=='__main__':
     import cellprofiler.gui.cpfigure as F
     from cellprofiler.cpmath.filter import stretch
     from cellprofiler.cpmath.threshold import log_transform, inverse_log_transform
-    
+
     FILE_OPEN = wx.NewId()
     M_OTSU = wx.NewId()
     M_ENTROPY = wx.NewId()
@@ -316,7 +316,7 @@ if __name__=='__main__':
             self.SetTopWindow(self.frame)
             self.frame.Show()
             return 1
-        
+
         def on_file_open(self, event):
             dlg = wx.FileDialog(self.frame,style=wx.FD_OPEN)
             if dlg.ShowModal() == wx.ID_OK:
@@ -359,8 +359,3 @@ if __name__=='__main__':
                               parent=self.frame)
     app = MyApp(0)
     app.MainLoop()
-
-     
-
-    
-    

@@ -9,17 +9,21 @@ from apps.expt.util import generate_id_token, str_value, random_string
 from apps.expt.data import *
 from apps.img import algorithms
 from apps.img.cpmath.threshold import get_threshold
-from apps.img.cpmath.cpmorphology import fill_labeled_holes, strel_disk
+from apps.img.cpmath.cpmorphology import fill_labeled_holes, strel_disk, binary_shrink, relabel, is_local_maximum
+from apps.img.cpmath.smooth import smooth_with_function_and_mask
+from apps.img.cpmath.propagate import propagate
 
 # util
 import os
 import re
+import scipy
 from scipy.misc import imread, imsave, toimage
 from scipy.ndimage import label
 from skimage import exposure
 import numpy as np
 from PIL import Image, ImageDraw
 from scipy.stats.mstats import mode
+import matplotlib.pyplot as plt
 
 ### Models
 # http://stackoverflow.com/questions/19695249/load-just-part-of-an-image-in-python
@@ -484,58 +488,50 @@ class Gon(models.Model):
         gon.save_array(self.experiment.composite_path, template)
         gon.save()
 
-  def segment_primary(self):
+  def segment_primary(self, min_size, max_size):
 
-    # important methods
-    # self.threshold_image (Identify)
-    # -- self.get_threshold (Identify)
-    # ---- get_threshold (cellprofiler.cpmath.threshold)
-    # -- smooth_with_function_and_mask (cellprofiler.cpmath.smooth)
-    # ----
-    # scipy.ndimage.label (scipy)
-    # self.separate_neighboring_objects (Identify)
+    img = self.load().astype(np.float64) / 255.0
 
     # 1. threshold image
-    binary_image = self.threshold_image()
+    binary_image = self.threshold_image(img=img)
 
     # 2. fill background holes in foreground objects
-    # size_fn
-    # fill_labeled_holes
     def size_fn(size, is_foreground):
-      return size < self.size_range.max * self.size_range.max
+      return size < max_size
     binary_image = fill_labeled_holes(binary_image, size_fn=size_fn)
 
     # 3. perform recognition
-    # scipy.ndimage.label
-    # self.separate_neighboring_objects
     labeled_image, object_count = scipy.ndimage.label(binary_image, np.ones((3,3), bool))
-    labeled_image, object_count, maxima_suppression_size, LoG_threshold, LoG_filter_diameter = self.separate_neighboring_objects(workspace, labeled_image, object_count)
+    labeled_image, object_count, maxima_suppression_size, LoG_threshold, LoG_filter_diameter = self.separate_neighboring_objects(labeled_image, object_count, min_size, max_size, img=img)
 
     # 4. fill holes again
-    # labeled_image = fill_labeled_holes(labeled_image)
+    labeled_image = fill_labeled_holes(labeled_image)
+    return labeled_image, object_count
 
     # 5. create objects
 
-  def threshold_image(self):
-    # image = bitch I know where my image at
-    local_threshold, global_threshold = self.get_threshold()
+  def threshold_image(self, img=None):
+    img = self.load().astype(np.float64) / 255.0 if img is None else img
+
+    local_threshold, global_threshold = self.get_threshold(img=img)
 
     # Convert from a scale into a sigma. What I've done here
     # is to structure the Gaussian so that 1/2 of the smoothed
     # intensity is contributed from within the smoothing diameter
     # and 1/2 is contributed from outside.
-    sigma = self.threshold_smoothing_scale.value / 0.6744 / 2.0
+    sigma = 1.0 / 0.6744 / 2.0
 
     def fn(img, sigma=sigma):
       return scipy.ndimage.gaussian_filter(img, sigma, mode='constant', cval=0)
 
-    blurred_image = smooth_with_function_and_mask(img, fn, mask)
-    binary_image = (blurred_image >= local_threshold) & mask
+    blurred_image = smooth_with_function_and_mask(img, fn, np.ones(img.shape, dtype=bool))
+    binary_image = (blurred_image >= local_threshold)
 
     return binary_image
 
-  def get_threshold(self):
-    img = self.load()
+  def get_threshold(self, img=None):
+    img = self.load().astype(np.float64) / 255.0 if img is None else img
+
     # The original behavior
     image_size = np.array(img.shape[:2], dtype=int)
     block_size = image_size / 10
@@ -549,15 +545,118 @@ class Gon(models.Model):
     local_threshold, global_threshold = get_threshold('Otsu',
                                                       'Adaptive',
                                                       img,
-                                                      mask = np.zeros(img.shape),
+                                                      mask = None,
                                                       labels = None,
                                                       adaptive_window_size = block_size,
                                                       **kwparams)
 
     return local_threshold, global_threshold
 
-  def separate_neighboring_objects(self):
-    pass
+  def separate_neighboring_objects(self, labeled_image, object_count, min_size, max_size, img=None):
+
+    image = self.load().astype(np.float64) / 255.0 if img is None else img
+    mask = np.ones(image.shape)
+
+    reported_LoG_filter_diameter = 5
+    reported_LoG_threshold = 0.5
+    blurred_image = self.smooth_image(min_size, max_size, img=image)
+    if min_size > 10:
+      image_resize_factor = 10.0 / float(min_size)
+      maxima_suppression_size = 7
+    else:
+      image_resize_factor = 1.0
+      maxima_suppression_size = min_size/1.5
+    reported_maxima_suppression_size = maxima_suppression_size
+
+    maxima_mask = strel_disk(max(1, maxima_suppression_size-.5))
+    distance_transformed_image = None
+
+    # Declumping
+    # Remove dim maxima
+    maxima_image = self.get_maxima(blurred_image, labeled_image, maxima_mask, image_resize_factor)
+
+    #
+    # Create a marker array where the unlabeled image has a label of
+    # -(nobjects+1)
+    # and every local maximum has a unique label which will become
+    # the object's label. The labels are negative because that
+    # makes the watershed algorithm use FIFO for the pixels which
+    # yields fair boundaries when markers compete for pixels.
+    #
+    labeled_maxima, object_count = scipy.ndimage.label(maxima_image, np.ones((3,3), bool))
+    watershed_boundaries, distance = propagate(np.zeros(labeled_maxima.shape), labeled_maxima, labeled_image != 0, 1.0)
+
+    return watershed_boundaries, object_count, reported_maxima_suppression_size, reported_LoG_threshold, reported_LoG_filter_diameter
+
+  def smooth_image(self, min_size, max_size, img=None):
+    image = self.load().astype(np.float64) / 255.0 if img is None else img
+
+    filter_size = 2.35*min_size/3.5
+    if filter_size == 0:
+      return image
+
+    sigma = filter_size / 2.35
+    #
+    # We not only want to smooth using a Gaussian, but we want to limit
+    # the spread of the smoothing to 2 SD, partly to make things happen
+    # locally, partly to make things run faster, partly to try to match
+    # the Matlab behavior.
+    #
+    filter_size = max(int(float(filter_size) / 2.0),1)
+    f = (1/np.sqrt(2.0 * np.pi) / sigma * np.exp(-0.5 * np.arange(-filter_size, filter_size+1)**2 / sigma ** 2))
+
+    def fgaussian(image):
+      output = scipy.ndimage.convolve1d(image, f, axis = 0, mode='constant')
+      return scipy.ndimage.convolve1d(output, f, axis = 1, mode='constant')
+    #
+    # Use the trick where you similarly convolve an array of ones to find
+    # out the edge effects, then divide to correct the edge effects
+    #
+
+    # edge_array = fgaussian(mask.astype(float))
+    # masked_image = image.copy()
+    # masked_image[~mask] = 0
+    # smoothed_image = fgaussian(masked_image)
+    # masked_image[mask] = smoothed_image[mask] / edge_array[mask]
+    # return masked_image
+
+    return fgaussian(image)
+
+  def get_maxima(self, blurred_image, labeled_image, maxima_mask, image_resize_factor, img=None):
+    #
+
+    image = self.load().astype(np.float64) / 255.0 if img is None else img
+
+    if image_resize_factor < 1.0:
+      shape = np.array(image.shape) * image_resize_factor
+      i_j = (np.mgrid[0:shape[0],0:shape[1]].astype(float) / image_resize_factor)
+      resized_image = scipy.ndimage.map_coordinates(image, i_j)
+      resized_labels = scipy.ndimage.map_coordinates(labeled_image, i_j, order=0).astype(labeled_image.dtype)
+
+    else:
+      resized_image = image
+      resized_labels = labeled_image
+
+    #
+    # find local maxima
+    #
+    if maxima_mask is not None:
+      binary_maxima_image = is_local_maximum(resized_image, resized_labels, maxima_mask)
+      binary_maxima_image[resized_image <= 0] = 0
+    else:
+      binary_maxima_image = (resized_image > 0) & (labeled_image > 0)
+
+    if image_resize_factor < 1.0:
+      inverse_resize_factor = (float(image.shape[0]) / float(binary_maxima_image.shape[0]))
+      i_j = (np.mgrid[0:image.shape[0], 0:image.shape[1]].astype(float) / inverse_resize_factor)
+      binary_maxima_image = scipy.ndimage.map_coordinates(binary_maxima_image.astype(float), i_j) > .5
+      assert(binary_maxima_image.shape[0] == image.shape[0])
+      assert(binary_maxima_image.shape[1] == image.shape[1])
+
+    # Erode blobs of touching maxima to a single point
+
+    shrunk_image = binary_shrink(binary_maxima_image)
+    return shrunk_image
 
 ### GON STRUCTURE AND MODIFICATION ###
 class Path(models.Model):

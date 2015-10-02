@@ -74,7 +74,7 @@ TM_GLOBAL_METHODS = [" ".join((x,TM_GLOBAL)) for x in TM_METHODS]
 
 def get_threshold(threshold_method, threshold_modifier, image,
                   mask=None, labels = None,
-                  threshold_range_min = None, threshold_range_max = None,
+                  threshold_range_min = 0.0, threshold_range_max = 1.0,
                   threshold_correction_factor = 1.0,
                   adaptive_window_size = 10, **kwargs):
     """Compute a threshold for an image
@@ -220,10 +220,10 @@ def get_adaptive_threshold(threshold_method, image, threshold,
     # block.
     #
     block_threshold = np.zeros([nblocks[0],nblocks[1]])
-    for i in range(nblocks[0]):
+    for i in range(int(nblocks[0])):
         i0 = int(i*increment[0])
         i1 = int((i+1)*increment[0])
-        for j in range(nblocks[1]):
+        for j in range(int(nblocks[1])):
             j0 = int(j*increment[1])
             j1 = int((j+1)*increment[1])
             block = image[i0:i1,j0:j1]

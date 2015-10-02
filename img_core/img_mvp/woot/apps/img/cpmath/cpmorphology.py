@@ -4159,11 +4159,11 @@ def is_local_maximum(image, labels, footprint):
     # at the offset.
     #
     for fp_image_offset, fp_big_offset in zip(fp_image_offsets, fp_big_offsets):
-        same_label = (big_labels_raveled[big_indexes + fp_big_offset] ==
-                      big_labels_raveled[big_indexes])
-        less_than = (image_raveled[image_indexes[same_label]] <
-                     image_raveled[image_indexes[same_label]+ fp_image_offset])
-        result_raveled[result_indexes[same_label][less_than]] = False
+        same_label = (big_labels_raveled[(big_indexes + fp_big_offset).astype(int)] ==
+                      big_labels_raveled[big_indexes.astype(int)])
+        less_than = (image_raveled[image_indexes[same_label].astype(int)] <
+                     image_raveled[(image_indexes[same_label]+ fp_image_offset).astype(int)])
+        result_raveled[result_indexes[same_label][less_than].astype(int)] = False
 
     return result
 
