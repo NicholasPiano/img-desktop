@@ -7,6 +7,7 @@ from django.conf import settings
 # local
 from apps.expt.models import Experiment
 from apps.img.models import Gon
+from apps.cell.models import Marker
 from apps.expt.data import *
 from apps.expt.util import *
 
@@ -31,9 +32,9 @@ class Command(BaseCommand):
   help = ''
 
   def handle(self, *args, **options):
-    g = Gon.objects.get(pk=1081)
-    binary_image, object_count = g.segment_primary(60, 80)
+    # g = Gon.objects.get(pk=1081)
+    g = Gon.objects.get(pk=100)
+    so = g.segment_secondary('-zcomp')
 
-    print(object_count)
-    plt.imshow(binary_image)
+    plt.imshow(so)
     plt.show()

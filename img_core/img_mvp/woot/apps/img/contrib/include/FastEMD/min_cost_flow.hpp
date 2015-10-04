@@ -343,7 +343,7 @@ private:
         //tmp_tic_toc.tic();
         //---------------------------------------------------------------------------------
         // reduced costs for forward edges (c[i,j]-pi[i]+pi[j])
-								   {for (NODE_T from=0; from<_num_nodes; ++from) {
+                   {for (NODE_T from=0; from<_num_nodes; ++from) {
                                            {for (typename std::list< edge1<NUM_T> >::iterator it= cost_forward[from].begin();
                  it!=cost_forward[from].end(); ++it) {
                 if (finalNodesFlg[from]) {
@@ -356,7 +356,7 @@ private:
         }}
         
         // reduced costs and capacity for backward edges (c[j,i]-pi[j]+pi[i])
-								   {for (NODE_T from=0; from<_num_nodes; ++from) {
+                   {for (NODE_T from=0; from<_num_nodes; ++from) {
                                            {  for (typename std::list< edge2<NUM_T> >::iterator it= cost_backward[from].begin();
                  it!=cost_backward[from].end(); ++it) {
                 if (finalNodesFlg[from]) {

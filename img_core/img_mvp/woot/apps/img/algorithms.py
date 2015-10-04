@@ -1,7 +1,7 @@
 # apps.img.algorithms
 
 # local
-from apps.img.util import cut_to_black, create_bulk_from_image_set, nonzero_mean, edge_image
+from apps.img.util import cut_to_black, create_bulk_from_image_set, nonzero_mean, edge_image, scan_point
 from apps.expt.util import generate_id_token, str_value
 
 # util
@@ -22,17 +22,6 @@ from PIL import ImageDraw
 from PIL import ImageFont
 
 # methods
-def scan_point(img, rs, cs, r, c, size=0):
-  r0 = r - size if r - size >= 0 else 0
-  r1 = r + size + 1 if r + size + 1 <= rs else rs
-  c0 = c - size if c - size >= 0 else 0
-  c1 = c + size + 1 if c + size + 1 <= cs else cs
-
-  column = img[r0:r1,c0:c1,:]
-  column_1D = np.sum(np.sum(column, axis=0), axis=0)
-
-  return column_1D
-
 def mask_edge_image(mask_img):
   full_edge_img = np.zeros(mask_img.shape)
   for unique in [u for u in np.unique(mask_img) if u>0]:
