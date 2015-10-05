@@ -122,33 +122,50 @@ class Command(BaseCommand):
     # cost functions
     def test_cost_function(delta_z, delta_zbf, delta_zmean, abs_zbf, abs_zmean):
       cost = 0
-      # cost += np.abs(delta_z)
-      # cost += -delta_zbf
-      cost += -delta_zmean * 2.0
+
+      cost += np.abs(delta_z) * 8
+      cost += delta_zbf * 10 if delta_zbf < 0 else 0
+      # cost += -delta_zmean * 10.0
 
       return cost
 
-    # set up segmentation
-    travellers = [Traveller(marker.r, marker.c, np.random.randint(0,7), 10, test_cost_function)]
+    # set up segmentation - round 1
+    travellers = []
+    for i in range(10):
+      travellers.append(Traveller(marker.r, marker.c, np.random.randint(0,7), 10, test_cost_function))
 
     iterations = 0
-    while sum([t.money for t in travellers])>0 and iterations < 50:
+    while sum([t.money for t in travellers])>0:
       iterations += 1
       for traveller in travellers:
         if traveller.money > 0:
           traveller.move()
         if traveller.money <= 0:
           travellers.remove(traveller)
+          del traveller
 
-      # spawn travellers from edge of track_image
-      track_edge = edge_image(track_image)
-      for r,c in zip(*np.where(track_edge>0)):
-        travellers.append(Traveller(r, c, np.random.randint(0,7), 10, test_cost_function))
+    # spawn travellers from edge of track_image or round 2
+    travellers = []
+    track_edge = edge_image(track_image)
+    for r,c in zip(*np.where(track_edge>0)):
+      travellers.append(Traveller(r, c, np.random.randint(0,7), 10, test_cost_function))
+
+    iterations = 0
+    while sum([t.money for t in travellers])>0:
+      iterations += 1
+      for traveller in travellers:
+        if traveller.money > 0:
+          traveller.move()
+        if traveller.money <= 0:
+          travellers.remove(traveller)
+          del traveller
+
+      # print(iterations, len(travellers), sum([t.money for t in travellers]))
 
     # cut = target_zmean[marker.r-10: marker.r+10, marker.c-10: marker.c+10]
     # plt.imshow(cut)
     # plt.show()
 
-    target_zmean[track_image==1] = 1.0
-    plt.imshow(target_zmean)
+    target_zbf[track_image==1] += 0.3
+    plt.imshow(target_zbf)
     plt.show()
