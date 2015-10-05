@@ -20,6 +20,10 @@ from optparse import make_option
 from subprocess import call
 import shutil as sh
 import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+from matplotlib import cm
+from matplotlib.ticker import LinearLocator, FormatStrFormatter
+import matplotlib.pyplot as plt
 
 spacer = ' ' *  20
 
@@ -58,8 +62,8 @@ class Command(BaseCommand):
     # previous_gfp = previous_gfp_stack.load()
     # previous_bf = previous_bf_stack.load()
 
-    target_gfp = target_gfp_stack.load()
-    target_bf = target_bf_stack.load()
+    # target_gfp = target_gfp_stack.load()
+    # target_bf = target_bf_stack.load()
     target_zmean = target_zmean_single.load()
     target_zbf = target_zbf_single.load()
     target_zmod = target_zmod_single.load() / 255.0 * composite.series.zs
@@ -70,4 +74,23 @@ class Command(BaseCommand):
     # 1. find maximum from marker
     marker = composite.markers.get(pk=124)
 
-    
+    cut_zmean = target_zmean[marker.r-50: marker.r+60, marker.c-50: marker.c+50]
+    cut_zbf = target_zbf[marker.r-50: marker.r+60, marker.c-50: marker.c+50]
+
+    # plt.imshow(cut_zbf)
+    # plt.show()
+
+    fig = plt.figure()
+    ax = fig.gca(projection='3d')
+    X = np.arange(0, 100, 1)
+    Y = np.arange(0, 110, 1)
+    X, Y = np.meshgrid(X, Y)
+    surf = ax.plot_surface(X, Y, cut_zmean, rstride=1, cstride=1, cmap=cm.coolwarm, linewidth=0, antialiased=False)
+    # surf = ax.plot_surface(X, Y, cut_zbf, rstride=1, cstride=1, cmap=cm.coolwarm, linewidth=0, antialiased=False)
+
+    ax.zaxis.set_major_locator(LinearLocator(10))
+    ax.zaxis.set_major_formatter(FormatStrFormatter('%.02f'))
+
+    fig.colorbar(surf, shrink=0.5, aspect=5)
+
+    plt.show()
