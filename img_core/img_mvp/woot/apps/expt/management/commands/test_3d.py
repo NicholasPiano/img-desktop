@@ -72,7 +72,7 @@ class Command(BaseCommand):
     # next_bf = next_bf_stack.load()
 
     # 1. find maximum from marker
-    marker = composite.markers.get(pk=124)
+    marker = composite.markers.get(pk=126)
 
     cut_zmean = target_zmean[marker.r-50: marker.r+60, marker.c-50: marker.c+50]
     cut_zbf = target_zbf[marker.r-50: marker.r+60, marker.c-50: marker.c+50]
@@ -86,7 +86,7 @@ class Command(BaseCommand):
     Y = np.arange(0, 110, 1)
     X, Y = np.meshgrid(X, Y)
     surf = ax.plot_surface(X, Y, cut_zmean, rstride=1, cstride=1, cmap=cm.coolwarm, linewidth=0, antialiased=False)
-    # surf = ax.plot_surface(X, Y, cut_zbf, rstride=1, cstride=1, cmap=cm.coolwarm, linewidth=0, antialiased=False)
+    surf = ax.plot_surface(X, Y, cut_zbf, rstride=1, cstride=1, cmap=cm.coolwarm, linewidth=0, antialiased=False)
 
     ax.zaxis.set_major_locator(LinearLocator(10))
     ax.zaxis.set_major_formatter(FormatStrFormatter('%.02f'))

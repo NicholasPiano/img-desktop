@@ -20,6 +20,9 @@ from optparse import make_option
 from subprocess import call
 import shutil as sh
 import matplotlib.pyplot as plt
+from skimage.filter import canny
+from scipy.ndimage.morphology import binary_erosion as erode
+from scipy.ndimage.morphology import binary_dilation as dilate
 
 spacer = ' ' *  20
 
@@ -62,13 +65,14 @@ class Command(BaseCommand):
     # target_bf = target_bf_stack.load()
     target_zmean = target_zmean_single.load() / 255.0
     target_zbf = target_zbf_single.load() / 255.0
+    target_zbf_canny_s3 = canny(target_zbf, sigma=1).astype(float)
     target_zmod = target_zmod_single.load() / 255.0 * (composite.series.zs - 1)
 
     # next_gfp = next_gfp_stack.load()
     # next_bf = next_bf_stack.load()
 
     # 1. find maximum from marker
-    marker = composite.markers.get(pk=124)
+    # marker = composite.markers.get(pk=124)
 
     track_image = np.zeros(target_zmod.shape)
 
@@ -124,15 +128,31 @@ class Command(BaseCommand):
       cost = 0
 
       cost += np.abs(delta_z) * 8
-      cost += delta_zbf * 10 if delta_zbf < 0 else 0
+      cost += -delta_zbf * 4 if delta_zbf < 0 else 0
       # cost += -delta_zmean * 10.0
+
+      return cost
+
+    def dont_go_through_dark_edges(delta_z, delta_zbf, delta_zmean, abs_zbf, abs_zmean):
+      cost = 0
+
+      cost += np.abs(delta_z) * 4
+      cost += -delta_zbf * 7 if delta_zbf < 0 else 0
+
+      return cost
+
+    def dont_go_to_another_z(delta_z, delta_zbf, delta_zmean, abs_zbf, abs_zmean):
+      cost = 0
+
+      cost += np.abs(delta_z) * 8
 
       return cost
 
     # set up segmentation - round 1
     travellers = []
-    for i in range(10):
-      travellers.append(Traveller(marker.r, marker.c, np.random.randint(0,7), 10, test_cost_function))
+    for marker in composite.markers.filter(track_instance__t=target_frame_index):
+      for i in range(10):
+        travellers.append(Traveller(marker.r, marker.c, np.random.randint(0,7), 10, dont_go_to_another_z))
 
     iterations = 0
     while sum([t.money for t in travellers])>0:
@@ -148,7 +168,7 @@ class Command(BaseCommand):
     travellers = []
     track_edge = edge_image(track_image)
     for r,c in zip(*np.where(track_edge>0)):
-      travellers.append(Traveller(r, c, np.random.randint(0,7), 10, test_cost_function))
+      travellers.append(Traveller(r, c, np.random.randint(0,7), 10, dont_go_through_dark_edges))
 
     iterations = 0
     while sum([t.money for t in travellers])>0:
@@ -166,6 +186,9 @@ class Command(BaseCommand):
     # plt.imshow(cut)
     # plt.show()
 
-    target_zbf[track_image==1] += 0.3
-    plt.imshow(target_zbf)
+    track_image = dilate(erode(erode(dilate(track_image))))
+
+    display_image = target_zbf.copy()
+    display_image[track_image==1] += 0.3
+    plt.imshow(display_image)
     plt.show()
