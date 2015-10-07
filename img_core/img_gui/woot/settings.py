@@ -12,6 +12,13 @@ import string
 import json
 import sys
 
+########## HOST CONFIGURATION
+ALLOWED_HOSTS = (
+	'localhost',
+)
+########## END HOST CONFIGURATION
+
+
 ########## TEST CONFIGURATION
 TEST_RUNNER = 'django.test.runner.DiscoverRunner'
 ########## END TEST CONFIGURATION
