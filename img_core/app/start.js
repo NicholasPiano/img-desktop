@@ -9,7 +9,8 @@ thrust(function(err, api) {
     size: {
       width: 640,
       height: 480,
-    }
+    },
+		title:'img'
   });
   window.show();
   window.focus();
