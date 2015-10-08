@@ -35,10 +35,12 @@ for (dummy_env in env) {
 
 // Now, extend this with some new variables:
 env_duplicate['PYTHONPATH'] = '.';
-env_duplicate['DJANGO_SETTINGS_MODULE'] = 'img_gui.woot.settings';
+// env_duplicate['DJANGO_SETTINGS_MODULE'] = 'img_gui.woot.settings';
+env_duplicate['DJANGO_SETTINGS_MODULE'] = 'testsite.settings';
 
 // 3. spawn server process
-var tornado_proc = spawn('python3.4', ['./img_gui/tornado_main.py'], {env: env_duplicate});
+// var tornado_proc = spawn('python3.4', ['./img_gui/tornado_main.py'], {env: env_duplicate});
+var tornado_proc = spawn('python3.4', ['./testsite/tornado_main.py'], {env: env_duplicate});
 console.log('tornado process id: ' + tornado_proc.pid);
 
 tornado_proc.stdout.on('data',
@@ -79,7 +81,7 @@ app.on('ready', function() {
 	// frameless: https://github.com/atom/electron/blob/master/docs/api/frameless-window.md
 
   // Create the browser window.
-  mainWindow = new BrowserWindow({width: 800, height: 600, 'title-bar-style': 'hidden'});
+  mainWindow = new BrowserWindow({width: 1024, height: 768, 'title-bar-style': 'hidden'});
 
   // POINT AT THE SERVER PROCESS URL HERE
 	mainWindow.loadUrl('file://' + __dirname + '/startup.html'); // temporary until server process is loaded

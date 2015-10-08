@@ -14,7 +14,7 @@ import tornado.web
 import tornado.wsgi
 django.setup()
 
-define('port', type=int, default=8080)
+define('port', type=int, default=8000)
 
 def main():
   parse_command_line()

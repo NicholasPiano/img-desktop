@@ -2,27 +2,31 @@
 <html>
   <head>
 		<title>Hello World!</title>
-		<script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+		<script src="assets/js/jquery-1.11.3.min.js" onload="window.$ = window.jQuery = module.exports;"></script>
 	</head>
   <body>
-    <h1>Hello World!</h1>
-    Loading...
+    <div id="splash"></div>
+		<div id="main"></div>
   </body>
   <script type="text/javascript">
-    // window.$ = window.jQuery;
-		// keep trying to load: https://api.jquery.com/promise/
-    var mainAddr = 'http://localhost:8000';
-    $.ajax({
-      type: 'HEAD',
-      url: mainAddr,
-      success: function() {
-        //alert('good');
-        location.replace(mainAddr);
-      },
-      error: function() {
-        alert('some errors happen...');
-        // page does not exist
-      }
-    });
+		(function ($) {
+			function attemptToLoadMainUrl () {
+				$.ajax({
+			    type: "get",
+			    timeout: 1000,
+			    url:"http://localhost:8000/hello-django",
+			    success: function(data, textStatus, XMLHttpRequest){
+		        $("#main").html(data);
+			    },
+			    error:function (xhr, ajaxOptions, thrownError){
+						if (xhr.status === 404 || xhr.status === 0) {
+							attemptToLoadMainUrl();
+						}
+			    }
+				});
+			}
+
+			attemptToLoadMainUrl();
+		})(jQuery);
   </script>
 </html>
