@@ -75,15 +75,17 @@ app.on('ready', function() {
 	///////////////////////////////////
 	/////////////// BROWSER WINDOW
 	///////////////
+	// browser window api: https://github.com/atom/electron/blob/master/docs/api/browser-window.md
+	// frameless: https://github.com/atom/electron/blob/master/docs/api/frameless-window.md
 
   // Create the browser window.
   mainWindow = new BrowserWindow({width: 800, height: 600, 'title-bar-style': 'hidden'});
 
   // POINT AT THE SERVER PROCESS URL HERE
 	mainWindow.loadUrl('file://' + __dirname + '/startup.html'); // temporary until server process is loaded
-	setTimeout(function() {
-		mainWindow.loadUrl('http://' + host + '/');
-	}, 3000);
+	// setTimeout(function() {
+	// 	mainWindow.loadUrl('http://' + host + '/');
+	// }, 3000);
 
   // Emitted when the window is closed.
   mainWindow.on('closed', function() {
@@ -97,7 +99,7 @@ app.on('ready', function() {
 	///////////////////////////////////
 	/////////////// KEYBOARD SHORTCUTS: https://github.com/atom/electron/blob/master/docs/api/global-shortcut.md
 	///////////////
-
+	// using requests to server process: https://docs.nodejitsu.com/articles/HTTP/clients/how-to-create-a-HTTP-request
 
 
 });
