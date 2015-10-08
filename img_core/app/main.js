@@ -40,6 +40,8 @@ env_duplicate['DJANGO_SETTINGS_MODULE'] = 'testsite.settings';
 
 // 3. spawn server process
 // var tornado_proc = spawn('python3.4', ['./img_gui/tornado_main.py'], {env: env_duplicate});
+// for production, all packages used by tornado, including python3.4, must be on the python path,
+// so, inside the current folder.
 var tornado_proc = spawn('python3.4', ['./testsite/tornado_main.py'], {env: env_duplicate});
 console.log('tornado process id: ' + tornado_proc.pid);
 
