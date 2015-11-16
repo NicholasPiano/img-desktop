@@ -53,24 +53,12 @@ class Command(BaseCommand):
     series = Series.objects.get(name='15')
     composite = series.composites.get()
 
-    for t in [119]:
+    for t in [112]:
 
     # load brightfield stack
       bf_gon = composite.gons.get(t=t, channel__name=1)
       bf = bf_gon.load()
 
-      Zmean = np.zeros(composite.series.shape(d=2))
-      for r in range(composite.series.rs):
-        for c in range(composite.series.cs):
-          print(t,r,c)
+      Zmean = bf[:,:,37]
 
-          # scan
-          data = scan_point(bf, composite.series.rs, composite.series.cs, r, c, size=1)
-          normalised_data = np.array(data) / np.max(data)
-
-          # data
-          mean = 1.0 - np.mean(normalised_data) # 1 - mean
-
-          Zmean[r,c] = mean
-
-      imsave(join(out, '260714_s15_bmod_{}.tiff'.format(t)), Zmean)
+      imsave(join(out, '260714_s15_constant37_{}.tiff'.format(t)), Zmean)
