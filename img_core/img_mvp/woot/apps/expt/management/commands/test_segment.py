@@ -40,9 +40,9 @@ class Command(BaseCommand):
     composite = Composite.objects.get(experiment__name='260714', series__name='15')
 
     # frames
-    previous_frame_index = 0
-    target_frame_index = 1
-    next_frame_index = 2
+    previous_frame_index = 50
+    target_frame_index = 51
+    next_frame_index = 52
 
     # stacks
     previous_gfp_stack = composite.gons.get(t=previous_frame_index, channel__name='0')
@@ -136,8 +136,8 @@ class Command(BaseCommand):
     def dont_go_through_dark_edges(delta_z, delta_zbf, delta_zmean, abs_zbf, abs_zmean):
       cost = 0
 
-      cost += np.abs(delta_z) * 4
-      cost += -delta_zbf * 7 if delta_zbf < 0 else 0
+      cost += np.abs(delta_z) * 2
+      cost += -delta_zbf * 10 if delta_zbf < 0 else 0
 
       return cost
 
@@ -170,6 +170,7 @@ class Command(BaseCommand):
     for r,c in zip(*np.where(track_edge>0)):
       travellers.append(Traveller(r, c, np.random.randint(0,7), 10, dont_go_through_dark_edges))
 
+    # travellers = []
     iterations = 0
     while sum([t.money for t in travellers])>0:
       iterations += 1
@@ -180,15 +181,13 @@ class Command(BaseCommand):
           travellers.remove(traveller)
           del traveller
 
-      # print(iterations, len(travellers), sum([t.money for t in travellers]))
-
     # cut = target_zmean[marker.r-10: marker.r+10, marker.c-10: marker.c+10]
     # plt.imshow(cut)
     # plt.show()
 
-    track_image = dilate(erode(erode(dilate(track_image))))
+    # track_image = dilate(erode(erode(dilate(track_image))))
 
     display_image = target_zbf.copy()
-    display_image[track_image==1] += 0.3
+    display_image[track_image==1] += 0.5
     plt.imshow(display_image)
     plt.show()
