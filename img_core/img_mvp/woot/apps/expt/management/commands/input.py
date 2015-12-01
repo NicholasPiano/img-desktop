@@ -76,7 +76,7 @@ class Command(BaseCommand):
       else:
         print('step01 | series {}... already exists.'.format(series_name))
 
-			experiment.make_paths(join(data_root, experiment.name))
+      experiment.make_paths(join(data_root, experiment.name))
 
       # 2. if lif is not extracted, do it.
       if len(os.listdir(experiment.storage_path))==0 and len(os.listdir(experiment.composite_path))==0:
