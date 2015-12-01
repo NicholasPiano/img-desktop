@@ -64,7 +64,6 @@ class Command(BaseCommand):
       experiment, experiment_created = Experiment.objects.get_or_create(name=experiment_name)
       if experiment_created:
         # set metadata
-        experiment.make_paths(join(data_root, experiment.name))
         experiment.get_templates()
         print('step01 | experiment path exists, experiment {}...  created.'.format(experiment_name))
       else:
@@ -76,6 +75,8 @@ class Command(BaseCommand):
         print('step01 | series {}... created.'.format(series_name))
       else:
         print('step01 | series {}... already exists.'.format(series_name))
+
+      experiment.make_paths(join(data_root, experiment.name))
 
       # 2. if lif is not extracted, do it.
       if len(os.listdir(experiment.storage_path))==0 and len(os.listdir(experiment.composite_path))==0:
